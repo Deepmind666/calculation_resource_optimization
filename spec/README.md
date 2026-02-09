@@ -7,3 +7,7 @@
 - `data_model.md`
 - `retention_contract.schema.json`
 - `algorithm_pseudocode.md`
+
+当前状态：
+- 已完成：`architecture.md`、`data_model.md`、`retention_contract.schema.json`、`algorithm_pseudocode.md`
+- 扩展：`retention_contract_examples.json`（5 套模板）

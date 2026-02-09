@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/retention_contract.schema.json",
+  "title": "RetentionContract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "version",
+    "domain",
+    "required_slots",
+    "slot_constraints",
+    "source_weights",
+    "topic_policy",
+    "length_constraints",
+    "validation_policy"
+  ],
+  "properties": {
+    "contract_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+$"
+    },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "patent_writing",
+        "research_assistant",
+        "customer_service",
+        "project_management",
+        "knowledge_base"
+      ]
+    },
+    "required_slots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "facts",
+          "procedure-steps",
+          "rationale",
+          "decisions",
+          "parameter-ranges",
+          "tool-results",
+          "risks",
+          "todos",
+          "citations",
+          "disagreements"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "slot_constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(facts|procedure-steps|rationale|decisions|parameter-ranges|tool-results|risks|todos|citations|disagreements)$": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required",
+            "min_coverage_ratio",
+            "min_items"
+          ],
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "min_coverage_ratio": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "min_items": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "source_weights": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+      }
+    },
+    "topic_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowlist",
+        "blocklist"
+      ],
+      "properties": {
+        "allowlist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "blocklist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "length_constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "global_token_budget",
+        "per_cluster_min_tokens",
+        "per_cluster_max_tokens"
+      ],
+      "properties": {
+        "global_token_budget": {
+          "type": "integer",
+          "minimum": 64
+        },
+        "per_cluster_min_tokens": {
+          "type": "integer",
+          "minimum": 16
+        },
+        "per_cluster_max_tokens": {
+          "type": "integer",
+          "minimum": 32
+        }
+      }
+    },
+    "validation_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_rewrite_rounds",
+        "require_entailment_check",
+        "require_conflict_check"
+      ],
+      "properties": {
+        "max_rewrite_rounds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "require_entailment_check": {
+          "type": "boolean"
+        },
+        "require_conflict_check": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

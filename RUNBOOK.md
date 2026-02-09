@@ -28,6 +28,7 @@ git remote -v
 ## 4. 结构自查
 ```powershell
 powershell -ExecutionPolicy Bypass -File qa/structure_check.ps1
+python qa/validate_retention_contract.py
 ```
 
 ## 5. 查看最新进展日志

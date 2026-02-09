@@ -167,3 +167,30 @@
   2. 产出 spec 细化文件（数据模型、契约 schema、伪代码拆分）。
   3. 进入 prototype Phase 1（核心数据结构 + 冲突检测/契约校验最小实现 + 单测）。
   4. 形成 patent/权利要求书.md 初稿，再倒推说明书支持段。
+
+## 2026-02-09 23:54:47 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（自检）
+- 工作内容：
+  - Step 3 推进：将 spec/architecture.md 拆分为可实现工件，新增数据模型、9 步流程伪代码、Retention Contract Schema 与 5 套模板示例。
+  - 新增契约样例校验脚本 qa/validate_retention_contract.py，用于持续检查模板结构与关键约束。
+  - 更新运行手册与 QA 说明，纳入新校验命令。
+  - 执行双重自查：structure_check.ps1 与 alidate_retention_contract.py 均通过。
+- 文件变更：
+  - spec/data_model.md
+  - spec/algorithm_pseudocode.md
+  - spec/retention_contract.schema.json
+  - spec/retention_contract_examples.json
+  - spec/README.md
+  - qa/validate_retention_contract.py
+  - qa/README.md
+  - RUNBOOK.md
+- 文件评审清单：
+  - [x] 关键规范已从长文拆分为独立可执行文档
+  - [x] 契约样例数量 >= 5（当前 5 套）
+  - [x] 校验脚本可执行并通过
+  - [x] RUNBOOK 已包含新增校验命令
+  - [x] 结构检查脚本通过
+- 风险与后续：
+  - 风险：prior_art 仍存在“待核验”条目，需补更细粒度专利/论文摘录。
+  - 后续：进入 prototype Phase 1，先实现 Fragment/Cluster/Contract 数据结构与最小管线（采集->并簇->冲突分叉->契约校验）。
