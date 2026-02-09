@@ -240,3 +240,27 @@
 - 风险与后续：
   - 风险：当前测试仍为单元级，尚未覆盖实验指标流水线。
   - 后续：新增实验脚本与结果 CSV 生成。
+
+## 2026-02-10 00:00:27 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（自检）
+- 工作内容：
+  - Step 5 最小化落地：新增 prototype/run_experiments.py，自动生成实验指标 CSV/JSON。
+  - 生成结果文件：igures/experiment_metrics.csv、igures/experiment_metrics.json，并新增 igures/experiment_report.md 解释指标。
+  - 更新文档：prototype/README.md、igures/README.md。
+  - 自查通过：结构检查、契约校验、单测全通过。
+- 文件变更：
+  - prototype/run_experiments.py
+  - prototype/README.md
+  - igures/README.md
+  - igures/experiment_metrics.csv
+  - igures/experiment_metrics.json
+  - igures/experiment_report.md
+- 文件评审清单：
+  - [x] 指标输出可复现（脚本 + CSV + JSON）
+  - [x] 指标字段覆盖压缩率/冲突保留率/合规率/耗时
+  - [x] 文档命令与输出路径一致
+  - [x] 结构检查与测试均通过
+- 风险与后续：
+  - 风险：当前实验为合成数据 + 轻量规则基线，真实性能结论有限。
+  - 后续：开始 Step 6，先产出 patent/权利要求书.md 初稿，再倒推说明书支撑段落。

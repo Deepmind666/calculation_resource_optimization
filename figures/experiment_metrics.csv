@@ -1,0 +1,2 @@
+run_seed,fragments,clusters,token_compression_rate,conflict_retention_rate,preference_compliance_rate,runtime_ms
+7.0,48.0,1.0,0.125,0.3333,1.0,2.77

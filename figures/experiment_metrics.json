@@ -1,0 +1,191 @@
+{
+  "metrics": {
+    "run_seed": 7.0,
+    "fragments": 48.0,
+    "clusters": 1.0,
+    "token_compression_rate": 0.125,
+    "conflict_retention_rate": 0.3333,
+    "preference_compliance_rate": 1.0,
+    "runtime_ms": 2.77
+  },
+  "sample_cluster_unit": {
+    "cluster_id": "C-0001",
+    "consensus_summary": "[facts] 步骤8：主题冲突，参数C=merge，风险：需要校验。 | 步骤2：主题冲突，参数C=merge，风险：需要校验。 | 步骤15：主题聚类，参数A=0.4，风险：需要校验。\n[procedure-steps] 步骤8：主题冲突，参数C=merge，风险：需要校验。 | 步骤2：主题冲突，参数C=merge，风险：需要校验。 | 步骤15：主题聚类，参数A=0.4，风险：需要校验。\n[parameter-ranges] 步骤8=主题冲突 | 参数c=merge | 风险=需要校验\n[risks] 步骤8：主题冲突，参数C=merge，风险：需要校验。 | 步骤2：主题冲突，参数C=merge，风险：需要校验。 | 步骤15：主题聚类，参数A=0.4，风险：需要校验。\n[citations] trace://synthetic/0040 | trace://synthetic/0034 | trace://synthetic/0015\n[disagreements] 步骤8=主题冲突 vs 步骤8=主题契约 | 参数c=keep vs 参数c=merge | 步骤2=主题冲突 vs 步骤2=主题契约",
+    "disagreements": [
+      {
+        "key": "步骤8",
+        "A": "步骤8=主题冲突",
+        "B": "步骤8=主题契约",
+        "evidence": "F-0040,F-0024"
+      },
+      {
+        "key": "参数c",
+        "A": "参数c=keep",
+        "B": "参数c=merge",
+        "evidence": "F-0047,F-0037,F-0041,F-0043,F-0039,F-0045,F-0033,F-0035,F-0040,F-0034,F-0046,F-0048,F-0036,F-0044,F-0038,F-0042"
+      },
+      {
+        "key": "步骤2",
+        "A": "步骤2=主题冲突",
+        "B": "步骤2=主题契约",
+        "evidence": "F-0034,F-0018"
+      },
+      {
+        "key": "步骤15",
+        "A": "步骤15=主题冲突",
+        "B": "步骤15=主题契约",
+        "evidence": "F-0047,F-0031"
+      },
+      {
+        "key": "参数a",
+        "A": "参数a=0.4",
+        "B": "参数a=0.5",
+        "evidence": "F-0015,F-0011,F-0009,F-0001,F-0013,F-0003,F-0007,F-0005,F-0016,F-0012,F-0002,F-0008,F-0006,F-0014,F-0004,F-0010"
+      },
+      {
+        "key": "步骤16",
+        "A": "步骤16=主题冲突",
+        "B": "步骤16=主题契约",
+        "evidence": "F-0048,F-0032"
+      },
+      {
+        "key": "步骤11",
+        "A": "步骤11=主题冲突",
+        "B": "步骤11=主题契约",
+        "evidence": "F-0043,F-0027"
+      },
+      {
+        "key": "步骤12",
+        "A": "步骤12=主题冲突",
+        "B": "步骤12=主题契约",
+        "evidence": "F-0044,F-0028"
+      },
+      {
+        "key": "步骤1",
+        "A": "步骤1=主题冲突",
+        "B": "步骤1=主题契约",
+        "evidence": "F-0033,F-0017"
+      },
+      {
+        "key": "参数b",
+        "A": "参数b=loose",
+        "B": "参数b=strict",
+        "evidence": "F-0032,F-0020,F-0022,F-0030,F-0018,F-0028,F-0024,F-0026,F-0017,F-0029,F-0023,F-0025,F-0019,F-0031,F-0027,F-0021"
+      },
+      {
+        "key": "步骤5",
+        "A": "步骤5=主题冲突",
+        "B": "步骤5=主题契约",
+        "evidence": "F-0037,F-0021"
+      },
+      {
+        "key": "步骤9",
+        "A": "步骤9=主题冲突",
+        "B": "步骤9=主题契约",
+        "evidence": "F-0041,F-0025"
+      },
+      {
+        "key": "步骤13",
+        "A": "步骤13=主题冲突",
+        "B": "步骤13=主题契约",
+        "evidence": "F-0045,F-0029"
+      },
+      {
+        "key": "步骤7",
+        "A": "步骤7=主题冲突",
+        "B": "步骤7=主题契约",
+        "evidence": "F-0039,F-0023"
+      },
+      {
+        "key": "步骤4",
+        "A": "步骤4=主题冲突",
+        "B": "步骤4=主题契约",
+        "evidence": "F-0036,F-0020"
+      },
+      {
+        "key": "步骤14",
+        "A": "步骤14=主题冲突",
+        "B": "步骤14=主题契约",
+        "evidence": "F-0046,F-0030"
+      },
+      {
+        "key": "步骤6",
+        "A": "步骤6=主题冲突",
+        "B": "步骤6=主题契约",
+        "evidence": "F-0038,F-0022"
+      },
+      {
+        "key": "步骤3",
+        "A": "步骤3=主题冲突",
+        "B": "步骤3=主题契约",
+        "evidence": "F-0035,F-0019"
+      },
+      {
+        "key": "步骤10",
+        "A": "步骤10=主题冲突",
+        "B": "步骤10=主题契约",
+        "evidence": "F-0042,F-0026"
+      }
+    ],
+    "evidence_pointers": [
+      "trace://synthetic/0040",
+      "trace://synthetic/0034",
+      "trace://synthetic/0015",
+      "trace://synthetic/0016",
+      "trace://synthetic/0011",
+      "trace://synthetic/0047",
+      "trace://synthetic/0012",
+      "trace://synthetic/0017",
+      "trace://synthetic/0032",
+      "trace://synthetic/0037",
+      "trace://synthetic/0041",
+      "trace://synthetic/0043",
+      "trace://synthetic/0029",
+      "trace://synthetic/0009",
+      "trace://synthetic/0001",
+      "trace://synthetic/0023",
+      "trace://synthetic/0020",
+      "trace://synthetic/0013",
+      "trace://synthetic/0046",
+      "trace://synthetic/0025",
+      "trace://synthetic/0022",
+      "trace://synthetic/0048",
+      "trace://synthetic/0030",
+      "trace://synthetic/0039",
+      "trace://synthetic/0019",
+      "trace://synthetic/0002",
+      "trace://synthetic/0036",
+      "trace://synthetic/0018",
+      "trace://synthetic/0031",
+      "trace://synthetic/0008",
+      "trace://synthetic/0045",
+      "trace://synthetic/0027",
+      "trace://synthetic/0028",
+      "trace://synthetic/0006",
+      "trace://synthetic/0003",
+      "trace://synthetic/0014",
+      "trace://synthetic/0033",
+      "trace://synthetic/0044",
+      "trace://synthetic/0038",
+      "trace://synthetic/0024",
+      "trace://synthetic/0007",
+      "trace://synthetic/0035",
+      "trace://synthetic/0005",
+      "trace://synthetic/0004",
+      "trace://synthetic/0042",
+      "trace://synthetic/0026",
+      "trace://synthetic/0010",
+      "trace://synthetic/0021"
+    ],
+    "slot_coverage": {
+      "facts": 1.0,
+      "procedure-steps": 1.0,
+      "parameter-ranges": 1.0,
+      "risks": 1.0,
+      "citations": 1.0,
+      "disagreements": 1.0
+    },
+    "violations": [],
+    "rewrite_history": []
+  }
+}
