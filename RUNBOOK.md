@@ -48,3 +48,11 @@ git push origin main
 1. 每次改动后更新 `logs/work_progress.md`。
 2. 每次提交前执行 `qa/structure_check.ps1`。
 3. 新增流程或命令时，同步更新 `RUNBOOK.md` 与 `.claude.md`。
+
+## 8. Prototype Phase 1 验证
+```powershell
+cd prototype
+python main.py
+python -m unittest discover -s tests -p "test_*.py"
+cd ..
+```

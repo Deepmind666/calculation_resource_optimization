@@ -194,3 +194,49 @@
 - 风险与后续：
   - 风险：prior_art 仍存在“待核验”条目，需补更细粒度专利/论文摘录。
   - 后续：进入 prototype Phase 1，先实现 Fragment/Cluster/Contract 数据结构与最小管线（采集->并簇->冲突分叉->契约校验）。
+
+## 2026-02-09 23:57:29 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（自检）
+- 工作内容：
+  - Prototype Phase 1：实现最小可运行管线 prototype/memory_pipeline.py，覆盖碎片采集、并簇、冲突检测、槽位覆盖校验、审计报告。
+  - 新增演示入口 prototype/main.py，可直接读取契约模板并输出簇记忆单元与审计结果。
+  - 新增单元测试 prototype/tests/test_memory_pipeline.py（3 个用例）。
+  - 新增并更新文档：prototype/README.md、RUNBOOK.md（补充原型验证命令）。
+  - 执行验证：
+    - python prototype/main.py 成功输出 JSON 结果；
+    - python -m unittest discover -s prototype/tests -p \"test_*.py\" 通过（3/3）。
+- 文件变更：
+  - prototype/memory_pipeline.py
+  - prototype/main.py
+  - prototype/tests/test_memory_pipeline.py
+  - prototype/README.md
+  - RUNBOOK.md
+- 文件评审清单：
+  - [x] 原型代码可运行且无外部依赖
+  - [x] 单测覆盖关键路径（并簇/冲突/契约违规）
+  - [x] 文档命令与实际执行一致
+  - [x] 输出包含审计字段（violations/conflicts/status）
+  - [x] 保持术语一致（fragment/cluster/contract）
+- 风险与后续：
+  - 风险：当前冲突检测规则为轻量实现，NLI 级语义冲突尚未接入。
+  - 后续：增加实验脚本与 CSV 指标输出（压缩率、冲突保留率、执行耗时），并进入专利权利要求草案编写。
+
+## 2026-02-09 23:58:14 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（自检）
+- 工作内容：
+  - 自查发现单测路径缺陷：从仓库根目录执行 unittest discover 时无法导入 memory_pipeline。
+  - 已修复 prototype/tests/test_memory_pipeline.py，加入基于 Path 的导入路径注入。
+  - 复验结果：
+    - 根目录执行测试通过（3/3）；
+    - prototype/ 目录执行测试通过（3/3）。
+- 文件变更：
+  - prototype/tests/test_memory_pipeline.py
+- 文件评审清单：
+  - [x] 缺陷可稳定复现
+  - [x] 修复后双路径执行均通过
+  - [x] 未引入外部依赖
+- 风险与后续：
+  - 风险：当前测试仍为单元级，尚未覆盖实验指标流水线。
+  - 后续：新增实验脚本与结果 CSV 生成。
