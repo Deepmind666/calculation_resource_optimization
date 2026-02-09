@@ -412,3 +412,111 @@
 - 风险与后续：
   - 风险：远程推送可能受临时网络错误影响（此前出现 HTTP 502）。
   - 后续：提交该日志并重试推送到 origin/main。
+
+## 2026-02-10 01:05:00 +08:00
+- 执行人：Claude (Opus 4.6)
+- 角色：评审
+- 工作内容：
+  - R3 补充评审：对 Codex 新产出的资源调度方向全部代码进行深度技术评审。
+  - 验证可执行性：单元测试 3/3 PASS、配置校验 PASS、演示入口 PASS、实验脚本 4 场景全部产出正确、结构检查 PASS。
+  - 逐模块代码审查 `prototype/resource_scheduler.py`（444 行），发现 1 个 Bug 和 3 个缺陷：
+    - BUG-1 [必须修复]：`_refresh_running` + `_stop_task` 中 `timeout_total` 被双重计数（第 357 行 + 第 389 行各加一次）
+    - ISSUE-18：`load_scheduler_config` 文件句柄未用 `with` 关闭
+    - ISSUE-19：实验 `high_pressure` 场景 `blocked_total=100` 具有误导性（是阻断事件次数，非任务数）
+    - ISSUE-20：`figures/` 中残留旧版 CSV/JSON 与新版共存造成混淆
+  - 评审测试文件 `test_resource_scheduler.py`（3 个用例，覆盖核心路径但深度不足）
+  - 评审配套文档（architecture、pseudocode、data_model、beginner_guide），文档质量良好
+  - 撰写 R3-supplement 完整评审报告写入 `.claude.md`
+- 文件变更：
+  - `.claude.md`（追加 R3-supplement 评审报告）
+  - `logs/work_progress.md`（追加本条记录）
+- 文件评审清单：
+  - [x] 全部 5 项可执行性验证均通过
+  - [x] 逐行审查核心调度器代码（444 行）
+  - [x] Bug 复现路径已确认（timeout_total 从 _refresh_running 和 _stop_task 各加一次）
+  - [x] 评审覆盖代码/测试/配置/文档/实验全链路
+  - [x] R3-supplement 报告自查完成
+- 评审发现摘要：
+  - BUG-1 [必须修复]：timeout_total 双重计数
+  - ISSUE-18~20 [建议修复]：文件句柄/指标误导/旧文件残留
+  - SUG-5~7：CPU 采样首次不准、抢占排序需文档、测试覆盖可增强
+  - **R3-supplement 评审判定：有条件通过（Conditional PASS）**
+- 风险与后续：
+  - 核心风险：项目方向分裂问题仍未解决（R3 主评审 REJECT 仍有效）
+  - 后续：
+    1. Codex 修复 BUG-1（timeout 双重计数）
+    2. 用户确认项目方向
+    3. 方向确认后，根据选择恢复/清理对应文件
+
+## 2026-02-10 01:15:38 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（自检）
+- 工作内容：
+  - 专注算法改进（不改主目标）：增强 prototype/resource_scheduler.py 的动态调度稳定性与防爆能力。
+  - 关键改动：
+    1. 资源平滑：引入 EMA（ema_alpha）减少瞬时抖动误判。
+    2. 模式稳态：引入滞回阈值（mode_hysteresis_pct）与紧急冷却（emergency_cooldown_ticks）。
+    3. 接纳预算：同一 tick 内按“累计预测负载”接纳任务，防止一次放行过多任务。
+    4. 启动节流：新增 max_start_per_tick_normal/high，避免突发并发冲击。
+    5. 紧急回收：抢占策略加入“低优先级 + 高内存占用”优先回收，并按目标回收量提前停止。
+  - 配置与校验同步：更新 spec/scheduler_config.example.json 与 qa/validate_scheduler_config.py。
+  - 测试增强：prototype/tests/test_resource_scheduler.py 新增两类用例（累计预算防超发、紧急冷却保持）。
+  - 文档同步：更新 spec/architecture.md、spec/algorithm_pseudocode.md、spec/beginner_guide.md。
+- 文件变更：
+  - prototype/resource_scheduler.py
+  - prototype/tests/test_resource_scheduler.py
+  - spec/scheduler_config.example.json
+  - qa/validate_scheduler_config.py
+  - spec/architecture.md
+  - spec/algorithm_pseudocode.md
+  - spec/beginner_guide.md
+- 文件评审清单：
+  - [x] 算法改进聚焦“多项目并行占用资源”场景
+  - [x] 配置项与代码实现一致
+  - [x] 单元测试通过（5/5）
+  - [x] 配置校验通过
+  - [x] 演示脚本与实验脚本可运行
+- 风险与后续：
+  - 风险：当前任务资源估算仍依赖输入估值，估值偏差会影响接纳准确度。
+  - 后续：引入运行时统计学习，自动更新任务资源画像。
+
+## 2026-02-10 01:18:02 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（自检）
+- 工作内容：
+  - 继续算法强化并修复已知缺陷：
+    1. 修复 	imeout_total 双重计数问题（超时仅计数一次）。
+    2. 新增/通过超时计数测试 	est_timeout_count_once。
+    3. 保持 6 项单测全通过，确保改动无回归。
+  - 保持改进能力：EMA 平滑、滞回+冷却、同 tick 累计接纳预算、启动节流、高内存优先回收。
+- 文件变更：
+  - prototype/resource_scheduler.py
+  - prototype/tests/test_resource_scheduler.py
+  - logs/work_progress.md
+- 文件评审清单：
+  - [x] timeout 计数逻辑正确
+  - [x] 新增测试可稳定复现并通过
+  - [x] 全量测试通过（6/6）
+  - [x] 配置校验通过
+- 风险与后续：
+  - 风险：实验指标中的 locked_total 是“阻断事件次数”，非“唯一任务数”，可能被误读。
+  - 后续：实验脚本增加 unique_blocked_tasks 指标。
+
+## 2026-02-10 01:19:01 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（自检）
+- 工作内容：
+  - 完成实验指标可读性改进：prototype/run_experiments.py 新增 unique_blocked_tasks，并将原字段命名为 locked_event_total。
+  - 重新生成实验输出：igures/scheduler_experiment_metrics.csv/json。
+  - 复验：单测 6/6、配置校验 PASS、结构检查 PASS。
+- 文件变更：
+  - prototype/run_experiments.py
+  - igures/scheduler_experiment_metrics.csv
+  - igures/scheduler_experiment_metrics.json
+- 文件评审清单：
+  - [x] 指标语义更清晰（事件次数 vs 唯一任务数）
+  - [x] 输出文件已更新
+  - [x] 质量检查全通过
+- 风险与后续：
+  - 风险：实验仍使用合成监控序列，需在真实负载场景补充压测。
+  - 后续：加入真实进程池压测脚本与告警阈值评估。

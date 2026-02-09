@@ -11,7 +11,8 @@ INPUT:
   scheduler_config
 
 LOOP every check_interval_sec:
-  snapshot <- monitor.sample()
+  raw_snapshot <- monitor.sample()
+  snapshot <- smooth(raw_snapshot, ema_alpha)
   refresh_running_tasks(running_set)
   mode <- evaluate_mode(snapshot, scheduler_config)
 
@@ -19,7 +20,9 @@ LOOP every check_interval_sec:
       preempt_low_priority_tasks(running_set, scheduler_config)
 
   target_workers <- compute_target_workers(mode, scheduler_config)
-  try_admit_tasks(pending_queue, running_set, snapshot, target_workers, scheduler_config)
+  try_admit_tasks_with_cumulative_projection(
+      pending_queue, running_set, snapshot, target_workers, scheduler_config
+  )
 
   emit_tick_report(snapshot, mode, running_set, pending_queue)
 END LOOP
@@ -116,6 +119,10 @@ function try_admit_tasks(queue, running_set, snapshot, target_workers, cfg):
   if capacity <= 0:
       return
 
+  planned_mem_extra = 0
+  planned_cpu_extra = 0
+  planned_gpu_extra = 0
+
   trial_count = len(queue)
   blocked_buffer = []
   for i in [1 .. trial_count]:
@@ -123,10 +130,16 @@ function try_admit_tasks(queue, running_set, snapshot, target_workers, cfg):
           break
 
       task = pop_highest_priority(queue)
-      ok, reason = can_admit(task, snapshot, current_mode, cfg)
+      ok, reason = can_admit(
+          task, snapshot, current_mode, cfg,
+          planned_mem_extra, planned_cpu_extra, planned_gpu_extra
+      )
       if ok:
           start_task(task)
           add running_set
+          planned_mem_extra += task.estimated_mem_mb
+          planned_cpu_extra += task.estimated_cpu_percent
+          planned_gpu_extra += task.estimated_gpu_mem_mb
       else:
           blocked_buffer.append((task, reason))
 
@@ -159,3 +172,6 @@ metrics:
   preempted_total
   emergency_ticks
 ```
+  if previous_mode == EMERGENCY and cooldown_left > 0:
+      cooldown_left -= 1
+      return EMERGENCY

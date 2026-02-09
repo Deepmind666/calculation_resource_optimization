@@ -72,13 +72,19 @@ def run_scenario(name: str, snapshots: List[ResourceSnapshot], task_n: int = 10)
         scheduler.tick()
 
     m = scheduler.metrics_dict()
+    unique_blocked = {
+        evt["payload"]["task_id"]
+        for evt in scheduler.events
+        if evt.get("event_type") == "TASK_BLOCKED" and isinstance(evt.get("payload"), dict) and "task_id" in evt["payload"]
+    }
     submitted = max(1, m["submitted_total"])
     return {
         "scenario": name,
         "submitted_total": float(m["submitted_total"]),
         "started_total": float(m["started_total"]),
         "completed_total": float(m["completed_total"]),
-        "blocked_total": float(m["blocked_total"]),
+        "blocked_event_total": float(m["blocked_total"]),
+        "unique_blocked_tasks": float(len(unique_blocked)),
         "preempted_total": float(m["preempted_total"]),
         "emergency_ticks": float(m["emergency_ticks"]),
         "admission_success_rate": round(m["started_total"] / submitted, 4),

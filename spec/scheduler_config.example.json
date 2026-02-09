@@ -14,5 +14,10 @@
   "high_mode_priority_cutoff": 3,
   "preempt_count_per_tick": 1,
   "kill_timeout_sec": 3.0,
+  "mode_hysteresis_pct": 3.0,
+  "emergency_cooldown_ticks": 2,
+  "ema_alpha": 0.6,
+  "max_start_per_tick_normal": 4,
+  "max_start_per_tick_high": 1,
   "dry_run": true
 }

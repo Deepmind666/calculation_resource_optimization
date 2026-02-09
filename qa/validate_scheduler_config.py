@@ -28,6 +28,11 @@ def main() -> None:
         "cpu_high_pct",
         "cpu_hard_pct",
         "reserve_memory_mb",
+        "mode_hysteresis_pct",
+        "emergency_cooldown_ticks",
+        "ema_alpha",
+        "max_start_per_tick_normal",
+        "max_start_per_tick_high",
         "dry_run",
     }
     missing = sorted(required_keys - set(cfg.keys()))
@@ -36,6 +41,14 @@ def main() -> None:
 
     if not (cfg["min_workers"] >= 1 and cfg["max_workers"] >= cfg["min_workers"]):
         fail("Invalid worker range.")
+    if int(cfg["max_start_per_tick_normal"]) < 1 or int(cfg["max_start_per_tick_high"]) < 1:
+        fail("max_start_per_tick_* must be >= 1.")
+    if int(cfg["emergency_cooldown_ticks"]) < 0:
+        fail("emergency_cooldown_ticks must be >= 0.")
+    if float(cfg["mode_hysteresis_pct"]) < 0:
+        fail("mode_hysteresis_pct must be >= 0.")
+    if not (0.0 <= float(cfg["ema_alpha"]) <= 1.0):
+        fail("ema_alpha must be in [0, 1].")
 
     for k in [
         "memory_high_pct",
