@@ -1,0 +1,79 @@
+{
+  "metrics": {
+    "submitted_total": 8,
+    "started_total": 8,
+    "completed_total": 7,
+    "blocked_total": 0,
+    "preempted_total": 0,
+    "failed_total": 0,
+    "timeout_total": 0,
+    "emergency_ticks": 0
+  },
+  "ticks": [
+    {
+      "tick_id": 1,
+      "mode": "NORMAL",
+      "running_count": 4,
+      "pending_count": 4,
+      "started": [
+        "T-001",
+        "T-007",
+        "T-002",
+        "T-008"
+      ],
+      "blocked": [],
+      "preempted": []
+    },
+    {
+      "tick_id": 2,
+      "mode": "NORMAL",
+      "running_count": 4,
+      "pending_count": 4,
+      "started": [],
+      "blocked": [],
+      "preempted": []
+    },
+    {
+      "tick_id": 3,
+      "mode": "NORMAL",
+      "running_count": 4,
+      "pending_count": 2,
+      "started": [
+        "T-003",
+        "T-004"
+      ],
+      "blocked": [],
+      "preempted": []
+    },
+    {
+      "tick_id": 4,
+      "mode": "NORMAL",
+      "running_count": 4,
+      "pending_count": 0,
+      "started": [
+        "T-005",
+        "T-006"
+      ],
+      "blocked": [],
+      "preempted": []
+    },
+    {
+      "tick_id": 5,
+      "mode": "NORMAL",
+      "running_count": 3,
+      "pending_count": 0,
+      "started": [],
+      "blocked": [],
+      "preempted": []
+    },
+    {
+      "tick_id": 6,
+      "mode": "NORMAL",
+      "running_count": 1,
+      "pending_count": 0,
+      "started": [],
+      "blocked": [],
+      "preempted": []
+    }
+  ]
+}

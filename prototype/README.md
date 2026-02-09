@@ -1,22 +1,22 @@
 # prototype
 
-存放可运行原型、单元测试、实验脚本和结果生成脚本。
+本目录是“资源调度防爆”原型实现。
 
-最低交付：
-- `main.py` 或等价入口
-- `tests/`
-- `run_experiments.py`
+核心文件：
+1. `resource_scheduler.py`：资源监控、模式判定、接纳控制、紧急回收。
+2. `main.py`：演示入口（默认 dry-run，安全）。
+3. `run_experiments.py`：多场景实验并输出 CSV/JSON。
+4. `tests/test_resource_scheduler.py`：单元测试。
 
-当前状态（Phase 1）：
-- `memory_pipeline.py`：最小管线实现（采集、并簇、冲突分叉、槽位覆盖校验、审计报告）。
-- `main.py`：可直接运行的演示入口。
-- `tests/test_memory_pipeline.py`：单元测试。
-- `run_experiments.py`：合成数据实验与指标导出（CSV/JSON）。
-
-运行方式：
+## 快速运行
 ```powershell
 cd prototype
-python main.py
-python -m unittest discover -s tests -p \"test_*.py\"
+python main.py --ticks 12
 python run_experiments.py
+python -m unittest discover -s tests -p "test_*.py"
+cd ..
 ```
+
+## 安全说明
+1. `main.py` 默认 `dry-run`，不启动真实子进程。
+2. 需要真实执行时再加 `--real-run`，且建议先小规模验证。

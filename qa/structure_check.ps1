@@ -22,11 +22,14 @@ $requiredFiles = @(
     "logs/work_progress.md",
     "prior_art/README.md",
     "spec/README.md",
+    "spec/scheduler_config.example.json",
     "prototype/README.md",
+    "prototype/resource_scheduler.py",
     "patent/README.md",
     "figures/README.md",
     "qa/README.md",
-    "qa/review_checklist.md"
+    "qa/review_checklist.md",
+    "qa/validate_scheduler_config.py"
 )
 
 $missing = @()

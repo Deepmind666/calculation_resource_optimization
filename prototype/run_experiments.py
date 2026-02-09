@@ -2,126 +2,122 @@ from __future__ import annotations
 
 import csv
 import json
-import random
-import time
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
-from main import load_contract
-from memory_pipeline import Cluster, assign_or_create_cluster, ingest_fragment, summarize_cluster
+from resource_scheduler import DynamicTaskScheduler, ResourceSnapshot, SchedulerConfig, TaskSpec
 
 
 ROOT = Path(__file__).resolve().parents[1]
 FIGURES_DIR = ROOT / "figures"
-CSV_PATH = FIGURES_DIR / "experiment_metrics.csv"
-JSON_PATH = FIGURES_DIR / "experiment_metrics.json"
+CSV_PATH = FIGURES_DIR / "scheduler_experiment_metrics.csv"
+JSON_PATH = FIGURES_DIR / "scheduler_experiment_metrics.json"
 
 
-def token_count(text: str) -> int:
-    return len([x for x in text.replace("\n", " ").split(" ") if x.strip()])
+class ScriptedMonitor:
+    def __init__(self, snapshots: List[ResourceSnapshot]) -> None:
+        self.snapshots = snapshots
+        self.i = 0
+
+    def sample(self) -> ResourceSnapshot:
+        if self.i >= len(self.snapshots):
+            return self.snapshots[-1]
+        s = self.snapshots[self.i]
+        self.i += 1
+        return s
 
 
-def generate_synthetic_fragments(seed: int = 7) -> List[Dict[str, object]]:
-    random.seed(seed)
-    rows: List[Dict[str, object]] = []
-    topics = ["聚类", "契约", "冲突"]
-    values = {
-        "聚类": ["A=0.4", "A=0.5"],
-        "契约": ["B=strict", "B=loose"],
-        "冲突": ["C=keep", "C=merge"],
-    }
-    idx = 1
-    for topic in topics:
-        for i in range(16):
-            value = values[topic][i % 2]
-            content = f"步骤{i+1}：主题{topic}，参数{value}，风险：需要校验。"
-            rows.append(
-                {
-                    "id": f"F-{idx:04d}",
-                    "content": content,
-                    "agent": f"agent_{(i % 3) + 1}",
-                    "trace": f"trace://synthetic/{idx:04d}",
-                    "topics": [topic],
-                }
+def make_snapshot(mem: float, cpu: float, swap: float = 10.0) -> ResourceSnapshot:
+    total = 16 * 1024.0
+    used = total * mem / 100.0
+    avail = max(1.0, total - used)
+    return ResourceSnapshot(
+        timestamp=0.0,
+        cpu_percent=cpu,
+        memory_percent=mem,
+        memory_used_mb=used,
+        memory_total_mb=total,
+        memory_available_mb=avail,
+        swap_percent=swap,
+        gpu_util_percent=None,
+        gpu_memory_percent=None,
+        gpu_memory_used_mb=None,
+        gpu_memory_total_mb=None,
+    )
+
+
+def run_scenario(name: str, snapshots: List[ResourceSnapshot], task_n: int = 10) -> Dict[str, float]:
+    cfg = SchedulerConfig(
+        max_workers=4,
+        min_workers=1,
+        dry_run=True,
+        preempt_count_per_tick=2,
+        reserve_memory_mb=512,
+    )
+    scheduler = DynamicTaskScheduler(config=cfg, monitor=ScriptedMonitor(snapshots))
+    for i in range(task_n):
+        scheduler.submit_task(
+            TaskSpec(
+                task_id=f"{name}-T-{i+1:03d}",
+                command=[],
+                priority=(i % 6) + 1,
+                estimated_mem_mb=400,
+                estimated_cpu_percent=10,
+                preemptible=True,
+                dry_run_ticks=2,
             )
-            idx += 1
-    random.shuffle(rows)
-    return rows
-
-
-def run_once(seed: int = 7) -> Tuple[Dict[str, float], List[Dict[str, object]]]:
-    contract = load_contract("patent_writing")
-    rows = generate_synthetic_fragments(seed=seed)
-
-    clusters: Dict[str, Cluster] = {}
-    fragment_map = {}
-
-    t0 = time.perf_counter()
-    for row in rows:
-        f = ingest_fragment(
-            fragment_id=row["id"],
-            content=row["content"],
-            source_agent=row["agent"],
-            trace_pointer=row["trace"],
-            confidence=1.0,
-            topics=row["topics"],
         )
-        fragment_map[f.fragment_id] = f
-        assign_or_create_cluster(f, clusters, similarity_threshold=0.35)
 
-    units = [summarize_cluster(clusters[cid], fragment_map, contract) for cid in sorted(clusters.keys())]
-    elapsed_ms = (time.perf_counter() - t0) * 1000
+    for _ in range(len(snapshots)):
+        scheduler.tick()
 
-    original_tokens = sum(token_count(r["content"]) for r in rows)
-    summary_tokens = sum(token_count(u["consensus_summary"]) for u in units)
-    compression_rate = 1.0 - (summary_tokens / original_tokens if original_tokens else 0.0)
-
-    expected_conflicts = 3.0
-    detected_conflicts = float(sum(1 for u in units if len(u["disagreements"]) > 0))
-    conflict_retention_rate = min(1.0, detected_conflicts / expected_conflicts)
-
-    required_slots = sum(
-        1
-        for _ in units
-        for slot, rule in contract.slot_constraints.items()
-        if rule.required
-    )
-    pass_slots = sum(
-        1
-        for u in units
-        for slot, rule in contract.slot_constraints.items()
-        if rule.required and u["slot_coverage"].get(slot, 0.0) >= rule.min_coverage_ratio
-    )
-    preference_compliance_rate = (pass_slots / required_slots) if required_slots else 1.0
-
-    metrics = {
-        "run_seed": float(seed),
-        "fragments": float(len(rows)),
-        "clusters": float(len(units)),
-        "token_compression_rate": round(compression_rate, 4),
-        "conflict_retention_rate": round(conflict_retention_rate, 4),
-        "preference_compliance_rate": round(preference_compliance_rate, 4),
-        "runtime_ms": round(elapsed_ms, 2),
+    m = scheduler.metrics_dict()
+    submitted = max(1, m["submitted_total"])
+    return {
+        "scenario": name,
+        "submitted_total": float(m["submitted_total"]),
+        "started_total": float(m["started_total"]),
+        "completed_total": float(m["completed_total"]),
+        "blocked_total": float(m["blocked_total"]),
+        "preempted_total": float(m["preempted_total"]),
+        "emergency_ticks": float(m["emergency_ticks"]),
+        "admission_success_rate": round(m["started_total"] / submitted, 4),
+        "preemption_rate": round(m["preempted_total"] / submitted, 4),
     }
-    return metrics, units
-
-
-def write_outputs(metrics: Dict[str, float], units: List[Dict[str, object]]) -> None:
-    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-
-    with CSV_PATH.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(metrics.keys()))
-        writer.writeheader()
-        writer.writerow(metrics)
-
-    payload = {"metrics": metrics, "sample_cluster_unit": units[0] if units else {}}
-    JSON_PATH.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def main() -> None:
-    metrics, units = run_once(seed=7)
-    write_outputs(metrics, units)
-    print(json.dumps(metrics, ensure_ascii=False, indent=2))
+    scenarios = [
+        (
+            "normal",
+            [make_snapshot(mem=55, cpu=35) for _ in range(10)],
+        ),
+        (
+            "high_pressure",
+            [make_snapshot(mem=88, cpu=72) for _ in range(10)],
+        ),
+        (
+            "emergency",
+            [make_snapshot(mem=95, cpu=90) for _ in range(10)],
+        ),
+        (
+            "burst_then_recover",
+            [make_snapshot(mem=70, cpu=60) for _ in range(3)]
+            + [make_snapshot(mem=94, cpu=85) for _ in range(4)]
+            + [make_snapshot(mem=68, cpu=40) for _ in range(3)],
+        ),
+    ]
+
+    rows = [run_scenario(name, snaps) for name, snaps in scenarios]
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+
+    with CSV_PATH.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(rows)
+
+    JSON_PATH.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps(rows, ensure_ascii=False, indent=2))
     print(f"[OK] wrote: {CSV_PATH}")
     print(f"[OK] wrote: {JSON_PATH}")
 

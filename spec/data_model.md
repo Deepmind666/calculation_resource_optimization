@@ -1,110 +1,140 @@
-# 数据模型规范（v0.1）
+# 数据模型（资源调度主线）
 
 更新时间：2026-02-09（UTC+08:00）
 
-## 1. Fragment（记忆碎片）
+## 1. ResourceSnapshot（资源快照）
 
 ```python
-from dataclasses import dataclass
-from typing import List, Dict
-
 @dataclass
-class Fragment:
-    fragment_id: str                 # 全局唯一 ID
-    content: str                     # 原始文本内容
-    source_agent: str                # 来源智能体
-    timestamp: float                 # Unix 时间戳
-    topic_candidates: List[str]      # 主题候选标签
-    confidence: float                # 来源置信度 [0,1]
-    tool_fingerprint: str            # 工具输出指纹
-    citation_count: int              # 被后续步骤引用次数
-    trace_pointer: str               # 外部原文 hash/ID
-    embedding: List[float]           # 向量表示
-    metadata: Dict[str, str]         # 扩展字段
+class ResourceSnapshot:
+    timestamp: float
+    cpu_percent: float
+    memory_percent: float
+    memory_used_mb: float
+    memory_total_mb: float
+    memory_available_mb: float
+    swap_percent: float
+    gpu_util_percent: Optional[float]
+    gpu_memory_percent: Optional[float]
+    gpu_memory_used_mb: Optional[float]
+    gpu_memory_total_mb: Optional[float]
 ```
 
-约束：
-- `fragment_id` 唯一，不可变。
-- `confidence` 取值范围 `[0, 1]`。
-- `trace_pointer` 必须可追溯到原始输入。
+用途：
+1. 每个调度周期的实时输入。
+2. 模式判定（NORMAL/HIGH/EMERGENCY）依据。
 
-## 2. Cluster（语义簇）
+---
+
+## 2. TaskSpec（任务定义）
 
 ```python
-from dataclasses import dataclass
-from typing import List, Dict
-
 @dataclass
-class Cluster:
-    cluster_id: str
-    fragment_ids: List[str]
-    centroid: List[float]
-    topic_distribution: Dict[str, float]
-    conflict_risk: float
-    last_updated: float
+class TaskSpec:
+    task_id: str
+    command: List[str]
+    priority: int
+    estimated_mem_mb: int
+    estimated_cpu_percent: float
+    estimated_gpu_mem_mb: int = 0
+    preemptible: bool = True
+    max_runtime_sec: float = 300.0
+    dry_run_ticks: int = 2
 ```
 
-约束：
-- `fragment_ids` 至少包含 1 条碎片 ID。
-- `topic_distribution` 概率和约为 1。
-- `conflict_risk` 范围 `[0, 1]`。
+字段说明：
+1. `priority`：越小越重要。
+2. `estimated_mem_mb`：用于接纳前预测，防止冲过内存上限。
+3. `preemptible`：紧急时是否允许被终止。
 
-## 3. ClusterMemoryUnit（簇记忆单元）
+---
+
+## 3. SchedulerConfig（调度配置）
 
 ```python
-from dataclasses import dataclass
-from typing import List, Dict
-
 @dataclass
-class ClusterMemoryUnit:
-    cluster_id: str
-    consensus_summary: str
-    disagreements: List[Dict[str, str]]   # 争议点 A/B 与证据
-    evidence_pointers: List[str]           # 可追溯证据 ID
-    slot_coverage: Dict[str, float]        # 槽位覆盖率 [0,1]
-    compression_report: Dict[str, str]     # 压缩/重试/修订记录
+class SchedulerConfig:
+    max_workers: int = 4
+    min_workers: int = 1
+    check_interval_sec: float = 0.5
+
+    memory_high_pct: float = 85.0
+    memory_emergency_pct: float = 92.0
+    cpu_high_pct: float = 80.0
+    cpu_hard_pct: float = 95.0
+    swap_emergency_pct: float = 80.0
+
+    enable_gpu_guard: bool = True
+    gpu_memory_high_pct: float = 85.0
+    gpu_memory_emergency_pct: float = 95.0
+
+    reserve_memory_mb: int = 512
+    high_mode_priority_cutoff: int = 3
+    preempt_count_per_tick: int = 1
+    kill_timeout_sec: float = 3.0
+
+    dry_run: bool = False
 ```
 
-约束：
-- `evidence_pointers` 不能为空。
-- 若存在冲突，`disagreements` 至少包含 1 条记录。
-- `slot_coverage` 中必须包含契约定义的必选槽位。
+---
 
-## 4. RetentionContract（偏好保留契约）
+## 4. TaskRuntime（运行时状态）
 
 ```python
-from dataclasses import dataclass
-from typing import Dict, List
-
 @dataclass
-class SlotConstraint:
-    min_items: int
-    min_coverage_ratio: float
-    required: bool
-
-@dataclass
-class RetentionContract:
-    contract_id: str
-    version: str
-    slots: Dict[str, SlotConstraint]
-    source_weights: Dict[str, float]
-    topic_allowlist: List[str]
-    topic_blocklist: List[str]
-    length_budget: int
-    max_rounds: int
+class TaskRuntime:
+    spec: TaskSpec
+    start_ts: float
+    state: str
+    process: Optional[subprocess.Popen] = None
+    remaining_ticks: int = 0
 ```
 
-约束：
-- `length_budget` > 0。
-- `max_rounds` >= 1。
-- `topic_allowlist` 与 `topic_blocklist` 不应交集。
+状态举例：
+1. `RUNNING`
+2. `COMPLETED`
+3. `PREEMPTED`
+4. `FAILED`
+5. `TIMEOUT`
 
-## 5. 最小持久化表建议
+---
 
-| 表名 | 主键 | 关键字段 |
-|---|---|---|
-| `fragments` | `fragment_id` | `content, source_agent, confidence, trace_pointer, embedding` |
-| `clusters` | `cluster_id` | `fragment_ids, centroid, conflict_risk` |
-| `cluster_memory_units` | `cluster_id` | `consensus_summary, disagreements, evidence_pointers, slot_coverage` |
-| `retention_contracts` | `contract_id` | `version, slots, source_weights, length_budget` |
-| `audit_logs` | `event_id` | `cluster_id, action, status, timestamp` |
+## 5. TickReport（单次调度报告）
+
+```python
+@dataclass
+class TickReport:
+    tick_id: int
+    mode: str
+    started: List[str]
+    blocked: List[Dict[str, str]]
+    preempted: List[str]
+    running_count: int
+    pending_count: int
+    snapshot: ResourceSnapshot
+```
+
+---
+
+## 6. Metrics（累计指标）
+
+```python
+@dataclass
+class SchedulerMetrics:
+    submitted_total: int = 0
+    started_total: int = 0
+    completed_total: int = 0
+    blocked_total: int = 0
+    preempted_total: int = 0
+    failed_total: int = 0
+    emergency_ticks: int = 0
+```
+
+---
+
+## 7. 关系总览
+1. `ResourceSnapshot` 决定当前模式。
+2. `TaskSpec` 决定任务是否允许启动。
+3. `SchedulerConfig` 决定阈值、并发和保护策略。
+4. `TaskRuntime` 反映当前执行状态。
+5. `TickReport` 和 `Metrics` 用于审计与调优。

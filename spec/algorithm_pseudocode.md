@@ -1,167 +1,161 @@
-# 九步流程伪代码（v0.1）
+# 动态调度伪代码（资源优化主线）
 
 更新时间：2026-02-09（UTC+08:00）
 
-## 全流程入口
+## 1. 调度主循环
 
 ```text
 INPUT:
-  fragments_stream
-  retention_contract
-  global_token_budget B
+  pending_queue
+  running_set
+  scheduler_config
 
-OUTPUT:
-  cluster_memory_units
-  allocation_plan
-  audit_report
+LOOP every check_interval_sec:
+  snapshot <- monitor.sample()
+  refresh_running_tasks(running_set)
+  mode <- evaluate_mode(snapshot, scheduler_config)
 
-for each fragment in fragments_stream:
-    f <- collect_and_annotate(fragment)                      # Step 1
-    candidates <- coarse_retrieval(f.embedding)              # Step 2
-    decision <- precise_cluster_decision(f, candidates)      # Step 3
-    apply_cluster_update(decision)
+  if mode == EMERGENCY:
+      preempt_low_priority_tasks(running_set, scheduler_config)
 
-for each cluster in active_clusters:
-    consensus, evidence, credit <- redundancy_arbitration(cluster)      # Step 4
-    conflicts <- conflict_detection(cluster)                             # Step 5
-    draft <- contract_guided_summary(cluster, retention_contract)        # Step 6
-    final <- fidelity_check_and_rewrite(draft, cluster, retention_contract) # Step 7
-    save_cluster_memory_unit(cluster, consensus, conflicts, evidence, final)
+  target_workers <- compute_target_workers(mode, scheduler_config)
+  try_admit_tasks(pending_queue, running_set, snapshot, target_workers, scheduler_config)
 
-allocation_plan <- token_budget_optimization(active_clusters, B)         # Step 8
-build_hierarchical_index_and_trace(active_clusters)                      # Step 9
-audit_report <- emit_audit_report(active_clusters, allocation_plan)
-return cluster_memory_units, allocation_plan, audit_report
+  emit_tick_report(snapshot, mode, running_set, pending_queue)
+END LOOP
 ```
 
-## Step 1 碎片采集与标注
+---
+
+## 2. 模式判定
 
 ```text
-function collect_and_annotate(fragment):
-    fragment.fragment_id <- uuid()
-    fragment.timestamp <- now()
-    fragment.tool_fingerprint <- hash(tool_outputs)
-    fragment.topic_candidates <- topic_predict(fragment.content)
-    fragment.confidence <- init_confidence(fragment.source_agent)
-    fragment.trace_pointer <- store_raw_input_and_get_pointer(fragment.raw)
-    fragment.embedding <- embed(fragment.content)
-    return fragment
+function evaluate_mode(snapshot, cfg):
+  if snapshot.memory_percent >= cfg.memory_emergency_pct:
+      return EMERGENCY
+  if snapshot.swap_percent >= cfg.swap_emergency_pct:
+      return EMERGENCY
+  if cfg.enable_gpu_guard and snapshot.gpu_memory_percent != null and
+     snapshot.gpu_memory_percent >= cfg.gpu_memory_emergency_pct:
+      return EMERGENCY
+
+  if snapshot.memory_percent >= cfg.memory_high_pct:
+      return HIGH
+  if snapshot.cpu_percent >= cfg.cpu_high_pct:
+      return HIGH
+  if cfg.enable_gpu_guard and snapshot.gpu_memory_percent != null and
+     snapshot.gpu_memory_percent >= cfg.gpu_memory_high_pct:
+      return HIGH
+
+  return NORMAL
 ```
 
-## Step 2 候选近邻检索（粗筛）
+---
+
+## 3. 目标并发计算
 
 ```text
-function coarse_retrieval(embedding):
-    c1 <- ann_index.search(embedding, top_k)
-    c2 <- lsh_index.search(embedding, top_k)
-    return deduplicate(c1 ∪ c2)
+function compute_target_workers(mode, cfg):
+  if mode == NORMAL:
+      return cfg.max_workers
+  if mode == HIGH:
+      return max(cfg.min_workers, floor(cfg.max_workers / 2))
+  return 0   # EMERGENCY
 ```
 
-## Step 3 精判并簇/新簇/拆簇
+---
+
+## 4. 接纳控制
 
 ```text
-function precise_cluster_decision(f, candidates):
-    best_score <- -inf
-    best_cluster <- null
-    for c in candidates:
-        s_sem <- semantic_similarity(f.embedding, c.centroid)
-        s_topic <- topic_consistency(f.topic_candidates, c.topic_distribution)
-        s_src <- source_reliability(f.source_agent, c)
-        s_conflict <- conflict_risk_penalty(f, c)
-        score <- w1*s_sem + w2*s_topic + w3*s_src - w4*s_conflict
-        if score > best_score:
-            best_score <- score
-            best_cluster <- c
-    if best_score < tau_new:
-        return NEW_CLUSTER
-    if split_condition(best_cluster):
-        return SPLIT_CLUSTER(best_cluster)
-    return MERGE(best_cluster)
+function can_admit(task, snapshot, mode, cfg):
+  if mode == EMERGENCY:
+      return false, "emergency mode"
+
+  projected_mem_mb = snapshot.memory_used_mb + task.estimated_mem_mb + cfg.reserve_memory_mb
+  projected_mem_pct = 100 * projected_mem_mb / snapshot.memory_total_mb
+  if projected_mem_pct >= cfg.memory_emergency_pct:
+      return false, "projected memory emergency"
+
+  projected_cpu_pct = snapshot.cpu_percent + task.estimated_cpu_percent
+  if projected_cpu_pct >= cfg.cpu_hard_pct:
+      return false, "projected cpu hard limit"
+
+  if mode == HIGH and task.priority > cfg.high_mode_priority_cutoff:
+      return false, "blocked low-priority task in high mode"
+
+  if cfg.enable_gpu_guard and snapshot.gpu_memory_total_mb != null:
+      projected_gpu_mb = snapshot.gpu_memory_used_mb + task.estimated_gpu_mem_mb
+      projected_gpu_pct = 100 * projected_gpu_mb / snapshot.gpu_memory_total_mb
+      if projected_gpu_pct >= cfg.gpu_memory_emergency_pct:
+          return false, "projected gpu memory emergency"
+
+  return true, ""
 ```
 
-## Step 4 跨智能体冗余仲裁
+---
+
+## 5. 紧急回收
 
 ```text
-function redundancy_arbitration(cluster):
-    statements <- extract_statements(cluster.fragments)
-    for st in statements:
-        st.credit <- alpha*source_confidence(st.source_agent)
-                    + beta*citation_frequency(st)
-                    + gamma*tool_consistency(st)
-    consensus <- select_top_statements(statements, policy="coverage+confidence")
-    evidence <- collect_evidence_pointers(consensus)
-    return consensus, evidence, statements
+function preempt_low_priority_tasks(running_set, cfg):
+  candidates = filter(running_set, task.preemptible == true)
+  sort candidates by priority descending  # 数值越大优先级越低
+  k = min(cfg.preempt_count_per_tick, len(candidates))
+  for i in [0 .. k-1]:
+      terminate(candidates[i], reason="emergency preemption")
 ```
 
-## Step 5 冲突检测与分叉
+---
+
+## 6. 尝试接纳任务
 
 ```text
-function conflict_detection(cluster):
-    conflicts <- []
-    for (a, b) in pairwise(cluster.statements):
-        if contradiction(a, b):       # NLI 或规则分类器
-            conflicts.append({A:a, B:b, evidence:[a.id, b.id]})
-    return conflicts
+function try_admit_tasks(queue, running_set, snapshot, target_workers, cfg):
+  capacity = target_workers - len(running_set)
+  if capacity <= 0:
+      return
+
+  trial_count = len(queue)
+  blocked_buffer = []
+  for i in [1 .. trial_count]:
+      if len(running_set) >= target_workers:
+          break
+
+      task = pop_highest_priority(queue)
+      ok, reason = can_admit(task, snapshot, current_mode, cfg)
+      if ok:
+          start_task(task)
+          add running_set
+      else:
+          blocked_buffer.append((task, reason))
+
+  push_back(blocked_buffer to queue)
 ```
 
-## Step 6 契约驱动摘要生成
+---
+
+## 7. 任务刷新
 
 ```text
-function contract_guided_summary(cluster, contract):
-    required_slots <- contract.required_slots
-    summary <- generate_summary_with_slots(cluster, required_slots)
-    slot_coverage <- compute_slot_coverage(summary, required_slots)
-    return {summary: summary, slot_coverage: slot_coverage}
+function refresh_running_tasks(running_set):
+  for task in running_set:
+      if task.finished():
+          mark COMPLETED and remove from running_set
+      else if runtime(task) > task.max_runtime_sec:
+          terminate(task, reason="timeout")
 ```
 
-## Step 7 证明式保真校验与重写
+---
+
+## 8. 指标输出
 
 ```text
-function fidelity_check_and_rewrite(draft, cluster, contract):
-    for i in range(contract.max_rounds):
-        must_keep <- extract_must_keep_facts(cluster, contract)
-        ok_entail <- entailment_check(draft.summary, must_keep)
-        ok_conflict <- no_new_unsupported_claim(draft.summary, cluster.evidence)
-        ok_slots <- slot_coverage_pass(draft.slot_coverage, contract)
-        if ok_entail and ok_conflict and ok_slots:
-            return draft
-        draft <- rewrite_with_feedback(draft, must_keep, cluster.evidence, contract)
-    return fallback_conservative_summary(cluster.evidence)
-```
-
-## Step 8 全局 token 预算优化
-
-```text
-function token_budget_optimization(clusters, B):
-    # maximize Σ Ui(li), s.t. Σ li <= B, li >= lmin_i
-    initialize li <- lmin_i
-    remain <- B - Σ li
-    while remain > 0:
-        i <- argmax marginal_gain(Ui, li)
-        li <- li + delta
-        remain <- remain - delta
-    return {cluster_i: li}
-```
-
-## Step 9 分层索引与可追溯恢复
-
-```text
-function build_hierarchical_index_and_trace(clusters):
-    for c in clusters:
-        index_level0.store(c.cluster_id, c.summary)
-        index_level1.store(c.cluster_id, c.evidence_pointers)
-        for eid in c.evidence_pointers:
-            trace_map[c.cluster_id].append(eid)
-```
-
-## 审计报告输出结构
-
-```json
-{
-  "cluster_id": "C-001",
-  "slot_coverage": {"facts": 1.0, "procedure-steps": 0.8},
-  "evidence_ids": ["F-1001", "F-1023"],
-  "conflict_branches": [{"A": "x", "B": "y"}],
-  "rewrite_history": [{"round": 1, "reason": "slot missing"}]
-}
+metrics:
+  submitted_total
+  started_total
+  completed_total
+  blocked_total
+  preempted_total
+  emergency_ticks
 ```

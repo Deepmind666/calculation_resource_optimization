@@ -1,0 +1,46 @@
+[
+  {
+    "scenario": "normal",
+    "submitted_total": 10.0,
+    "started_total": 10.0,
+    "completed_total": 10.0,
+    "blocked_total": 0.0,
+    "preempted_total": 0.0,
+    "emergency_ticks": 0.0,
+    "admission_success_rate": 1.0,
+    "preemption_rate": 0.0
+  },
+  {
+    "scenario": "high_pressure",
+    "submitted_total": 10.0,
+    "started_total": 0.0,
+    "completed_total": 0.0,
+    "blocked_total": 100.0,
+    "preempted_total": 0.0,
+    "emergency_ticks": 0.0,
+    "admission_success_rate": 0.0,
+    "preemption_rate": 0.0
+  },
+  {
+    "scenario": "emergency",
+    "submitted_total": 10.0,
+    "started_total": 0.0,
+    "completed_total": 0.0,
+    "blocked_total": 0.0,
+    "preempted_total": 0.0,
+    "emergency_ticks": 10.0,
+    "admission_success_rate": 0.0,
+    "preemption_rate": 0.0
+  },
+  {
+    "scenario": "burst_then_recover",
+    "submitted_total": 10.0,
+    "started_total": 10.0,
+    "completed_total": 8.0,
+    "blocked_total": 0.0,
+    "preempted_total": 2.0,
+    "emergency_ticks": 4.0,
+    "admission_success_rate": 1.0,
+    "preemption_rate": 0.2
+  }
+]

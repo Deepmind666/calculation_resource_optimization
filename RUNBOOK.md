@@ -1,58 +1,52 @@
 # RUNBOOK
 
-## 1. 环境准备
+## 1. 环境检查
 ```powershell
 git --version
 python --version
 ```
 
-建议环境：
-- Windows PowerShell 5.1+ 或 PowerShell 7+
-- Python 3.10+
+建议：
+1. Python 3.10+
+2. PowerShell 5.1+
+3. 可选：安装 `psutil` 以获得更稳定的 CPU/内存采样
 
-## 2. 仓库准备（首次克隆）
+## 2. 克隆仓库
 ```powershell
 git clone https://github.com/Deepmind666/calculation_resource_optimization.git
 cd calculation_resource_optimization
 ```
 
-## 3. 远程绑定（已有本地目录时）
-```powershell
-git init
-git branch -M main
-git remote remove origin 2>$null
-git remote add origin https://github.com/Deepmind666/calculation_resource_optimization.git
-git remote -v
-```
-
-## 4. 结构自查
+## 3. 自查
 ```powershell
 powershell -ExecutionPolicy Bypass -File qa/structure_check.ps1
-python qa/validate_retention_contract.py
+python qa/validate_scheduler_config.py
 ```
 
-## 5. 查看最新进展日志
+## 4. 运行原型（安全 dry-run）
 ```powershell
-Get-Content -Tail 120 logs/work_progress.md
+cd prototype
+python main.py --ticks 12
+python run_experiments.py
+python -m unittest discover -s tests -p "test_*.py"
+cd ..
+```
+
+## 5. 可选：真实子进程模式
+```powershell
+cd prototype
+python main.py --real-run --ticks 12
+cd ..
 ```
 
 ## 6. 提交与推送（安全模式）
 ```powershell
 git status --short
 git add AGENTS.md .claude.md .gitignore README.md RUNBOOK.md gptdeepsearch2_9.md logs prior_art spec prototype patent figures qa
-git commit -m "chore: update project artifacts"
+git commit -m "chore: update scheduler project artifacts"
 git push origin main
 ```
 
-## 7. 工作要求
-1. 每次改动后更新 `logs/work_progress.md`。
-2. 每次提交前执行 `qa/structure_check.ps1`。
-3. 新增流程或命令时，同步更新 `RUNBOOK.md` 与 `.claude.md`。
-
-## 8. Prototype Phase 1 验证
-```powershell
-cd prototype
-python main.py
-python -m unittest discover -s tests -p "test_*.py"
-cd ..
-```
+## 7. 工作规则
+1. 每次工作都更新 `logs/work_progress.md`（时间戳 + 清单 + 风险）。
+2. 每次提交前至少跑一次自查和单测。

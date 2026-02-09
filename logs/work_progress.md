@@ -310,3 +310,51 @@
 - 风险与后续：
   - 风险：当前为章节级映射，未细化到段落编号。
   - 后续：补“段落编号/充分公开”列并进行第二轮权利要求收敛。
+
+## 2026-02-10 00:12:19 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（自检）
+- 工作内容：
+  - 新增零基础学习文档 spec/beginner_guide.md，用人话解释项目目标、核心逻辑、9步流程、合理性与学习路径。
+  - 内容重点为“先懂为什么，再懂怎么做”，避免数学门槛阻塞学习。
+- 文件变更：
+  - spec/beginner_guide.md
+- 文件评审清单：
+  - [x] 面向薄弱基础可读
+  - [x] 与现有架构文档术语一致
+  - [x] 给出明确学习顺序和入口文件
+  - [x] 不引入与主线冲突的新概念
+- 风险与后续：
+  - 风险：当前为入门版，未展开专利法条细节。
+  - 后续：如需要，可再补一版“专利审查视角”的入门讲义。
+
+## 2026-02-10 00:40:44 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（自检）
+- 工作内容：
+  - 根据用户确认，将项目主线从“语义记忆/专利方向”切换为“CPU/GPU/内存动态调度与防爆保护”。
+  - 重写核心文档：spec/architecture.md、spec/data_model.md、spec/algorithm_pseudocode.md、spec/beginner_guide.md。
+  - 新增调度配置：spec/scheduler_config.example.json；新增配置校验：qa/validate_scheduler_config.py。
+  - 实现新原型：prototype/resource_scheduler.py（监控、模式分级、接纳控制、紧急回收、事件日志）。
+  - 重写运行入口与实验：prototype/main.py、prototype/run_experiments.py。
+  - 重建测试：prototype/tests/test_resource_scheduler.py（模式切换、接纳阻断、紧急回收）。
+  - 清理旧主线文件：删除 prototype/memory_pipeline.py、prototype/tests/test_memory_pipeline.py、spec/retention_contract*.json、qa/validate_retention_contract.py 及旧实验输出。
+  - 更新治理文档：AGENTS.md、.claude.md、README.md、RUNBOOK.md、gptdeepsearch2_9.md。
+- 文件变更：
+  - 新增：prototype/resource_scheduler.py、prototype/tests/test_resource_scheduler.py、qa/validate_scheduler_config.py、spec/scheduler_config.example.json、spec/beginner_guide.md
+  - 重写：spec/architecture.md、spec/data_model.md、spec/algorithm_pseudocode.md、prototype/main.py、prototype/run_experiments.py
+  - 更新：AGENTS.md、.claude.md、README.md、RUNBOOK.md、prototype/README.md、qa/README.md、qa/structure_check.ps1、igures/README.md
+  - 删除：旧 memory/patent 主线相关验证与实验文件（见 git 变更记录）
+- 文件评审清单：
+  - [x] 主线目标与用户需求一致（资源调度防爆）
+  - [x] 文档、代码、测试、运行手册已对齐
+  - [x] 结构检查通过
+  - [x] 配置校验通过
+  - [x] 单元测试通过（3/3）
+  - [x] 演示入口与实验脚本可运行并产出结果文件
+- 风险与后续：
+  - 风险：当前接纳预测依赖任务估算值，若估算偏差大，防护效果会下降。
+  - 后续：
+    1. 增加历史运行统计，自动校正任务资源估算。
+    2. 增加“暂停/恢复”能力，减少仅靠终止回收带来的任务损失。
+    3. 增加告警机制（进入 HIGH/EMERGENCY 时通知）。
