@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
+import subprocess
 import sys
 import tempfile
 import time
@@ -267,6 +269,64 @@ class ResourceSchedulerTests(unittest.TestCase):
         self.assertAlmostEqual(float(gpu["gpu_memory_used_mb"]), 7000.0, places=3)
         self.assertAlmostEqual(float(gpu["gpu_memory_total_mb"]), 8000.0, places=3)
         self.assertAlmostEqual(float(gpu["gpu_util_percent"]), 30.0, places=3)
+
+    def test_non_dry_run_can_admit_skips_running_estimate(self) -> None:
+        cfg = SchedulerConfig(dry_run=False, ema_alpha=1.0)
+        monitor = FakeMonitor([snap(50, 20)])
+        sch = DynamicTaskScheduler(config=cfg, monitor=monitor)
+        task = TaskSpec("REAL-1", ["echo", "ok"], priority=1, estimated_mem_mb=10, estimated_cpu_percent=1)
+        s = snap(50, 20)
+        with patch.object(
+            DynamicTaskScheduler,
+            "_running_estimated_load",
+            side_effect=AssertionError("should not be called in non-dry_run path"),
+        ):
+            ok, reason = sch._can_admit(task, s, mode="NORMAL")
+        self.assertTrue(ok, reason)
+
+    def test_validate_scheduler_config_respects_cli_path(self) -> None:
+        root = Path(__file__).resolve().parents[2]
+        script = root / "qa" / "validate_scheduler_config.py"
+        with tempfile.TemporaryDirectory() as d:
+            bad = Path(d) / "custom_bad.json"
+            bad.write_text(
+                json.dumps(
+                    {
+                        "max_workers": 2,
+                        "min_workers": 1,
+                        "check_interval_sec": 0.5,
+                        "memory_high_pct": 85.0,
+                        "memory_emergency_pct": 92.0,
+                        "cpu_high_pct": 80.0,
+                        "cpu_hard_pct": 95.0,
+                        "swap_emergency_pct": 80.0,
+                        "enable_gpu_guard": True,
+                        "gpu_memory_high_pct": 85.0,
+                        "gpu_memory_emergency_pct": 95.0,
+                        "reserve_memory_mb": 512,
+                        "high_mode_priority_cutoff": 3,
+                        "preempt_count_per_tick": 1,
+                        "kill_timeout_sec": 3.0,
+                        "mode_hysteresis_pct": 3.0,
+                        "emergency_cooldown_ticks": 2,
+                        "ema_alpha": 0.6,
+                        "max_start_per_tick_normal": 4,
+                        "max_start_per_tick_high": 1,
+                        "max_event_log_entries": 5000,
+                        "dry_run": True,
+                        "unknown_knob": 123,
+                    }
+                ),
+                encoding="utf-8",
+            )
+            proc = subprocess.run(
+                [sys.executable, str(script), str(bad)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("Unknown keys", proc.stdout + proc.stderr)
 
 
 if __name__ == "__main__":

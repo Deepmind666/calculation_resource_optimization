@@ -42,43 +42,61 @@
 - 风险描述：错误配置键被忽略后系统继续用默认值运行，用户会误以为配置生效。
 - 修复动作：`load_scheduler_config` 遇未知键直接抛错，并补齐关键边界校验。
 - 修复后证据：
-  - `prototype/resource_scheduler.py:591`
-  - `prototype/resource_scheduler.py:602`
-  - `prototype/resource_scheduler.py:608`
-  - `prototype/resource_scheduler.py:610`
-  - `prototype/resource_scheduler.py:612`
-  - `qa/validate_scheduler_config.py:51`
-  - `qa/validate_scheduler_config.py:56`
-- 回归测试：`prototype/tests/test_resource_scheduler.py:162`
+  - `prototype/resource_scheduler.py:624`
+  - `prototype/resource_scheduler.py:635`
+  - `prototype/resource_scheduler.py:641`
+  - `prototype/resource_scheduler.py:643`
+  - `prototype/resource_scheduler.py:645`
+  - `prototype/resource_scheduler.py:647`
+  - `qa/validate_scheduler_config.py:61`
+  - `qa/validate_scheduler_config.py:66`
+- 回归测试：`prototype/tests/test_resource_scheduler.py:167`
 
 ### F-05 [Medium] 终止失败场景可能留存孤儿进程
 - 风险描述：原实现在 kill 异常时吞掉错误并移除跟踪，可能导致进程仍在运行但调度器误判已停止。
-- 修复前位置：`prototype/resource_scheduler.py:504`, `prototype/resource_scheduler.py:514`, `prototype/resource_scheduler.py:516`
+- 修复前位置：`prototype/resource_scheduler.py:523`, `prototype/resource_scheduler.py:533`, `prototype/resource_scheduler.py:536`
 - 修复动作：`_stop_task` 改为返回布尔结果；仅在确认停止后才移出 `running`，失败时记录 `TASK_STOP_FAILED`。
-- 修复后证据：`prototype/resource_scheduler.py:504`, `prototype/resource_scheduler.py:524`, `prototype/resource_scheduler.py:535`
-- 回归测试：`prototype/tests/test_resource_scheduler.py:177`
+- 修复后证据：`prototype/resource_scheduler.py:523`, `prototype/resource_scheduler.py:543`, `prototype/resource_scheduler.py:554`
+- 回归测试：`prototype/tests/test_resource_scheduler.py:181`
 
 ### F-06 [Medium] 事件日志无上限，长时运行有内存增长风险
 - 风险描述：`events` 持续追加会推高调度器自身内存占用，和“防爆”目标冲突。
-- 修复前位置：`prototype/resource_scheduler.py:572`
+- 修复前位置：`prototype/resource_scheduler.py:591`
 - 修复动作：新增 `max_event_log_entries`，超限后按 FIFO 截断。
-- 修复后证据：`prototype/resource_scheduler.py:72`, `prototype/resource_scheduler.py:572`, `prototype/resource_scheduler.py:627`
-- 配置同步：`spec/scheduler_config.example.json:22`, `qa/validate_scheduler_config.py:44`, `qa/validate_scheduler_config.py:69`
-- 回归测试：`prototype/tests/test_resource_scheduler.py:216`
+- 修复后证据：`prototype/resource_scheduler.py:72`, `prototype/resource_scheduler.py:591`, `prototype/resource_scheduler.py:647`
+- 配置同步：`spec/scheduler_config.example.json:22`, `qa/validate_scheduler_config.py:54`, `qa/validate_scheduler_config.py:78`
+- 回归测试：`prototype/tests/test_resource_scheduler.py:220`
 
 ### F-07 [Critical] dry_run 模式同 tick 已启动任务双重计数
 - 风险描述：`_can_admit` 在 dry_run 下同时叠加 `planned_extra_*` 与 `_running_estimated_load()`，导致同 tick 已启动任务被重复计入，错误阻断后续任务。
-- 修复前位置：`prototype/resource_scheduler.py:414`, `prototype/resource_scheduler.py:417`
+- 修复前位置：`prototype/resource_scheduler.py:425`, `prototype/resource_scheduler.py:429`
 - 修复动作：dry_run 路径仅使用 `running_estimated_load`；real-run 路径使用 `planned_extra_*`。
 - 修复后证据：`prototype/resource_scheduler.py:413`, `prototype/resource_scheduler.py:430`
-- 回归测试：`prototype/tests/test_resource_scheduler.py:240`
+- 回归测试：`prototype/tests/test_resource_scheduler.py:242`
 
 ### F-08 [Medium] 多 GPU 只监控首卡
 - 风险描述：原实现读取 `nvidia-smi` 第一行，可能漏掉其他 GPU 的过载风险。
 - 修复前位置：`prototype/resource_scheduler.py:161`
 - 修复动作：解析全部 GPU 行，按显存占比最高卡作为风险判定输入。
 - 修复后证据：`prototype/resource_scheduler.py:148`, `prototype/resource_scheduler.py:177`
-- 回归测试：`prototype/tests/test_resource_scheduler.py:257`
+- 回归测试：`prototype/tests/test_resource_scheduler.py:259`
+
+### F-09 [Low] 伪代码遗漏 GPU 迟滞退出条件
+- 风险描述：伪代码 HIGH->NORMAL 退出条件仅含内存/CPU，遗漏 GPU 迟滞条件，导致文档与实现不一致。
+- 修复动作：在 Section 2 增加 GPU 迟滞退出分支。
+- 修复后证据：`spec/algorithm_pseudocode.md:81`
+
+### F-10 [Low] non-dry_run 无用调用 `_running_estimated_load()`
+- 风险描述：`_can_admit` 在 non-dry_run 路径执行 O(R) 计算但结果不使用，造成可避免开销。
+- 修复动作：将 `_running_estimated_load()` 调用移动到 dry_run 分支内部。
+- 修复后证据：`prototype/resource_scheduler.py:429`
+- 回归测试：`prototype/tests/test_resource_scheduler.py:273`
+
+### F-11 [Low] 配置校验脚本忽略命令行路径
+- 风险描述：脚本固定读取默认配置，用户传入路径时无效。
+- 修复动作：新增 `_resolve_config_path(sys.argv)`，支持可选参数路径与 usage 检查。
+- 修复后证据：`qa/validate_scheduler_config.py:18`
+- 回归测试：`prototype/tests/test_resource_scheduler.py:287`
 
 ## 4. 剩余风险（当前非阻塞）
 
@@ -101,7 +119,10 @@
 - [x] 事件日志上限：具备可配置截断机制。
 - [x] dry_run 计数正确性：同 tick 不再双重计数。
 - [x] 多 GPU 防护视角：按风险最高卡判定。
-- [x] 回归测试：新增 8 个用例，全部通过。
+- [x] 伪代码与实现一致性：补齐 GPU 迟滞退出条件。
+- [x] non-dry_run 性能细节：移除无用负载估算调用。
+- [x] 配置校验脚本可用性：支持命令行路径参数。
+- [x] 回归测试：新增 10 个用例，全部通过。
 - [x] 结构检查：通过。
 - [x] 配置检查：通过。
 - [x] 旧功能回归：原 6 个测试保持通过。
@@ -112,8 +133,8 @@ python -m unittest discover -s prototype/tests -p "test_*.py"
 python qa/validate_scheduler_config.py spec/scheduler_config.example.json
 powershell -ExecutionPolicy Bypass -File qa/structure_check.ps1
 ```
-结果：14/14 测试通过，配置校验 PASS，结构检查 PASS。
+结果：16/16 测试通过（含 ISSUE-30/31 回归测试），配置校验 PASS，结构检查 PASS。
 
 ## 7. 供 Claude 下轮对比的基线 ID
-- 已修复：`F-01`, `F-02`, `F-03`, `F-04`, `F-05`, `F-06`, `F-07`, `F-08`
+- 已修复：`F-01`, `F-02`, `F-03`, `F-04`, `F-05`, `F-06`, `F-07`, `F-08`, `F-09`, `F-10`, `F-11`
 - 待复核：`R-04`, `R-05`

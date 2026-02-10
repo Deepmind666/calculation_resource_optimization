@@ -661,3 +661,37 @@
 - 风险与后续：
   - 风险：项目方向分裂（R3 ISSUE-9）仍需用户治理决策。
   - 后续：收到 Claude 下一轮意见后，按 `qa/r4_review_comparison_2026-02-10.md` 的对比表继续逐条闭环。
+
+## 2026-02-10 13:07:59 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（采纳 Claude R5）
+- 工作内容：
+  - 按 R5 建议完成低级问题闭环：
+    1. ISSUE-29：补齐 `spec/algorithm_pseudocode.md` 中 GPU 迟滞退出条件。
+    2. ISSUE-30：优化 `_can_admit`，仅在 dry_run 分支调用 `_running_estimated_load()`。
+    3. ISSUE-31：`qa/validate_scheduler_config.py` 支持命令行传入配置路径。
+  - 新增测试：
+    - `test_non_dry_run_can_admit_skips_running_estimate`
+    - `test_validate_scheduler_config_respects_cli_path`
+  - 新增闭环文档：`qa/r5_followup_fixes_2026-02-10.md`。
+  - 更新自查总表：`qa/self_audit_round1_2026-02-10.md` 扩展到 F-11。
+  - 更新运行手册：`RUNBOOK.md` 显式传入配置路径示例。
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `qa/validate_scheduler_config.py`
+  - `spec/algorithm_pseudocode.md`
+  - `RUNBOOK.md`
+  - `qa/r5_followup_fixes_2026-02-10.md`
+  - `qa/self_audit_round1_2026-02-10.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] ISSUE-29/30/31 一一对应到具体代码/文档修改
+  - [x] 新增测试覆盖 ISSUE-30 与 ISSUE-31
+  - [x] 全量单测通过（16/16）
+  - [x] 配置校验通过（默认路径 + 命令行路径）
+  - [x] 结构检查通过
+  - [x] 报告文件中的行号引用可校验（invalid_refs=[]）
+- 风险与后续：
+  - 风险：ISSUE-9、ISSUE-13 仍是治理层问题，需用户决策。
+  - 后续：如你确认，我可以把本轮改动做最小提交并推送，再输出一份“Claude 复核专用审查清单”。

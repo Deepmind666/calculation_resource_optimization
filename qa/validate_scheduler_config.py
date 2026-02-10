@@ -15,11 +15,20 @@ def fail(msg: str) -> None:
     sys.exit(1)
 
 
-def main() -> None:
-    if not CONFIG.exists():
-        fail(f"Missing config: {CONFIG}")
+def _resolve_config_path(argv: list[str]) -> Path:
+    if len(argv) > 2:
+        fail("Usage: validate_scheduler_config.py [config_path]")
+    if len(argv) == 2:
+        return Path(argv[1]).resolve()
+    return CONFIG
 
-    cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
+
+def main() -> None:
+    config_path = _resolve_config_path(sys.argv)
+    if not config_path.exists():
+        fail(f"Missing config: {config_path}")
+
+    cfg = json.loads(config_path.read_text(encoding="utf-8"))
     required_keys = {
         "max_workers",
         "min_workers",
@@ -92,7 +101,7 @@ def main() -> None:
     if float(cfg["cpu_high_pct"]) >= float(cfg["cpu_hard_pct"]):
         fail("cpu_high_pct must be < cpu_hard_pct.")
 
-    print("[PASS] scheduler config looks valid.")
+    print(f"[PASS] scheduler config looks valid: {config_path}")
 
 
 if __name__ == "__main__":

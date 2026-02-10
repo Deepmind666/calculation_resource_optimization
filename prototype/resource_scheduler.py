@@ -422,11 +422,11 @@ class DynamicTaskScheduler:
         if mode == "EMERGENCY":
             return False, "emergency mode"
 
-        running_mem_est, running_cpu_est, running_gpu_est = self._running_estimated_load()
         base_mem_mb = s.memory_used_mb
         base_cpu_pct = s.cpu_percent
         base_gpu_mb = 0.0
         if self.config.dry_run:
+            running_mem_est, running_cpu_est, running_gpu_est = self._running_estimated_load()
             # dry_run running set already contains tasks started earlier in this tick.
             # Adding planned_extra_* again would double count.
             base_mem_mb += running_mem_est

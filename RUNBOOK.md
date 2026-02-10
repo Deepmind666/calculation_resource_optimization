@@ -20,7 +20,7 @@ cd calculation_resource_optimization
 ## 3. 自查
 ```powershell
 powershell -ExecutionPolicy Bypass -File qa/structure_check.ps1
-python qa/validate_scheduler_config.py
+python qa/validate_scheduler_config.py spec/scheduler_config.example.json
 ```
 
 ## 4. 运行原型（安全 dry-run）

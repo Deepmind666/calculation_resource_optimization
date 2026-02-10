@@ -80,7 +80,9 @@ function evaluate_mode(raw, smooth, cfg, previous_mode, cooldown_left):
 
   if previous_mode == HIGH and
      (smooth.memory_percent > cfg.memory_high_pct - cfg.mode_hysteresis_pct or
-      smooth.cpu_percent > cfg.cpu_high_pct - cfg.mode_hysteresis_pct):
+      smooth.cpu_percent > cfg.cpu_high_pct - cfg.mode_hysteresis_pct or
+      (cfg.enable_gpu_guard and smooth.gpu_memory_percent != null and
+       smooth.gpu_memory_percent > cfg.gpu_memory_high_pct - cfg.mode_hysteresis_pct)):
     return HIGH
 
   return NORMAL
