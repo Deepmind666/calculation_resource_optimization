@@ -119,7 +119,7 @@
 - 工作内容：
   - 复盘当前状态并确认未完成项：remote 未配置、未 commit、主文档存在复制残留和跨项目污染内容。
   - 修复阻塞项：更新 RUNBOOK.md（远程绑定、安全提交、环境准备）、新增 .gitignore、增强 qa/structure_check.ps1 检查覆盖。
-  - 修复日志历史错误：将 igures/README.md 更正为 igures/README.md。
+  - 修复日志历史错误：将 figures/README.md 更正为 figures/README.md。
   - 清理 gptdeepsearch2_9.md：删除无关 GPU/CPU 技术路线段落，移除 md/复制 残留行，修正末尾残句。
   - 执行结构自查脚本，结果 PASS。
 - 文件变更：
@@ -246,16 +246,16 @@
 - 评审人：Codex（自检）
 - 工作内容：
   - Step 5 最小化落地：新增 prototype/run_experiments.py，自动生成实验指标 CSV/JSON。
-  - 生成结果文件：igures/experiment_metrics.csv、igures/experiment_metrics.json，并新增 igures/experiment_report.md 解释指标。
-  - 更新文档：prototype/README.md、igures/README.md。
+  - 生成结果文件：figures/experiment_metrics.csv、figures/experiment_metrics.json，并新增 figures/experiment_report.md 解释指标。
+  - 更新文档：prototype/README.md、figures/README.md。
   - 自查通过：结构检查、契约校验、单测全通过。
 - 文件变更：
   - prototype/run_experiments.py
   - prototype/README.md
-  - igures/README.md
-  - igures/experiment_metrics.csv
-  - igures/experiment_metrics.json
-  - igures/experiment_report.md
+  - figures/README.md
+  - figures/experiment_metrics.csv
+  - figures/experiment_metrics.json
+  - figures/experiment_report.md
 - 文件评审清单：
   - [x] 指标输出可复现（脚本 + CSV + JSON）
   - [x] 指标字段覆盖压缩率/冲突保留率/合规率/耗时
@@ -343,7 +343,7 @@
 - 文件变更：
   - 新增：prototype/resource_scheduler.py、prototype/tests/test_resource_scheduler.py、qa/validate_scheduler_config.py、spec/scheduler_config.example.json、spec/beginner_guide.md
   - 重写：spec/architecture.md、spec/data_model.md、spec/algorithm_pseudocode.md、prototype/main.py、prototype/run_experiments.py
-  - 更新：AGENTS.md、.claude.md、README.md、RUNBOOK.md、prototype/README.md、qa/README.md、qa/structure_check.ps1、igures/README.md
+  - 更新：AGENTS.md、.claude.md、README.md、RUNBOOK.md、prototype/README.md、qa/README.md、qa/structure_check.ps1、figures/README.md
   - 删除：旧 memory/patent 主线相关验证与实验文件（见 git 变更记录）
 - 文件评审清单：
   - [x] 主线目标与用户需求一致（资源调度防爆）
@@ -507,12 +507,12 @@
 - 评审人：Codex（自检）
 - 工作内容：
   - 完成实验指标可读性改进：prototype/run_experiments.py 新增 unique_blocked_tasks，并将原字段命名为 locked_event_total。
-  - 重新生成实验输出：igures/scheduler_experiment_metrics.csv/json。
+  - 重新生成实验输出：figures/scheduler_experiment_metrics.csv/json。
   - 复验：单测 6/6、配置校验 PASS、结构检查 PASS。
 - 文件变更：
   - prototype/run_experiments.py
-  - igures/scheduler_experiment_metrics.csv
-  - igures/scheduler_experiment_metrics.json
+  - figures/scheduler_experiment_metrics.csv
+  - figures/scheduler_experiment_metrics.json
 - 文件评审清单：
   - [x] 指标语义更清晰（事件次数 vs 唯一任务数）
   - [x] 输出文件已更新
@@ -520,3 +520,144 @@
 - 风险与后续：
   - 风险：实验仍使用合成监控序列，需在真实负载场景补充压测。
   - 后续：加入真实进程池压测脚本与告警阈值评估。
+
+## 2026-02-10 10:33:14 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（自检）
+- 工作内容：
+  - 完成“漏洞自查 + 修复闭环”一轮：
+    1. 修复紧急模式漏检风险：紧急判定改为 raw 采样优先，EMA 仅用于稳态。
+    2. 增加任务输入校验，拒绝非法参数（负估值、非法 ID/命令等）。
+    3. 增加重复 task_id 防护，避免运行态跟踪冲突。
+    4. 配置加载改为“未知键即失败”，并补齐关键边界校验。
+  - 新增 4 个回归测试，覆盖以上风险点。
+  - 产出两份评审交付文档：
+    - `qa/self_audit_round1_2026-02-10.md`
+    - `qa/patent_publishability_self_assessment_2026-02-10.md`
+  - 复验通过：单测 10/10、配置校验 PASS、结构检查 PASS。
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `qa/validate_scheduler_config.py`
+  - `qa/self_audit_round1_2026-02-10.md`
+  - `qa/patent_publishability_self_assessment_2026-02-10.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 高风险漏洞有代码修复且有测试覆盖（F-01~F-04）
+  - [x] 测试命令可复现且全部通过
+  - [x] 报告中包含严重级别、文件位置、修复状态、剩余风险
+  - [x] 专利潜力评估包含技术点、风险、下一步可执行计划
+  - [x] 形成可供 Claude 下轮对比的基线 ID
+- 风险与后续：
+  - 风险：
+    1. `_stop_task` 终止失败场景仍有孤儿进程边界风险（R-01）。
+    2. `events` 无上限，长时运行存在内存增长风险（R-02）。
+  - 后续：
+    1. 在下一轮优先修复 R-01/R-02。
+    2. 等待 Claude 评审意见后做逐条对比闭环。
+
+## 2026-02-10 10:37:08 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（自检）
+- 工作内容：
+  - 继续闭环剩余风险：
+    1. 修复进程终止失败边界：`_stop_task` 改为返回状态，失败时不移除 `running`，并记录 `TASK_STOP_FAILED`。
+    2. 增加事件日志上限：新增 `max_event_log_entries`，超限 FIFO 截断，避免长期运行日志膨胀。
+  - 同步配置：更新 `spec/scheduler_config.example.json` 与 `qa/validate_scheduler_config.py`。
+  - 新增测试：
+    - `test_stop_failure_keeps_task_tracked`
+    - `test_event_log_is_bounded`
+  - 更新自查报告，将 R-01/R-02 升级为已修复 F-05/F-06。
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `spec/scheduler_config.example.json`
+  - `qa/validate_scheduler_config.py`
+  - `qa/self_audit_round1_2026-02-10.md`
+  - `.claude.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 终止失败路径不再误删除运行态
+  - [x] 事件日志具备上限与截断策略
+  - [x] 配置样例与配置校验已同步
+  - [x] 新增测试已覆盖修复点
+  - [x] 全量测试与校验通过
+- 风险与后续：
+  - 风险：
+    1. 多 GPU 场景仍取首卡视角（R-03）。
+    2. `blocked_total` 口径仍为事件次数（R-04）。
+  - 后续：等待 Claude 评审意见后做逐条对比并决定是否继续修复 R-03/R-04。
+
+## 2026-02-10 11:30:00 +08:00
+- 执行人：Claude (Opus 4.6)
+- 角色：评审
+- 工作内容：
+  - R4 全量评审：对 Codex 在 R3-supplement 后的全部更新进行深度评审，分两批：
+    - 第一批：EMA 平滑、迟滞阈值、冷却期、累计投影、启动节流、智能回收（6 个新特性）
+    - 第二批：Codex 自查修复 F-01~F-06 + 两份 QA 文档
+  - 验证可执行性：12/12 测试通过，配置校验 PASS。
+  - 逐条对比 Codex 自查报告 F-01~F-06 声明：**全部 6 项确认真实修复**，每个都有测试覆盖。
+  - 发现 BUG-2：dry_run 模式下 `_can_admit()` 对同 tick 已启动任务双重计数（planned_extra + _running_estimated_load 同时包含已启动任务）。
+  - 发现 `.claude.md` 全文 Chinese 编码被损坏（ISSUE-28），从 git HEAD 恢复原始内容，重建 R3-supplement 并追加 R4。
+  - 复核 Codex 专利潜力自评：P-02（raw+EMA 双视图）为最强差异化点，P-03 需先修复 BUG-2。
+  - 撰写 R4 完整评审报告写入 `.claude.md`。
+- 文件变更：
+  - `.claude.md`（从 git HEAD 恢复 + 重建 R3-supplement + 追加 R4 评审报告，共 477 行）
+  - `logs/work_progress.md`（追加本条记录）
+- 文件评审清单：
+  - [x] 12/12 测试通过
+  - [x] 配置校验通过
+  - [x] F-01~F-06 逐条代码验证（路径+行号+测试）
+  - [x] BUG-2 通过 scheduler_demo_report.json 复现并确认机理
+  - [x] .claude.md 编码损坏确认（hex 级比对工作树 vs git HEAD）
+  - [x] .claude.md 从 git HEAD 恢复成功
+  - [x] R4 报告自查完成
+- 评审发现摘要：
+  - F-01~F-06 全部确认真实修复（Codex 自检可信度显著提升：2/10 → 8/10）
+  - BUG-2 [必须修复]：dry_run 双重计数
+  - ISSUE-21：伪代码残留孤立代码
+  - ISSUE-22：伪代码与实现严重脱节
+  - ISSUE-27：多 GPU 仅监控首卡
+  - ISSUE-28 [严重]：.claude.md 编码损坏
+  - SUG-8/9：抢占排序方向、不可终止任务逃逸机制
+  - R1 ISSUE-2（igures 拼写）：五轮未修复
+  - **R4 评审判定：有条件通过（Conditional PASS）**
+- 风险与后续：
+  - 核心风险：项目方向分裂问题仍未解决（R3 REJECT 仍有效）
+  - 后续：
+    1. Codex 修复 BUG-2（dry_run 双重计数）
+    2. Codex 更新 algorithm_pseudocode.md 使之与实现一致
+    3. 用户确认项目方向
+    4. 修复 igures 拼写（五轮遗留）
+
+## 2026-02-10 11:13:55 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（对齐 Claude R4）
+- 工作内容：
+  - 对照 Claude R4 结论完成闭环修复：
+    1. 修复 BUG-2：dry_run 下 `_can_admit` 去除同 tick 双重计数。
+    2. 修复 ISSUE-27：`_sample_gpu` 改为解析多卡并按显存占比最高卡判定风险。
+    3. 修复 ISSUE-21/22：重写 `spec/algorithm_pseudocode.md`，与实现逐段对齐。
+    4. 同步数据模型文档：重写 `spec/data_model.md` 反映当前配置与指标字段。
+  - 新增测试并通过：
+    - `test_dry_run_admission_no_double_count_same_tick`
+    - `test_gpu_monitor_uses_worst_card_for_multi_gpu`
+  - 产出对比闭环报告：`qa/r4_review_comparison_2026-02-10.md`。
+  - 清理日志中的路径错字：将历史记录中的 `igures/`、`\x0cigures/` 统一为 `figures/`（仅 `logs/work_progress.md`）。
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `spec/algorithm_pseudocode.md`
+  - `spec/data_model.md`
+  - `qa/r4_review_comparison_2026-02-10.md`
+  - `qa/self_audit_round1_2026-02-10.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] BUG-2 有代码修复与针对性测试
+  - [x] 多 GPU 防护逻辑有代码修复与针对性测试
+  - [x] 伪代码与代码实现已逐段对齐
+  - [x] 文档中的代码行号引用可解析且有效
+  - [x] 单元测试/配置校验/结构检查全通过
+- 风险与后续：
+  - 风险：项目方向分裂（R3 ISSUE-9）仍需用户治理决策。
+  - 后续：收到 Claude 下一轮意见后，按 `qa/r4_review_comparison_2026-02-10.md` 的对比表继续逐条闭环。

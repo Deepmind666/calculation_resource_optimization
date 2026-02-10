@@ -6,7 +6,7 @@ import json
 import shutil
 import subprocess
 import time
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 try:
     import psutil  # type: ignore
@@ -69,6 +69,7 @@ class SchedulerConfig:
     max_start_per_tick_high: int = 1
 
     dry_run: bool = False
+    max_event_log_entries: int = 5000
 
 
 @dataclass
@@ -157,12 +158,24 @@ class ResourceMonitor:
                 text=True,
                 timeout=1.5,
             )
-            line = out.strip().splitlines()[0]
-            util_s, used_s, total_s = [x.strip() for x in line.split(",")]
-            util = float(util_s)
-            used_mb = float(used_s)
-            total_mb = max(1.0, float(total_s))
-            mem_pct = 100.0 * used_mb / total_mb
+            rows: List[Tuple[float, float, float, float]] = []
+            for line in out.strip().splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                parts = [x.strip() for x in line.split(",")]
+                if len(parts) < 3:
+                    continue
+                util = float(parts[0])
+                used_mb = float(parts[1])
+                total_mb = max(1.0, float(parts[2]))
+                mem_pct = 100.0 * used_mb / total_mb
+                rows.append((mem_pct, util, used_mb, total_mb))
+            if not rows:
+                return {}
+
+            # With multiple GPUs, guard based on the riskiest (highest memory pct) card.
+            mem_pct, util, used_mb, total_mb = max(rows, key=lambda x: x[0])
             return {
                 "gpu_util_percent": util,
                 "gpu_memory_percent": mem_pct,
@@ -179,6 +192,7 @@ class DynamicTaskScheduler:
         self.monitor = monitor or ResourceMonitor(enable_gpu=config.enable_gpu_guard)
 
         self.pending: List[Tuple[int, int, TaskSpec]] = []
+        self._pending_task_ids: Set[str] = set()
         self.running: Dict[str, TaskRuntime] = {}
         self.metrics = SchedulerMetrics()
 
@@ -190,8 +204,12 @@ class DynamicTaskScheduler:
         self.events: List[Dict[str, object]] = []
 
     def submit_task(self, task: TaskSpec) -> None:
+        self._validate_task_spec(task)
+        if task.task_id in self.running or task.task_id in self._pending_task_ids:
+            raise ValueError(f"Duplicate task_id in scheduler queue/running set: {task.task_id}")
         self._seq += 1
         heapq.heappush(self.pending, (task.priority, self._seq, task))
+        self._pending_task_ids.add(task.task_id)
         self.metrics.submitted_total += 1
         self._event("TASK_SUBMITTED", {"task_id": task.task_id, "priority": task.priority})
 
@@ -201,7 +219,7 @@ class DynamicTaskScheduler:
 
         raw_snapshot = self.monitor.sample()
         snapshot = self._smooth_snapshot(raw_snapshot)
-        mode = self._evaluate_mode(snapshot)
+        mode = self._evaluate_mode(snapshot, raw_snapshot)
         if mode == "EMERGENCY":
             self.metrics.emergency_ticks += 1
 
@@ -230,6 +248,7 @@ class DynamicTaskScheduler:
                 if len(self.running) >= target_workers or not self.pending or len(started) >= start_budget:
                     break
                 _, _, task = heapq.heappop(self.pending)
+                self._pending_task_ids.discard(task.task_id)
                 ok, reason = self._can_admit(
                     task,
                     snapshot,
@@ -253,6 +272,7 @@ class DynamicTaskScheduler:
             for task, _ in blocked_tasks:
                 self._seq += 1
                 heapq.heappush(self.pending, (task.priority, self._seq, task))
+                self._pending_task_ids.add(task.task_id)
 
         report = TickReport(
             tick_id=self._tick_id,
@@ -326,23 +346,25 @@ class DynamicTaskScheduler:
             gpu += float(runtime.spec.estimated_gpu_mem_mb)
         return mem, cpu, gpu
 
-    def _evaluate_mode(self, s: ResourceSnapshot) -> str:
+    def _evaluate_mode(self, s: ResourceSnapshot, raw: Optional[ResourceSnapshot] = None) -> str:
+        emergency_view = raw or s
         hysteresis = max(0.0, float(self.config.mode_hysteresis_pct))
         mem_high_exit = max(0.0, self.config.memory_high_pct - hysteresis)
         cpu_high_exit = max(0.0, self.config.cpu_high_pct - hysteresis)
         gpu_high_exit = max(0.0, self.config.gpu_memory_high_pct - hysteresis)
 
         emergency_trigger = False
-        if s.memory_percent >= self.config.memory_emergency_pct:
+        # Emergency checks must react to raw peaks; smoothing is only for non-emergency stability.
+        if emergency_view.memory_percent >= self.config.memory_emergency_pct:
             emergency_trigger = True
-        if s.swap_percent >= self.config.swap_emergency_pct:
+        if emergency_view.swap_percent >= self.config.swap_emergency_pct:
             emergency_trigger = True
-        if s.memory_available_mb <= max(1, self.config.reserve_memory_mb):
+        if emergency_view.memory_available_mb <= max(1, self.config.reserve_memory_mb):
             emergency_trigger = True
         if (
             self.config.enable_gpu_guard
-            and s.gpu_memory_percent is not None
-            and s.gpu_memory_percent >= self.config.gpu_memory_emergency_pct
+            and emergency_view.gpu_memory_percent is not None
+            and emergency_view.gpu_memory_percent >= self.config.gpu_memory_emergency_pct
         ):
             emergency_trigger = True
 
@@ -401,13 +423,20 @@ class DynamicTaskScheduler:
             return False, "emergency mode"
 
         running_mem_est, running_cpu_est, running_gpu_est = self._running_estimated_load()
-        base_mem_mb = s.memory_used_mb + planned_extra_mem_mb
-        base_cpu_pct = s.cpu_percent + planned_extra_cpu_pct
-        base_gpu_mb = planned_extra_gpu_mb
+        base_mem_mb = s.memory_used_mb
+        base_cpu_pct = s.cpu_percent
+        base_gpu_mb = 0.0
         if self.config.dry_run:
+            # dry_run running set already contains tasks started earlier in this tick.
+            # Adding planned_extra_* again would double count.
             base_mem_mb += running_mem_est
             base_cpu_pct += running_cpu_est
             base_gpu_mb += running_gpu_est
+        else:
+            # In real mode, planned_extra_* represents same-tick launches not reflected in snapshot yet.
+            base_mem_mb += planned_extra_mem_mb
+            base_cpu_pct += planned_extra_cpu_pct
+            base_gpu_mb += planned_extra_gpu_mb
 
         projected_mem_mb = base_mem_mb + task.estimated_mem_mb + self.config.reserve_memory_mb
         projected_mem_pct = 100.0 * projected_mem_mb / max(1.0, s.memory_total_mb)
@@ -491,11 +520,12 @@ class DynamicTaskScheduler:
             self.metrics.failed_total += 1
         self._event("TASK_FINISHED", {"task_id": task_id, "state": state})
 
-    def _stop_task(self, task_id: str, reason: str) -> None:
+    def _stop_task(self, task_id: str, reason: str) -> bool:
         runtime = self.running.get(task_id)
         if runtime is None:
-            return
+            return False
 
+        stopped = True
         if runtime.process is not None:
             try:
                 runtime.process.terminate()
@@ -503,8 +533,15 @@ class DynamicTaskScheduler:
             except Exception:
                 try:
                     runtime.process.kill()
+                    runtime.process.wait(timeout=self.config.kill_timeout_sec)
                 except Exception:
-                    pass
+                    stopped = False
+            if runtime.process.poll() is None:
+                stopped = False
+
+        if not stopped:
+            self._event("TASK_STOP_FAILED", {"task_id": task_id, "reason": reason})
+            return False
 
         self.running.pop(task_id, None)
         if reason == "PREEMPTED":
@@ -512,6 +549,7 @@ class DynamicTaskScheduler:
         elif reason == "TIMEOUT":
             self.metrics.timeout_total += 1
         self._event("TASK_STOPPED", {"task_id": task_id, "reason": reason})
+        return True
 
     def _preempt_low_priority(self, snapshot: ResourceSnapshot) -> List[str]:
         if not self.running:
@@ -535,11 +573,11 @@ class DynamicTaskScheduler:
         reclaimed_mb = 0.0
         for i in range(k):
             task_id = candidates[i].spec.task_id
-            self._stop_task(task_id, "PREEMPTED")
-            preempted.append(task_id)
-            reclaimed_mb += float(candidates[i].spec.estimated_mem_mb)
-            if reclaim_needed_mb > 0 and reclaimed_mb >= reclaim_needed_mb and preempted:
-                break
+            if self._stop_task(task_id, "PREEMPTED"):
+                preempted.append(task_id)
+                reclaimed_mb += float(candidates[i].spec.estimated_mem_mb)
+                if reclaim_needed_mb > 0 and reclaimed_mb >= reclaim_needed_mb and preempted:
+                    break
         return preempted
 
     def _event(self, event_type: str, payload: Dict[str, object]) -> None:
@@ -550,15 +588,42 @@ class DynamicTaskScheduler:
                 "payload": payload,
             }
         )
+        if len(self.events) > self.config.max_event_log_entries:
+            overflow = len(self.events) - self.config.max_event_log_entries
+            if overflow > 0:
+                del self.events[:overflow]
+
+    def _validate_task_spec(self, task: TaskSpec) -> None:
+        if not isinstance(task.task_id, str) or not task.task_id.strip():
+            raise ValueError("task_id must be a non-empty string.")
+        if not isinstance(task.priority, int) or task.priority < 1:
+            raise ValueError("priority must be an integer >= 1.")
+        if not isinstance(task.command, list):
+            raise ValueError("command must be a list of strings.")
+        if any((not isinstance(x, str) or not x.strip()) for x in task.command):
+            raise ValueError("command entries must be non-empty strings.")
+        if float(task.estimated_mem_mb) < 0:
+            raise ValueError("estimated_mem_mb must be >= 0.")
+        if float(task.estimated_cpu_percent) < 0:
+            raise ValueError("estimated_cpu_percent must be >= 0.")
+        if float(task.estimated_gpu_mem_mb) < 0:
+            raise ValueError("estimated_gpu_mem_mb must be >= 0.")
+        if float(task.max_runtime_sec) <= 0:
+            raise ValueError("max_runtime_sec must be > 0.")
+        if int(task.dry_run_ticks) < 1:
+            raise ValueError("dry_run_ticks must be >= 1.")
 
 
 def load_scheduler_config(path: str) -> SchedulerConfig:
     with open(path, "r", encoding="utf-8") as f:
         raw = json.load(f)
     cfg = SchedulerConfig()
+    unknown_keys = [k for k in raw.keys() if not hasattr(cfg, k)]
+    if unknown_keys:
+        unknown_keys.sort()
+        raise ValueError(f"Unknown scheduler config keys: {unknown_keys}")
     for key, value in raw.items():
-        if hasattr(cfg, key):
-            setattr(cfg, key, value)
+        setattr(cfg, key, value)
     _validate_config(cfg)
     return cfg
 
@@ -566,10 +631,20 @@ def load_scheduler_config(path: str) -> SchedulerConfig:
 def _validate_config(cfg: SchedulerConfig) -> None:
     if cfg.min_workers < 1 or cfg.max_workers < cfg.min_workers:
         raise ValueError("Invalid worker range.")
+    if cfg.check_interval_sec <= 0:
+        raise ValueError("check_interval_sec must be > 0.")
     if cfg.max_start_per_tick_normal < 1 or cfg.max_start_per_tick_high < 1:
         raise ValueError("max_start_per_tick_* must be >= 1.")
     if cfg.preempt_count_per_tick < 1:
         raise ValueError("preempt_count_per_tick must be >= 1.")
+    if cfg.high_mode_priority_cutoff < 1:
+        raise ValueError("high_mode_priority_cutoff must be >= 1.")
+    if cfg.reserve_memory_mb < 0:
+        raise ValueError("reserve_memory_mb must be >= 0.")
+    if cfg.kill_timeout_sec <= 0:
+        raise ValueError("kill_timeout_sec must be > 0.")
+    if cfg.max_event_log_entries < 1:
+        raise ValueError("max_event_log_entries must be >= 1.")
     if cfg.emergency_cooldown_ticks < 0:
         raise ValueError("emergency_cooldown_ticks must be >= 0.")
     if not (0.0 <= float(cfg.ema_alpha) <= 1.0):

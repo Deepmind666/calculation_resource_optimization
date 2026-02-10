@@ -1,9 +1,8 @@
-# 数据模型（资源调度主线）
+# 数据模型（与当前实现一致）
 
-更新时间：2026-02-09（UTC+08:00）
+更新时间：2026-02-10（UTC+08:00）
 
-## 1. ResourceSnapshot（资源快照）
-
+## 1. ResourceSnapshot
 ```python
 @dataclass
 class ResourceSnapshot:
@@ -14,20 +13,17 @@ class ResourceSnapshot:
     memory_total_mb: float
     memory_available_mb: float
     swap_percent: float
-    gpu_util_percent: Optional[float]
-    gpu_memory_percent: Optional[float]
-    gpu_memory_used_mb: Optional[float]
-    gpu_memory_total_mb: Optional[float]
+    gpu_util_percent: Optional[float] = None
+    gpu_memory_percent: Optional[float] = None
+    gpu_memory_used_mb: Optional[float] = None
+    gpu_memory_total_mb: Optional[float] = None
 ```
 
 用途：
-1. 每个调度周期的实时输入。
-2. 模式判定（NORMAL/HIGH/EMERGENCY）依据。
+1. 描述每个调度 tick 的资源快照。
+2. 作为模式判定与准入计算的输入。
 
----
-
-## 2. TaskSpec（任务定义）
-
+## 2. TaskSpec
 ```python
 @dataclass
 class TaskSpec:
@@ -42,15 +38,12 @@ class TaskSpec:
     dry_run_ticks: int = 2
 ```
 
-字段说明：
-1. `priority`：越小越重要。
-2. `estimated_mem_mb`：用于接纳前预测，防止冲过内存上限。
-3. `preemptible`：紧急时是否允许被终止。
+关键约束：
+1. `task_id` 必须唯一且非空。
+2. `priority` 必须为 `>=1` 的整数，值越小优先级越高。
+3. 资源估值必须 `>=0`。
 
----
-
-## 3. SchedulerConfig（调度配置）
-
+## 3. SchedulerConfig
 ```python
 @dataclass
 class SchedulerConfig:
@@ -72,14 +65,21 @@ class SchedulerConfig:
     high_mode_priority_cutoff: int = 3
     preempt_count_per_tick: int = 1
     kill_timeout_sec: float = 3.0
-
+    mode_hysteresis_pct: float = 3.0
+    emergency_cooldown_ticks: int = 2
+    ema_alpha: float = 0.6
+    max_start_per_tick_normal: int = 4
+    max_start_per_tick_high: int = 1
     dry_run: bool = False
+    max_event_log_entries: int = 5000
 ```
 
----
+关键约束：
+1. worker 范围合法：`min_workers >= 1` 且 `max_workers >= min_workers`。
+2. 阈值合法：`memory_high < memory_emergency`，`cpu_high < cpu_hard`。
+3. 采样/终止超时、日志上限等参数必须为正值。
 
-## 4. TaskRuntime（运行时状态）
-
+## 4. TaskRuntime
 ```python
 @dataclass
 class TaskRuntime:
@@ -90,17 +90,29 @@ class TaskRuntime:
     remaining_ticks: int = 0
 ```
 
-状态举例：
-1. `RUNNING`
-2. `COMPLETED`
-3. `PREEMPTED`
-4. `FAILED`
-5. `TIMEOUT`
+说明：
+1. `dry_run=True` 时用 `remaining_ticks` 驱动任务结束。
+2. 真实进程模式下，`process` 负责状态轮询与终止。
 
----
+## 5. SchedulerMetrics
+```python
+@dataclass
+class SchedulerMetrics:
+    submitted_total: int = 0
+    started_total: int = 0
+    completed_total: int = 0
+    blocked_total: int = 0
+    preempted_total: int = 0
+    failed_total: int = 0
+    timeout_total: int = 0
+    emergency_ticks: int = 0
+```
 
-## 5. TickReport（单次调度报告）
+说明：
+1. `blocked_total` 是阻断事件次数，不是唯一任务数。
+2. 唯一阻断任务数由实验脚本派生 `unique_blocked_tasks`。
 
+## 6. TickReport
 ```python
 @dataclass
 class TickReport:
@@ -114,27 +126,6 @@ class TickReport:
     snapshot: ResourceSnapshot
 ```
 
----
-
-## 6. Metrics（累计指标）
-
-```python
-@dataclass
-class SchedulerMetrics:
-    submitted_total: int = 0
-    started_total: int = 0
-    completed_total: int = 0
-    blocked_total: int = 0
-    preempted_total: int = 0
-    failed_total: int = 0
-    emergency_ticks: int = 0
-```
-
----
-
-## 7. 关系总览
-1. `ResourceSnapshot` 决定当前模式。
-2. `TaskSpec` 决定任务是否允许启动。
-3. `SchedulerConfig` 决定阈值、并发和保护策略。
-4. `TaskRuntime` 反映当前执行状态。
-5. `TickReport` 和 `Metrics` 用于审计与调优。
+说明：
+1. `mode` 取值：`NORMAL/HIGH/EMERGENCY`。
+2. 是每轮调度的可审计输出单元。

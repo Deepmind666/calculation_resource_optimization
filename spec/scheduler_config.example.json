@@ -19,5 +19,6 @@
   "ema_alpha": 0.6,
   "max_start_per_tick_normal": 4,
   "max_start_per_tick_high": 1,
+  "max_event_log_entries": 5000,
   "dry_run": true
 }

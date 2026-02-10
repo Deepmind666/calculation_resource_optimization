@@ -2,16 +2,21 @@ from __future__ import annotations
 
 from pathlib import Path
 import sys
+import tempfile
 import time
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from resource_scheduler import (  # noqa: E402
     DynamicTaskScheduler,
+    load_scheduler_config,
+    ResourceMonitor,
     ResourceSnapshot,
     SchedulerConfig,
     TaskSpec,
+    TaskRuntime,
 )
 
 
@@ -134,6 +139,134 @@ class ResourceSchedulerTests(unittest.TestCase):
         sch.tick()
         self.assertEqual(sch.metrics.timeout_total, 1)
         sch.shutdown()
+
+    def test_raw_emergency_spike_not_masked_by_ema(self) -> None:
+        cfg = SchedulerConfig(dry_run=True, ema_alpha=0.2, memory_emergency_pct=92.0)
+        monitor = FakeMonitor([snap(50, 20), snap(99, 25)])
+        sch = DynamicTaskScheduler(config=cfg, monitor=monitor)
+        self.assertEqual(sch.tick().mode, "NORMAL")
+        self.assertEqual(sch.tick().mode, "EMERGENCY")
+
+    def test_duplicate_task_id_rejected(self) -> None:
+        cfg = SchedulerConfig(dry_run=True, ema_alpha=1.0)
+        monitor = FakeMonitor([snap(55, 20)])
+        sch = DynamicTaskScheduler(config=cfg, monitor=monitor)
+        sch.submit_task(TaskSpec("DUP-1", [], priority=1, estimated_mem_mb=100, estimated_cpu_percent=5))
+        with self.assertRaises(ValueError):
+            sch.submit_task(TaskSpec("DUP-1", [], priority=2, estimated_mem_mb=80, estimated_cpu_percent=3))
+
+    def test_invalid_task_spec_rejected(self) -> None:
+        cfg = SchedulerConfig(dry_run=True, ema_alpha=1.0)
+        monitor = FakeMonitor([snap(55, 20)])
+        sch = DynamicTaskScheduler(config=cfg, monitor=monitor)
+        with self.assertRaises(ValueError):
+            sch.submit_task(TaskSpec("BAD-1", [], priority=1, estimated_mem_mb=-1, estimated_cpu_percent=5))
+
+    def test_unknown_config_key_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "bad_cfg.json"
+            p.write_text(
+                """{
+  "max_workers": 2,
+  "min_workers": 1,
+  "unknown_knob": 123
+}""",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                load_scheduler_config(str(p))
+
+    def test_stop_failure_keeps_task_tracked(self) -> None:
+        class NeverStopsProcess:
+            def terminate(self) -> None:
+                raise RuntimeError("terminate failed")
+
+            def wait(self, timeout: float | None = None) -> None:
+                raise RuntimeError("wait failed")
+
+            def kill(self) -> None:
+                raise RuntimeError("kill failed")
+
+            def poll(self) -> None:
+                return None
+
+        cfg = SchedulerConfig(dry_run=False, ema_alpha=1.0)
+        monitor = FakeMonitor([snap(50, 20)])
+        sch = DynamicTaskScheduler(config=cfg, monitor=monitor)
+
+        spec = TaskSpec(
+            task_id="STUCK-1",
+            command=[],
+            priority=1,
+            estimated_mem_mb=10,
+            estimated_cpu_percent=1,
+            max_runtime_sec=1.0,
+        )
+        sch.running[spec.task_id] = TaskRuntime(
+            spec=spec,
+            start_ts=time.time(),
+            state="RUNNING",
+            process=NeverStopsProcess(),  # type: ignore[arg-type]
+        )
+
+        ok = sch._stop_task(spec.task_id, "TIMEOUT")
+        self.assertFalse(ok)
+        self.assertIn(spec.task_id, sch.running)
+        self.assertEqual(sch.metrics.timeout_total, 0)
+        self.assertTrue(any(evt["event_type"] == "TASK_STOP_FAILED" for evt in sch.events))
+
+    def test_event_log_is_bounded(self) -> None:
+        cfg = SchedulerConfig(dry_run=True, ema_alpha=1.0, max_event_log_entries=25)
+        monitor = FakeMonitor([snap(55, 20)] * 30)
+        sch = DynamicTaskScheduler(config=cfg, monitor=monitor)
+
+        for i in range(12):
+            sch.submit_task(
+                TaskSpec(
+                    task_id=f"E-{i+1:03d}",
+                    command=[],
+                    priority=1,
+                    estimated_mem_mb=100,
+                    estimated_cpu_percent=2,
+                    dry_run_ticks=1,
+                )
+            )
+
+        for _ in range(30):
+            sch.tick()
+
+        self.assertLessEqual(len(sch.events), 25)
+
+    def test_dry_run_admission_no_double_count_same_tick(self) -> None:
+        cfg = SchedulerConfig(
+            dry_run=True,
+            reserve_memory_mb=512,
+            memory_emergency_pct=92.0,
+            max_workers=3,
+            max_start_per_tick_normal=3,
+            ema_alpha=1.0,
+        )
+        monitor = FakeMonitor([snap(60, 20)])
+        sch = DynamicTaskScheduler(config=cfg, monitor=monitor)
+        sch.submit_task(TaskSpec("D1", [], priority=1, estimated_mem_mb=800, estimated_cpu_percent=5))
+        sch.submit_task(TaskSpec("D2", [], priority=1, estimated_mem_mb=800, estimated_cpu_percent=5))
+        report = sch.tick()
+        self.assertEqual(len(report.started), 2)
+        self.assertEqual(len(report.blocked), 0)
+
+    def test_gpu_monitor_uses_worst_card_for_multi_gpu(self) -> None:
+        monitor = ResourceMonitor(enable_gpu=True)
+        fake_out = "20, 1000, 10000\n30, 7000, 8000\n10, 100, 12000\n"
+        with patch("resource_scheduler.shutil.which", return_value="nvidia-smi"), patch(
+            "resource_scheduler.subprocess.check_output",
+            return_value=fake_out,
+        ):
+            gpu = monitor._sample_gpu()
+
+        self.assertAlmostEqual(float(gpu["gpu_memory_percent"]), 87.5, places=3)
+        self.assertAlmostEqual(float(gpu["gpu_memory_used_mb"]), 7000.0, places=3)
+        self.assertAlmostEqual(float(gpu["gpu_memory_total_mb"]), 8000.0, places=3)
+        self.assertAlmostEqual(float(gpu["gpu_util_percent"]), 30.0, places=3)
 
 
 if __name__ == "__main__":
