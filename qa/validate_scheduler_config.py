@@ -44,7 +44,9 @@ def main() -> None:
         "reserve_memory_mb",
         "high_mode_priority_cutoff",
         "preempt_count_per_tick",
+        "preempt_sort_key",
         "kill_timeout_sec",
+        "stuck_task_timeout_sec",
         "mode_hysteresis_pct",
         "emergency_cooldown_ticks",
         "ema_alpha",
@@ -68,12 +70,16 @@ def main() -> None:
         fail("max_start_per_tick_* must be >= 1.")
     if int(cfg["preempt_count_per_tick"]) < 1:
         fail("preempt_count_per_tick must be >= 1.")
+    if str(cfg["preempt_sort_key"]) not in {"oldest_first", "newest_first"}:
+        fail("preempt_sort_key must be one of: oldest_first, newest_first.")
     if int(cfg["high_mode_priority_cutoff"]) < 1:
         fail("high_mode_priority_cutoff must be >= 1.")
     if int(cfg["reserve_memory_mb"]) < 0:
         fail("reserve_memory_mb must be >= 0.")
     if float(cfg["kill_timeout_sec"]) <= 0:
         fail("kill_timeout_sec must be > 0.")
+    if float(cfg["stuck_task_timeout_sec"]) <= 0:
+        fail("stuck_task_timeout_sec must be > 0.")
     if int(cfg["max_event_log_entries"]) < 1:
         fail("max_event_log_entries must be >= 1.")
     if int(cfg["emergency_cooldown_ticks"]) < 0:

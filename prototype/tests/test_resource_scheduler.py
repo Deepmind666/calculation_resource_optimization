@@ -270,6 +270,30 @@ class ResourceSchedulerTests(unittest.TestCase):
         self.assertAlmostEqual(float(gpu["gpu_memory_total_mb"]), 8000.0, places=3)
         self.assertAlmostEqual(float(gpu["gpu_util_percent"]), 30.0, places=3)
 
+    def test_preempt_sort_key_oldest_first(self) -> None:
+        cfg = SchedulerConfig(dry_run=True, preempt_count_per_tick=1, preempt_sort_key="oldest_first", ema_alpha=1.0)
+        sch = DynamicTaskScheduler(config=cfg, monitor=FakeMonitor([snap(95, 70)]))
+        a = TaskSpec("A", [], priority=5, estimated_mem_mb=100, estimated_cpu_percent=2)
+        b = TaskSpec("B", [], priority=5, estimated_mem_mb=100, estimated_cpu_percent=2)
+        sch.running = {
+            "A": TaskRuntime(spec=a, start_ts=100.0, state="RUNNING"),
+            "B": TaskRuntime(spec=b, start_ts=200.0, state="RUNNING"),
+        }
+        preempted = sch._preempt_low_priority(snap(95, 70))
+        self.assertEqual(preempted, ["A"])
+
+    def test_preempt_sort_key_newest_first(self) -> None:
+        cfg = SchedulerConfig(dry_run=True, preempt_count_per_tick=1, preempt_sort_key="newest_first", ema_alpha=1.0)
+        sch = DynamicTaskScheduler(config=cfg, monitor=FakeMonitor([snap(95, 70)]))
+        a = TaskSpec("A", [], priority=5, estimated_mem_mb=100, estimated_cpu_percent=2)
+        b = TaskSpec("B", [], priority=5, estimated_mem_mb=100, estimated_cpu_percent=2)
+        sch.running = {
+            "A": TaskRuntime(spec=a, start_ts=100.0, state="RUNNING"),
+            "B": TaskRuntime(spec=b, start_ts=200.0, state="RUNNING"),
+        }
+        preempted = sch._preempt_low_priority(snap(95, 70))
+        self.assertEqual(preempted, ["B"])
+
     def test_non_dry_run_can_admit_skips_running_estimate(self) -> None:
         cfg = SchedulerConfig(dry_run=False, ema_alpha=1.0)
         monitor = FakeMonitor([snap(50, 20)])
@@ -283,6 +307,50 @@ class ResourceSchedulerTests(unittest.TestCase):
         ):
             ok, reason = sch._can_admit(task, s, mode="NORMAL")
         self.assertTrue(ok, reason)
+
+    def test_stuck_task_removed_after_timeout(self) -> None:
+        class NeverStopsProcess:
+            def terminate(self) -> None:
+                raise RuntimeError("terminate failed")
+
+            def wait(self, timeout: float | None = None) -> None:
+                raise RuntimeError("wait failed")
+
+            def kill(self) -> None:
+                raise RuntimeError("kill failed")
+
+            def poll(self) -> None:
+                return None
+
+        cfg = SchedulerConfig(
+            dry_run=False,
+            ema_alpha=1.0,
+            kill_timeout_sec=0.01,
+            stuck_task_timeout_sec=0.02,
+        )
+        sch = DynamicTaskScheduler(config=cfg, monitor=FakeMonitor([snap(50, 20)]))
+        spec = TaskSpec(
+            task_id="STUCK-TIMEOUT",
+            command=[],
+            priority=1,
+            estimated_mem_mb=10,
+            estimated_cpu_percent=1,
+            max_runtime_sec=0.01,
+        )
+        sch.running[spec.task_id] = TaskRuntime(
+            spec=spec,
+            start_ts=time.time(),
+            state="RUNNING",
+            process=NeverStopsProcess(),  # type: ignore[arg-type]
+        )
+
+        self.assertFalse(sch._stop_task(spec.task_id, "TIMEOUT"))
+        self.assertIn(spec.task_id, sch.running)
+        time.sleep(0.03)
+        self.assertFalse(sch._stop_task(spec.task_id, "TIMEOUT"))
+        self.assertNotIn(spec.task_id, sch.running)
+        self.assertEqual(sch.metrics.stuck_removed_total, 1)
+        self.assertTrue(any(evt["event_type"] == "TASK_STUCK_REMOVED" for evt in sch.events))
 
     def test_validate_scheduler_config_respects_cli_path(self) -> None:
         root = Path(__file__).resolve().parents[2]
@@ -306,7 +374,9 @@ class ResourceSchedulerTests(unittest.TestCase):
                         "reserve_memory_mb": 512,
                         "high_mode_priority_cutoff": 3,
                         "preempt_count_per_tick": 1,
+                        "preempt_sort_key": "oldest_first",
                         "kill_timeout_sec": 3.0,
+                        "stuck_task_timeout_sec": 30.0,
                         "mode_hysteresis_pct": 3.0,
                         "emergency_cooldown_ticks": 2,
                         "ema_alpha": 0.6,

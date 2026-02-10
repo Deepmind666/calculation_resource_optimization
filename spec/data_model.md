@@ -64,7 +64,9 @@ class SchedulerConfig:
     reserve_memory_mb: int = 512
     high_mode_priority_cutoff: int = 3
     preempt_count_per_tick: int = 1
+    preempt_sort_key: str = "oldest_first"
     kill_timeout_sec: float = 3.0
+    stuck_task_timeout_sec: float = 30.0
     mode_hysteresis_pct: float = 3.0
     emergency_cooldown_ticks: int = 2
     ema_alpha: float = 0.6
@@ -88,6 +90,8 @@ class TaskRuntime:
     state: str
     process: Optional[subprocess.Popen] = None
     remaining_ticks: int = 0
+    stop_requested_ts: Optional[float] = None
+    stop_reason: Optional[str] = None
 ```
 
 说明：
@@ -105,6 +109,7 @@ class SchedulerMetrics:
     preempted_total: int = 0
     failed_total: int = 0
     timeout_total: int = 0
+    stuck_removed_total: int = 0
     emergency_ticks: int = 0
 ```
 

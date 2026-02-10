@@ -14,20 +14,20 @@
 ### ISSUE-30 [Low] non-dry_run 路径无用调用 `_running_estimated_load()`
 - 状态：已修复
 - 修改：将 `_running_estimated_load()` 调用移动到 `if self.config.dry_run:` 分支内部。
-- 证据：`prototype/resource_scheduler.py:425`
-- 回归测试：`prototype/tests/test_resource_scheduler.py:270`
+- 证据：`prototype/resource_scheduler.py:429`
+- 回归测试：`prototype/tests/test_resource_scheduler.py:297`
 
 ### ISSUE-31 [Low] `validate_scheduler_config.py` 忽略命令行参数
 - 状态：已修复
 - 修改：新增 `_resolve_config_path(sys.argv)`，支持 `python qa/validate_scheduler_config.py [config_path]`。
 - 证据：`qa/validate_scheduler_config.py:18`
-- 回归测试：`prototype/tests/test_resource_scheduler.py:283`
+- 回归测试：`prototype/tests/test_resource_scheduler.py:355`
 
 ## 2. 本轮新增验证
 
 1. `test_non_dry_run_can_admit_skips_running_estimate`
 2. `test_validate_scheduler_config_respects_cli_path`
-3. 全量测试：15/15 通过
+3. 全量测试：19/19 通过
 4. 配置校验：显式路径调用 PASS；默认调用 PASS
 5. 结构检查：PASS
 

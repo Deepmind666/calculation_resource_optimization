@@ -96,7 +96,34 @@
 - 风险描述：脚本固定读取默认配置，用户传入路径时无效。
 - 修复动作：新增 `_resolve_config_path(sys.argv)`，支持可选参数路径与 usage 检查。
 - 修复后证据：`qa/validate_scheduler_config.py:18`
-- 回归测试：`prototype/tests/test_resource_scheduler.py:287`
+- 回归测试：`prototype/tests/test_resource_scheduler.py:355`
+
+### F-12 [Medium] 抢占排序策略硬编码
+- 风险描述：紧急抢占固定按“旧任务优先”排序，缺乏策略可配置性，难以适配不同业务偏好。
+- 修复动作：新增配置 `preempt_sort_key`，支持 `oldest_first/newest_first`。
+- 修复后证据：
+  - `prototype/resource_scheduler.py:64`
+  - `prototype/resource_scheduler.py:583`
+  - `prototype/resource_scheduler.py:669`
+  - `qa/validate_scheduler_config.py:47`
+  - `qa/validate_scheduler_config.py:73`
+  - `spec/scheduler_config.example.json:16`
+- 回归测试：
+  - `prototype/tests/test_resource_scheduler.py:273`
+  - `prototype/tests/test_resource_scheduler.py:285`
+
+### F-13 [Medium] 不可终止任务缺少逃逸机制
+- 风险描述：任务持续 stop 失败会长期占据 `running`，影响调度稳定性。
+- 修复动作：新增 `stuck_task_timeout_sec`，达到阈值后强制移出并发出 `TASK_STUCK_REMOVED` 事件。
+- 修复后证据：
+  - `prototype/resource_scheduler.py:66`
+  - `prototype/resource_scheduler.py:97`
+  - `prototype/resource_scheduler.py:557`
+  - `prototype/resource_scheduler.py:561`
+  - `qa/validate_scheduler_config.py:49`
+  - `qa/validate_scheduler_config.py:81`
+  - `spec/scheduler_config.example.json:18`
+- 回归测试：`prototype/tests/test_resource_scheduler.py:311`
 
 ## 4. 剩余风险（当前非阻塞）
 
@@ -122,7 +149,9 @@
 - [x] 伪代码与实现一致性：补齐 GPU 迟滞退出条件。
 - [x] non-dry_run 性能细节：移除无用负载估算调用。
 - [x] 配置校验脚本可用性：支持命令行路径参数。
-- [x] 回归测试：新增 10 个用例，全部通过。
+- [x] 抢占策略可配置：支持 oldest/newest 两种排序键。
+- [x] stuck task 逃逸机制：超时强制移出并记录审计事件。
+- [x] 回归测试：新增 13 个用例，全部通过。
 - [x] 结构检查：通过。
 - [x] 配置检查：通过。
 - [x] 旧功能回归：原 6 个测试保持通过。
@@ -133,8 +162,8 @@ python -m unittest discover -s prototype/tests -p "test_*.py"
 python qa/validate_scheduler_config.py spec/scheduler_config.example.json
 powershell -ExecutionPolicy Bypass -File qa/structure_check.ps1
 ```
-结果：16/16 测试通过（含 ISSUE-30/31 回归测试），配置校验 PASS，结构检查 PASS。
+结果：19/19 测试通过（含 ISSUE-29/30/31 与 R6 回归测试），配置校验 PASS，结构检查 PASS。
 
 ## 7. 供 Claude 下轮对比的基线 ID
-- 已修复：`F-01`, `F-02`, `F-03`, `F-04`, `F-05`, `F-06`, `F-07`, `F-08`, `F-09`, `F-10`, `F-11`
+- 已修复：`F-01`, `F-02`, `F-03`, `F-04`, `F-05`, `F-06`, `F-07`, `F-08`, `F-09`, `F-10`, `F-11`, `F-12`, `F-13`
 - 待复核：`R-04`, `R-05`

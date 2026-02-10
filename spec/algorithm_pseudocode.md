@@ -174,7 +174,10 @@ function try_admit_tasks_with_cumulative_projection(...):
 ```text
 function preempt_low_priority_tasks(running_set, snapshot, cfg):
   candidates <- filter(running_set, preemptible == true)
-  sort candidates by (priority desc, estimated_mem_mb desc, start_ts asc)
+  if cfg.preempt_sort_key == "oldest_first":
+    sort candidates by (priority desc, estimated_mem_mb desc, start_ts asc)
+  else:  # newest_first
+    sort candidates by (priority desc, estimated_mem_mb desc, start_ts desc)
   k <- min(cfg.preempt_count_per_tick, len(candidates))
 
   reclaim_target_mb <- memory_target(snapshot, cfg)
@@ -194,7 +197,12 @@ function stop_task(task, reason):
   try terminate + wait
   if failed: try kill + wait
   if process still alive:
-    emit TASK_STOP_FAILED
+    if first_failure:
+      remember stop_requested_ts
+    emit TASK_STOP_FAILED(elapsed_sec)
+    if elapsed_sec >= cfg.stuck_task_timeout_sec:
+      force remove task from running_set
+      emit TASK_STUCK_REMOVED
     return false
 
   remove task from running_set
@@ -222,5 +230,6 @@ metrics:
   preempted_total
   failed_total
   timeout_total
+  stuck_removed_total
   emergency_ticks
 ```

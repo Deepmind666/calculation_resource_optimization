@@ -695,3 +695,51 @@
 - 风险与后续：
   - 风险：ISSUE-9、ISSUE-13 仍是治理层问题，需用户决策。
   - 后续：如你确认，我可以把本轮改动做最小提交并推送，再输出一份“Claude 复核专用审查清单”。
+
+## 2026-02-10 13:22:12 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（采纳 Claude R5 + 启动 R6 第1步）
+- 工作内容：
+  - 完成 R6 稳定性增强第一步（SUG-8/SUG-9）：
+    1. 新增可配置抢占排序 `preempt_sort_key`（`oldest_first`/`newest_first`）。
+    2. 新增 stuck task 逃逸机制 `stuck_task_timeout_sec`，超时后强制移出并记录 `TASK_STUCK_REMOVED`。
+  - 同步数据结构与指标：
+    - `TaskRuntime` 增加 `stop_requested_ts/stop_reason`
+    - `SchedulerMetrics` 增加 `stuck_removed_total`
+  - 配置和校验同步：
+    - `spec/scheduler_config.example.json` 新增配置项
+    - `qa/validate_scheduler_config.py` 新增字段校验
+  - 补齐测试覆盖：
+    - `test_preempt_sort_key_oldest_first`
+    - `test_preempt_sort_key_newest_first`
+    - `test_stuck_task_removed_after_timeout`
+  - 继续保持 R5 闭环：
+    - ISSUE-29 文档修复（GPU 迟滞）
+    - ISSUE-30 性能微优化
+    - ISSUE-31 CLI 路径支持
+  - 更新审查文档：
+    - `qa/r5_followup_fixes_2026-02-10.md`
+    - `qa/self_audit_round1_2026-02-10.md`（扩展到 F-13）
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `qa/validate_scheduler_config.py`
+  - `spec/scheduler_config.example.json`
+  - `spec/algorithm_pseudocode.md`
+  - `spec/data_model.md`
+  - `qa/r5_followup_fixes_2026-02-10.md`
+  - `qa/self_audit_round1_2026-02-10.md`
+  - `logs/work_progress.md`
+  - `RUNBOOK.md`
+- 文件评审清单：
+  - [x] SUG-8 以配置项实现，不做硬编码切换
+  - [x] SUG-9 具备默认值与事件审计
+  - [x] 新增配置项在样例与校验脚本中一致
+  - [x] 新增测试覆盖策略分支与逃逸路径
+  - [x] 全量测试通过（19/19）
+  - [x] 配置校验通过（CLI + 默认路径）
+  - [x] 结构检查通过
+  - [x] 关键报告行号引用校验通过（invalid_refs=[]）
+- 风险与后续：
+  - 风险：ISSUE-9、ISSUE-13 仍为治理层未决问题。
+  - 后续：进入 R6 第2步，补齐迟滞/GPU联动/回收目标/real-run 投影四类缺失测试。

@@ -61,7 +61,9 @@ class SchedulerConfig:
     reserve_memory_mb: int = 512
     high_mode_priority_cutoff: int = 3
     preempt_count_per_tick: int = 1
+    preempt_sort_key: str = "oldest_first"
     kill_timeout_sec: float = 3.0
+    stuck_task_timeout_sec: float = 30.0
     mode_hysteresis_pct: float = 3.0
     emergency_cooldown_ticks: int = 2
     ema_alpha: float = 0.6
@@ -79,6 +81,8 @@ class TaskRuntime:
     state: str
     process: Optional[subprocess.Popen] = None
     remaining_ticks: int = 0
+    stop_requested_ts: Optional[float] = None
+    stop_reason: Optional[str] = None
 
 
 @dataclass
@@ -90,6 +94,7 @@ class SchedulerMetrics:
     preempted_total: int = 0
     failed_total: int = 0
     timeout_total: int = 0
+    stuck_removed_total: int = 0
     emergency_ticks: int = 0
 
 
@@ -525,6 +530,7 @@ class DynamicTaskScheduler:
         if runtime is None:
             return False
 
+        now = time.time()
         stopped = True
         if runtime.process is not None:
             try:
@@ -540,7 +546,25 @@ class DynamicTaskScheduler:
                 stopped = False
 
         if not stopped:
-            self._event("TASK_STOP_FAILED", {"task_id": task_id, "reason": reason})
+            if runtime.stop_requested_ts is None:
+                runtime.stop_requested_ts = now
+                runtime.stop_reason = reason
+            elapsed = max(0.0, now - runtime.stop_requested_ts)
+            self._event(
+                "TASK_STOP_FAILED",
+                {"task_id": task_id, "reason": reason, "elapsed_sec": round(elapsed, 3)},
+            )
+            if elapsed >= self.config.stuck_task_timeout_sec:
+                self.running.pop(task_id, None)
+                self.metrics.stuck_removed_total += 1
+                self._event(
+                    "TASK_STUCK_REMOVED",
+                    {
+                        "task_id": task_id,
+                        "reason": runtime.stop_reason or reason,
+                        "elapsed_sec": round(elapsed, 3),
+                    },
+                )
             return False
 
         self.running.pop(task_id, None)
@@ -556,8 +580,13 @@ class DynamicTaskScheduler:
             return []
 
         candidates = [r for r in self.running.values() if r.spec.preemptible]
+        oldest_first = self.config.preempt_sort_key == "oldest_first"
         candidates.sort(
-            key=lambda r: (r.spec.priority, r.spec.estimated_mem_mb, -r.start_ts),
+            key=lambda r: (
+                r.spec.priority,
+                r.spec.estimated_mem_mb,
+                (-r.start_ts if oldest_first else r.start_ts),
+            ),
             reverse=True,
         )
         k = min(self.config.preempt_count_per_tick, len(candidates))
@@ -637,12 +666,16 @@ def _validate_config(cfg: SchedulerConfig) -> None:
         raise ValueError("max_start_per_tick_* must be >= 1.")
     if cfg.preempt_count_per_tick < 1:
         raise ValueError("preempt_count_per_tick must be >= 1.")
+    if cfg.preempt_sort_key not in {"oldest_first", "newest_first"}:
+        raise ValueError("preempt_sort_key must be one of: oldest_first, newest_first.")
     if cfg.high_mode_priority_cutoff < 1:
         raise ValueError("high_mode_priority_cutoff must be >= 1.")
     if cfg.reserve_memory_mb < 0:
         raise ValueError("reserve_memory_mb must be >= 0.")
     if cfg.kill_timeout_sec <= 0:
         raise ValueError("kill_timeout_sec must be > 0.")
+    if cfg.stuck_task_timeout_sec <= 0:
+        raise ValueError("stuck_task_timeout_sec must be > 0.")
     if cfg.max_event_log_entries < 1:
         raise ValueError("max_event_log_entries must be >= 1.")
     if cfg.emergency_cooldown_ticks < 0:
