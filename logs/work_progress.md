@@ -743,3 +743,32 @@
 - 风险与后续：
   - 风险：ISSUE-9、ISSUE-13 仍为治理层未决问题。
   - 后续：进入 R6 第2步，补齐迟滞/GPU联动/回收目标/real-run 投影四类缺失测试。
+
+## 2026-02-10 13:32:53 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R6 第2步）
+- 工作内容：
+  - 完成测试缺口补齐（四类）：
+    1. 迟滞退出测试（内存、GPU 各 1 条）。
+    2. GPU 准入/紧急联动测试（2 条）。
+    3. 回收目标精确停止测试（1 条）。
+    4. real-run 同 tick 投影阻断测试（1 条）。
+  - 测试命名按建议增加语义标签：`_hysteresis_`、`_gpu_admission_`、`_reclaim_target_`、`_real_run_projection_`。
+  - 更新审查文档：
+    - 新增 `qa/r6_test_gap_closure_2026-02-10.md`
+    - 更新 `qa/self_audit_round1_2026-02-10.md`（回归测试统计与结论）
+- 文件变更：
+  - `prototype/tests/test_resource_scheduler.py`
+  - `qa/r6_test_gap_closure_2026-02-10.md`
+  - `qa/self_audit_round1_2026-02-10.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 四类缺口均有对应测试用例
+  - [x] 测试断言覆盖核心行为（模式、准入、抢占、投影）
+  - [x] 行号引用可校验（invalid_refs=[]）
+  - [x] 全量测试通过（25/25）
+  - [x] 配置校验 PASS
+  - [x] 结构检查 PASS
+- 风险与后续：
+  - 风险：ISSUE-9、ISSUE-13 治理项仍未决。
+  - 后续：按计划进入第 3 步（可专利证据包 P-02/P-03），待你确认继续资源调度主线。

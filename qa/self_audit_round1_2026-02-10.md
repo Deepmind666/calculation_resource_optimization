@@ -151,7 +151,8 @@
 - [x] 配置校验脚本可用性：支持命令行路径参数。
 - [x] 抢占策略可配置：支持 oldest/newest 两种排序键。
 - [x] stuck task 逃逸机制：超时强制移出并记录审计事件。
-- [x] 回归测试：新增 13 个用例，全部通过。
+- [x] 测试缺口收敛（R6-2）：补齐迟滞/GPU联动/回收目标/real-run 投影四类测试。
+- [x] 回归测试：新增 19 个用例，全部通过。
 - [x] 结构检查：通过。
 - [x] 配置检查：通过。
 - [x] 旧功能回归：原 6 个测试保持通过。
@@ -162,7 +163,7 @@ python -m unittest discover -s prototype/tests -p "test_*.py"
 python qa/validate_scheduler_config.py spec/scheduler_config.example.json
 powershell -ExecutionPolicy Bypass -File qa/structure_check.ps1
 ```
-结果：19/19 测试通过（含 ISSUE-29/30/31 与 R6 回归测试），配置校验 PASS，结构检查 PASS。
+结果：25/25 测试通过（含 ISSUE-29/30/31 与 R6 缺口补测），配置校验 PASS，结构检查 PASS。
 
 ## 7. 供 Claude 下轮对比的基线 ID
 - 已修复：`F-01`, `F-02`, `F-03`, `F-04`, `F-05`, `F-06`, `F-07`, `F-08`, `F-09`, `F-10`, `F-11`, `F-12`, `F-13`

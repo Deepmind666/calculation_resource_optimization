@@ -54,6 +54,34 @@ def snap(mem_pct: float, cpu_pct: float, swap_pct: float = 10.0) -> ResourceSnap
     )
 
 
+def snap_gpu(
+    mem_pct: float,
+    cpu_pct: float,
+    gpu_used_mb: float,
+    gpu_total_mb: float,
+    gpu_util_pct: float = 40.0,
+    swap_pct: float = 10.0,
+) -> ResourceSnapshot:
+    total = 8192.0
+    used = total * mem_pct / 100.0
+    avail = max(1.0, total - used)
+    gpu_total = max(1.0, gpu_total_mb)
+    gpu_pct = 100.0 * gpu_used_mb / gpu_total
+    return ResourceSnapshot(
+        timestamp=0.0,
+        cpu_percent=cpu_pct,
+        memory_percent=mem_pct,
+        memory_used_mb=used,
+        memory_total_mb=total,
+        memory_available_mb=avail,
+        swap_percent=swap_pct,
+        gpu_util_percent=gpu_util_pct,
+        gpu_memory_percent=gpu_pct,
+        gpu_memory_used_mb=gpu_used_mb,
+        gpu_memory_total_mb=gpu_total,
+    )
+
+
 class ResourceSchedulerTests(unittest.TestCase):
     def test_mode_transition(self) -> None:
         cfg = SchedulerConfig(dry_run=True, ema_alpha=1.0)
@@ -119,6 +147,43 @@ class ResourceSchedulerTests(unittest.TestCase):
         self.assertEqual(sch.tick().mode, "EMERGENCY")
         self.assertEqual(sch.tick().mode, "EMERGENCY")
         self.assertEqual(sch.tick().mode, "EMERGENCY")
+        self.assertEqual(sch.tick().mode, "NORMAL")
+
+    def test_hysteresis_memory_exit_stays_high(self) -> None:
+        cfg = SchedulerConfig(
+            dry_run=True,
+            ema_alpha=1.0,
+            memory_high_pct=85.0,
+            mode_hysteresis_pct=5.0,
+            cpu_high_pct=99.0,
+            gpu_memory_high_pct=99.0,
+        )
+        monitor = FakeMonitor([snap(86, 20), snap(81, 20), snap(79, 20)])
+        sch = DynamicTaskScheduler(config=cfg, monitor=monitor)
+        self.assertEqual(sch.tick().mode, "HIGH")
+        self.assertEqual(sch.tick().mode, "HIGH")
+        self.assertEqual(sch.tick().mode, "NORMAL")
+
+    def test_hysteresis_gpu_exit_stays_high(self) -> None:
+        cfg = SchedulerConfig(
+            dry_run=True,
+            ema_alpha=1.0,
+            memory_high_pct=99.0,
+            cpu_high_pct=99.0,
+            gpu_memory_high_pct=85.0,
+            mode_hysteresis_pct=3.0,
+            enable_gpu_guard=True,
+        )
+        monitor = FakeMonitor(
+            [
+                snap_gpu(40, 20, gpu_used_mb=8800, gpu_total_mb=10000),  # 88%
+                snap_gpu(40, 20, gpu_used_mb=8300, gpu_total_mb=10000),  # 83% (>82 exit)
+                snap_gpu(40, 20, gpu_used_mb=8100, gpu_total_mb=10000),  # 81% (<82 exit)
+            ]
+        )
+        sch = DynamicTaskScheduler(config=cfg, monitor=monitor)
+        self.assertEqual(sch.tick().mode, "HIGH")
+        self.assertEqual(sch.tick().mode, "HIGH")
         self.assertEqual(sch.tick().mode, "NORMAL")
 
     def test_timeout_count_once(self) -> None:
@@ -270,6 +335,50 @@ class ResourceSchedulerTests(unittest.TestCase):
         self.assertAlmostEqual(float(gpu["gpu_memory_total_mb"]), 8000.0, places=3)
         self.assertAlmostEqual(float(gpu["gpu_util_percent"]), 30.0, places=3)
 
+    def test_gpu_admission_blocks_projected_emergency(self) -> None:
+        cfg = SchedulerConfig(dry_run=True, ema_alpha=1.0, enable_gpu_guard=True, gpu_memory_emergency_pct=95.0)
+        sch = DynamicTaskScheduler(config=cfg, monitor=FakeMonitor([snap(50, 20)]))
+        task = TaskSpec("GPU-BLOCK", [], priority=1, estimated_mem_mb=100, estimated_cpu_percent=2, estimated_gpu_mem_mb=1200)
+        s = snap_gpu(50, 20, gpu_used_mb=6400, gpu_total_mb=8000)  # 80%
+        ok, reason = sch._can_admit(task, s, mode="NORMAL")
+        self.assertFalse(ok)
+        self.assertIn("projected gpu memory emergency", reason)
+
+    def test_gpu_admission_and_emergency_linkage(self) -> None:
+        cfg = SchedulerConfig(
+            dry_run=True,
+            ema_alpha=1.0,
+            enable_gpu_guard=True,
+            preempt_count_per_tick=1,
+            memory_high_pct=99.0,
+            cpu_high_pct=99.0,
+        )
+        monitor = FakeMonitor(
+            [
+                snap_gpu(40, 20, gpu_used_mb=3000, gpu_total_mb=10000),  # normal
+                snap_gpu(40, 20, gpu_used_mb=9600, gpu_total_mb=10000),  # emergency
+            ]
+        )
+        sch = DynamicTaskScheduler(config=cfg, monitor=monitor)
+        sch.submit_task(
+            TaskSpec(
+                "GPU-LINK-1",
+                [],
+                priority=5,
+                estimated_mem_mb=100,
+                estimated_cpu_percent=1,
+                estimated_gpu_mem_mb=200,
+                preemptible=True,
+                dry_run_ticks=5,
+            )
+        )
+        first = sch.tick()
+        self.assertEqual(first.mode, "NORMAL")
+        self.assertGreaterEqual(len(first.started), 1)
+        second = sch.tick()
+        self.assertEqual(second.mode, "EMERGENCY")
+        self.assertIn("GPU-LINK-1", second.preempted)
+
     def test_preempt_sort_key_oldest_first(self) -> None:
         cfg = SchedulerConfig(dry_run=True, preempt_count_per_tick=1, preempt_sort_key="oldest_first", ema_alpha=1.0)
         sch = DynamicTaskScheduler(config=cfg, monitor=FakeMonitor([snap(95, 70)]))
@@ -293,6 +402,37 @@ class ResourceSchedulerTests(unittest.TestCase):
         }
         preempted = sch._preempt_low_priority(snap(95, 70))
         self.assertEqual(preempted, ["B"])
+
+    def test_reclaim_target_stops_after_enough_reclaimed(self) -> None:
+        cfg = SchedulerConfig(dry_run=False, preempt_count_per_tick=3, preempt_sort_key="oldest_first", ema_alpha=1.0)
+        sch = DynamicTaskScheduler(config=cfg, monitor=FakeMonitor([snap(86, 20)]))
+        a = TaskSpec("A", [], priority=5, estimated_mem_mb=1000, estimated_cpu_percent=2, preemptible=True)
+        b = TaskSpec("B", [], priority=5, estimated_mem_mb=500, estimated_cpu_percent=2, preemptible=True)
+        c = TaskSpec("C", [], priority=5, estimated_mem_mb=400, estimated_cpu_percent=2, preemptible=True)
+        sch.running = {
+            "A": TaskRuntime(spec=a, start_ts=100.0, state="RUNNING"),
+            "B": TaskRuntime(spec=b, start_ts=110.0, state="RUNNING"),
+            "C": TaskRuntime(spec=c, start_ts=120.0, state="RUNNING"),
+        }
+        snapshot = ResourceSnapshot(
+            timestamp=0.0,
+            cpu_percent=20.0,
+            memory_percent=86.0,
+            memory_used_mb=7041.2,  # reclaim_needed ~= 600MB with default high/reserve
+            memory_total_mb=8192.0,
+            memory_available_mb=1150.8,
+            swap_percent=10.0,
+            gpu_util_percent=None,
+            gpu_memory_percent=None,
+            gpu_memory_used_mb=None,
+            gpu_memory_total_mb=None,
+        )
+        preempted = sch._preempt_low_priority(snapshot)
+        self.assertEqual(preempted, ["A"])
+        self.assertEqual(sch.metrics.preempted_total, 1)
+        self.assertNotIn("A", sch.running)
+        self.assertIn("B", sch.running)
+        self.assertIn("C", sch.running)
 
     def test_non_dry_run_can_admit_skips_running_estimate(self) -> None:
         cfg = SchedulerConfig(dry_run=False, ema_alpha=1.0)
@@ -397,6 +537,25 @@ class ResourceSchedulerTests(unittest.TestCase):
             )
         self.assertNotEqual(proc.returncode, 0)
         self.assertIn("Unknown keys", proc.stdout + proc.stderr)
+
+    def test_real_run_projection_blocks_second_start_same_tick(self) -> None:
+        cfg = SchedulerConfig(
+            dry_run=False,
+            ema_alpha=1.0,
+            reserve_memory_mb=512,
+            memory_emergency_pct=92.0,
+            max_workers=2,
+            max_start_per_tick_normal=2,
+        )
+        monitor = FakeMonitor([snap(70, 20)])
+        sch = DynamicTaskScheduler(config=cfg, monitor=monitor)
+        cmd = [sys.executable, "-c", "import time; time.sleep(0.4)"]
+        sch.submit_task(TaskSpec("REAL-PROJ-1", cmd, priority=1, estimated_mem_mb=1000, estimated_cpu_percent=5))
+        sch.submit_task(TaskSpec("REAL-PROJ-2", cmd, priority=1, estimated_mem_mb=1000, estimated_cpu_percent=5))
+        report = sch.tick()
+        self.assertEqual(len(report.started), 1)
+        self.assertGreaterEqual(len(report.blocked), 1)
+        sch.shutdown()
 
 
 if __name__ == "__main__":
