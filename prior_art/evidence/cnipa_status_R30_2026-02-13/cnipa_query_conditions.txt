@@ -1,0 +1,9 @@
+capture_date=2026-02-13 +08:00
+source=CNIPA public search portal and guide pages
+urls:
+- https://pss-system.cponline.cnipa.gov.cn/conventionalSearch
+- https://www.cnipa.gov.cn/art/2023/2/13/art_3166_182074.html
+- https://www.cnipa.gov.cn/art/2024/4/1/art_3359_191346.html
+notes:
+- scripted request to conventionalSearch returned HTTP 412
+- error body archived as *.error.html with sha256 in manifest

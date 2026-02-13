@@ -1,0 +1,82 @@
+{
+  "generated_at": "2026-02-13 10:50:45 +0800",
+  "p02_mode_stability_ablation": {
+    "scenario": "P-02 dual-view emergency response delay ablation",
+    "raw_memory_series_pct": [
+      82.0,
+      83.0,
+      97.0,
+      97.0,
+      97.0,
+      97.0,
+      83.0,
+      82.0
+    ],
+    "raw_emergency_first_tick": 3,
+    "variants": [
+      {
+        "variant": "dual_view_raw_plus_ema",
+        "ticks": 8,
+        "raw_emergency_first_tick": 3,
+        "first_emergency_tick": 3,
+        "response_delay_ticks": 0,
+        "mode_switches": 1,
+        "emergency_ticks": 6,
+        "modes": [
+          "NORMAL",
+          "NORMAL",
+          "EMERGENCY",
+          "EMERGENCY",
+          "EMERGENCY",
+          "EMERGENCY",
+          "EMERGENCY",
+          "EMERGENCY"
+        ]
+      },
+      {
+        "variant": "ema_only_alpha_0_3_no_raw_bypass",
+        "ticks": 8,
+        "raw_emergency_first_tick": 3,
+        "first_emergency_tick": 6,
+        "response_delay_ticks": 3,
+        "mode_switches": 2,
+        "emergency_ticks": 3,
+        "modes": [
+          "NORMAL",
+          "NORMAL",
+          "HIGH",
+          "HIGH",
+          "HIGH",
+          "EMERGENCY",
+          "EMERGENCY",
+          "EMERGENCY"
+        ]
+      }
+    ]
+  },
+  "p03_cumulative_admission_ablation": {
+    "scenario": "P-03 same-tick cumulative projection ablation",
+    "snapshot_memory_pct": 78.0,
+    "memory_limit_pct": 92.0,
+    "task_count": 4,
+    "task_mem_mb": 800,
+    "over_issued_tasks_without_cumulative": 2,
+    "over_issue_rate_without_cumulative": 0.5,
+    "variants": [
+      {
+        "variant": "with_cumulative_projection",
+        "admitted_tasks": 2,
+        "blocked_tasks": 2,
+        "projected_peak_memory_pct": 90.8906,
+        "breach_limit": false
+      },
+      {
+        "variant": "without_cumulative_projection_baseline",
+        "admitted_tasks": 4,
+        "blocked_tasks": 0,
+        "projected_peak_memory_pct": 100.6562,
+        "breach_limit": true
+      }
+    ]
+  }
+}

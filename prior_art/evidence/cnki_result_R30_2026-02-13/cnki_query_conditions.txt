@@ -1,0 +1,14 @@
+capture_date=2026-02-13 +08:00
+entry_urls:
+- https://kns.cnki.net/kns8?dbcode=CJFQ
+- https://kns.cnki.net/kns8?dbcode=CDFD
+- https://kns.cnki.net/kns8?dbcode=CMFD
+result_urls:
+- https://kns.cnki.net/kns8/defaultresult/index
+- https://kns.cnki.net/kns8/defaultresult/index?kw=GPU%20%E8%B5%84%E6%BA%90%20%E8%B0%83%E5%BA%A6
+- https://kns.cnki.net/kns8/defaultresult/index?kw=%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%20%E4%BB%BB%E5%8A%A1%20%E8%B0%83%E5%BA%A6
+- https://kns.cnki.net/kns8/defaultresult/index?kw=%E8%87%AA%E8%B0%83%E5%BA%A6%20%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1
+keywords:
+- GPU ?? ??
+- ???? ?? ??
+- ??? ????

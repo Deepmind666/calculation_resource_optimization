@@ -1,0 +1,7 @@
+status: 412
+Server: ******
+Date: Fri, 13 Feb 2026 12:18:20 GMT
+Content-Type: text/html; charset=utf-8
+Transfer-Encoding: chunked
+Connection: close
+Set-Cookie: dX1xbeyMT58WO=60s.BUxYEFUVFJupxE7yQXxwJt82yOh83NGgGQgM.kOieIcf1w2YNrCww6.vDuEAvqDx3DDw44yhWqUsmJp3gYPG; Path=/; expires=Mon, 11 Feb 2036 12:18:20 GMT; Secure; HttpOnly

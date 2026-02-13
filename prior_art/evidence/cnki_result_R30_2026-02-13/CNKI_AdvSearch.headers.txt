@@ -1,0 +1,14 @@
+status: 200
+cache-control: private,no-cache, no-store
+pragma: no-cache
+content-type: text/html; charset=utf-8
+server: Microsoft-IIS/10.0
+set-cookie: eng_k55_id=015106; path=/
+x-aspnetmvc-version: 5.2
+x-aspnet-version: 4.0.30319
+x-frame-options: SAMEORIGIN
+x-xss-protection: 1; mode=block
+strict-transport-security: max-age=31536000; includeSubDomains
+date: Fri, 13 Feb 2026 12:18:39 GMT
+content-length: 50056
+connection: close

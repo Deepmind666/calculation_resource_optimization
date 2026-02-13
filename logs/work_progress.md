@@ -772,3 +772,1342 @@
 - 风险与后续：
   - 风险：ISSUE-9、ISSUE-13 治理项仍未决。
   - 后续：按计划进入第 3 步（可专利证据包 P-02/P-03），待你确认继续资源调度主线。
+
+## 2026-02-10 15:16:46 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R6 第3步）
+- 工作内容：
+  - 完成可专利证据包（P-02 / P-03）落地：
+    1. 新增证据脚本 `prototype/run_patent_evidence.py`，输出可复现实验数据。
+    2. 生成证据文件 `figures/patent_evidence_metrics.json` 与 `figures/patent_evidence_metrics.csv`。
+    3. 新增证据回归测试 `prototype/tests/test_patent_evidence.py`（3 条）。
+    4. 新增审查文档 `qa/r6_step3_patent_evidence_pack_2026-02-10.md`（含代码映射、实验结论、审查清单与风险边界）。
+  - 关键实验结果：
+    - P-02：`with_stability` 的模式切换次数从 8 降到 3。
+    - P-03：`with_cumulative` 准入 2 个任务且峰值 90.8906%，`snapshot_only_baseline` 准入 4 个且峰值 100.6562%（越线）。
+  - 完成全量验证：
+    - 单测 28/28 通过；
+    - 配置校验 PASS；
+    - 结构检查 PASS。
+- 文件变更：
+  - `prototype/run_patent_evidence.py`
+  - `prototype/tests/test_patent_evidence.py`
+  - `figures/patent_evidence_metrics.csv`
+  - `figures/patent_evidence_metrics.json`
+  - `qa/r6_step3_patent_evidence_pack_2026-02-10.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] P-02/P-03 均有“有机制/无机制”对照
+  - [x] 证据输出由脚本自动生成且可复现
+  - [x] 结论与 `resource_scheduler.py` 关键行号已映射
+  - [x] 新增测试覆盖证据脚本核心结论
+  - [x] 全量回归与校验通过
+- 风险与后续：
+  - 风险：P-03 的 snapshot-only 对照为“消融基线”而非生产分支实现；真实混合负载证据仍需补充。
+  - 后续：等待 Claude 对 R6 第2步反馈后，按其意见与本轮证据包做交叉审查并修订 claim-support matrix。
+
+## 2026-02-10 15:25:05 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（采纳同事 R6 建议后的 Step3 增强）
+- 工作内容：
+  - 按建议增强 P-02/P-03 证据设计并重跑：
+    1. P-02 改为“Dual-view vs EMA-only(alpha=0.3, no raw bypass)”对照，新增响应延迟指标。
+    2. P-03 改为“with cumulative projection vs without cumulative projection”调度器级对照，新增超发率指标。
+  - 脚本增强：
+    - `prototype/run_patent_evidence.py` 新增两个消融基线调度器：
+      - `EmaOnlyModeScheduler`
+      - `NoCumulativeProjectionScheduler`
+  - 文档增强：
+    - 更新 `qa/r6_step3_patent_evidence_pack_2026-02-10.md`（结果、解释、复现命令）
+    - 新增 `qa/technique_claim_mapping_2026-02-10.md`（代码行号 -> 技术点 -> claim 候选 -> 证据）
+  - 关键结果：
+    - P-02：dual-view 延迟 0 tick；EMA-only 延迟 3 ticks。
+    - P-03：无累计投影相对累计投影多放行 2 个任务，超发率 `0.5`，并触发阈值越线。
+  - 验证：
+    - 证据脚本执行通过并重生成 `figures/patent_evidence_metrics.csv/json`
+    - 全量单测 `28/28` 通过
+    - 配置校验 PASS
+    - 结构检查 PASS
+- 文件变更：
+  - `prototype/run_patent_evidence.py`
+  - `prototype/tests/test_patent_evidence.py`
+  - `figures/patent_evidence_metrics.csv`
+  - `figures/patent_evidence_metrics.json`
+  - `qa/r6_step3_patent_evidence_pack_2026-02-10.md`
+  - `qa/technique_claim_mapping_2026-02-10.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] P-02 使用指定基线（EMA-only, alpha=0.3, no raw bypass）
+  - [x] P-03 使用调度器级 no-cumulative 基线
+  - [x] 指标从“定性比较”升级为“延迟/超发率”定量比较
+  - [x] 三元证据映射完整（实现行号 + 实验输出 + 回归测试）
+  - [x] 回归、配置、结构检查全部通过
+- 风险与后续：
+  - 风险：`patent/` 目录仍是旧方向文本（ISSUE-9 治理项未决），当前仅保证 `qa/` 证据链与资源调度主线一致。
+  - 后续：收到 Claude 新一轮评审后，逐条对比并决定是否进入“资源调度专利文本重写”阶段。
+
+## 2026-02-10 17:41:33 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（深度算法自查与修复）
+- 工作内容：
+  - 开展 fault-oriented 深度自查，聚焦 GPU 监控边界和配置阈值一致性。
+  - 发现并修复 2 个真实问题：
+    1. F-14：`_sample_gpu` 遇到混合 `N/A` 行时会整段返回 `{}`，导致 GPU 防护失效。
+    2. F-15：缺失 `gpu_memory_high_pct < gpu_memory_emergency_pct` 关系校验。
+  - 修复动作：
+    - `prototype/resource_scheduler.py`：逐行容错解析 GPU 输出，跳过坏行；补 GPU 阈值关系校验。
+    - `qa/validate_scheduler_config.py`：同步补 GPU 阈值关系校验，保持 QA 与核心逻辑一致。
+  - 新增测试：
+    - `test_gpu_monitor_skips_malformed_rows`
+    - `test_invalid_gpu_threshold_relation_rejected`
+  - 新增审计文档：
+    - `qa/deep_algorithm_self_audit_R2_2026-02-10.md`
+  - 回归验证：
+    - 单测 `30/30` 通过
+    - 配置校验 PASS
+    - 结构检查 PASS
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `qa/validate_scheduler_config.py`
+  - `qa/deep_algorithm_self_audit_R2_2026-02-10.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 问题可复现且风险路径明确
+  - [x] 修复后行为有针对性回归测试
+  - [x] 核心逻辑与 QA 校验脚本保持一致
+  - [x] 全量测试与结构校验通过
+- 风险与后续：
+  - 风险：`blocked_total` 口径与唯一任务数口径仍未拆分。
+  - 后续：可在下一轮补 `blocked_task_total` 指标并补充任务级 GPU affinity 预测。
+
+## 2026-02-11 00:48:24 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（深度算法自查与改进继续推进）
+- 工作内容：
+  - 完成指标口径改进 F-16：把阻断指标拆分为事件数和唯一任务数。
+    1. 在 `SchedulerMetrics` 中新增 `blocked_task_total`。
+    2. 在调度器中新增 `_blocked_task_ids`，确保唯一任务阻断只计一次。
+    3. 保留 `blocked_total` 作为事件数，避免破坏兼容性。
+  - 新增测试覆盖：
+    - `test_blocked_metrics_split_event_and_unique_task_count`
+    - `test_blocked_metrics_unique_count_with_multiple_tasks`
+  - 同步实验输出与规格文档：
+    - `prototype/run_experiments.py` 增加 `blocked_task_total` 输出字段。
+    - `spec/algorithm_pseudocode.md`、`spec/data_model.md` 同步指标定义。
+  - 执行复验：
+    - 单测 `32/32` 通过
+    - 配置校验 PASS
+    - 结构检查 PASS
+    - `run_experiments.py`、`run_patent_evidence.py` 执行通过并重生成输出
+  - 新增审计文档：
+    - `qa/deep_algorithm_self_audit_R3_2026-02-11.md`
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `prototype/run_experiments.py`
+  - `spec/algorithm_pseudocode.md`
+  - `spec/data_model.md`
+  - `figures/scheduler_experiment_metrics.csv`
+  - `figures/scheduler_experiment_metrics.json`
+  - `figures/patent_evidence_metrics.csv`
+  - `figures/patent_evidence_metrics.json`
+  - `qa/deep_algorithm_self_audit_R3_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] `blocked_total` 与 `blocked_task_total` 语义清晰分离
+  - [x] 重复阻断与多任务阻断场景均有测试覆盖
+  - [x] 保持旧指标兼容，不破坏现有调用
+  - [x] 实验脚本和规格文档已同步
+  - [x] 全量回归与校验通过
+- 风险与后续：
+  - 风险：多 GPU 仍未引入任务级 affinity 预测，当前为风险最高卡保守判定。
+  - 后续：可进入下一轮“任务级 GPU affinity + admission 预测”改进。
+
+## 2026-02-11 00:57:16 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（下一阶段算法推进：GPU affinity 准入）
+- 工作内容：
+  - 完成 F-17：任务级 GPU affinity 准入预测能力。
+    1. `TaskSpec` 新增 `target_gpu_index`。
+    2. `ResourceSnapshot` 新增 `gpu_cards`，承载每张 GPU 的实时数据。
+    3. `ResourceMonitor._sample_gpu` 输出多卡明细并保持“风险最高卡”聚合字段兼容。
+    4. `_can_admit` 新增 target-card 投影逻辑：
+       - 指定 `target_gpu_index` 时，按目标卡显存占用进行准入判定；
+       - 目标卡不可用时显式拒绝（`target gpu unavailable`）。
+  - 新增测试覆盖：
+    - `test_gpu_affinity_uses_target_card_projection`
+    - `test_gpu_affinity_rejects_unavailable_target`
+    - 在 `test_invalid_task_spec_rejected` 中补负值 affinity 校验
+    - 扩展 `test_gpu_monitor_uses_worst_card_for_multi_gpu` 验证 `gpu_cards` 输出
+  - 文档与审计：
+    - 新增 `qa/deep_algorithm_self_audit_R4_2026-02-11.md`
+    - 更新 `spec/data_model.md` 与 `spec/algorithm_pseudocode.md`
+  - 回归验证：
+    - 单测 `34/34` 通过
+    - 配置校验 PASS
+    - 结构检查 PASS
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `spec/data_model.md`
+  - `spec/algorithm_pseudocode.md`
+  - `qa/deep_algorithm_self_audit_R4_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 新能力对无 affinity 任务保持兼容
+  - [x] 目标卡不可用时有显式拒绝与可审计原因
+  - [x] 正向/负向路径均有测试覆盖
+  - [x] 回归、配置、结构检查全部通过
+- 风险与后续：
+  - 风险：当前同 tick GPU 预测仍为全局 `planned_extra_gpu_mb`，未拆分到 per-GPU 预算。
+  - 后续：可继续推进“per-GPU planned budget”以减少跨卡保守误阻断。
+
+## 2026-02-11 01:06:20 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R7 低级问题闭环）
+- 工作内容：
+  - 针对 R7 的 ISSUE-32/33/34/35 完成闭环：
+    1. ISSUE-32：`_blocked_task_ids` 生命周期释放，避免历史任务 ID 长期积累。
+    2. ISSUE-35：EMERGENCY 模式下为 pending 任务逐条写入 `TASK_BLOCKED` 事件，补齐可观测性。
+    3. ISSUE-33：`spec/data_model.md` 补齐 `gpu_cards` / `target_gpu_index` 文档。
+    4. ISSUE-34：`qa/technique_claim_mapping_2026-02-10.md` 行号映射更新到当前代码。
+  - 新增测试：
+    - `test_blocked_task_tracking_released_after_completion`
+    - `test_emergency_pending_tasks_emit_per_task_block_events`
+  - 新增审计文档：
+    - `qa/deep_algorithm_self_audit_R5_2026-02-11.md`
+  - 回归验证：
+    - 单测 `36/36` 通过
+    - 配置校验 PASS
+    - 结构检查 PASS
+    - `run_experiments.py`、`run_patent_evidence.py` 可正常执行
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `spec/data_model.md`
+  - `qa/technique_claim_mapping_2026-02-10.md`
+  - `qa/deep_algorithm_self_audit_R5_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] ISSUE-32/35 有代码与测试双重证据
+  - [x] ISSUE-33/34 有文档同步证据
+  - [x] 全量测试、配置与结构检查通过
+  - [x] 关键引用行号已复核无越界
+- 风险与后续：
+  - 风险：同 tick GPU 累计预算仍是全局值，未细分到每张 GPU。
+  - 后续：推进 per-GPU planned budget（下一阶段算法增强）。
+
+## 2026-02-11 09:18:24 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（下一阶段算法增强：per-GPU planned budget）
+- 工作内容：
+  - 完成 F-18：同 tick GPU 累计预算从全局标量升级为按卡预算。
+    1. `tick()` 中新增 `planned_extra_gpu_by_index` 与 `planned_extra_gpu_unbound_mb`。
+    2. `_can_admit()` 中按任务是否绑定 GPU 分流预算：
+       - 绑定任务：只叠加 unbound + 目标卡预算；
+       - 未绑定任务：保持保守路径，叠加所有按卡预算。
+    3. 更新 `NoCumulativeProjectionScheduler` 的 `_can_admit` 签名，保持证据脚本兼容。
+  - 持续闭环 R7 低级项验证：
+    - EMERGENCY pending 逐任务阻断事件仍保持；
+    - `_blocked_task_ids` 生命周期释放仍保持。
+  - 新增测试：
+    - `test_real_run_gpu_projection_uses_per_gpu_planned_budget`
+    - `test_real_run_unbound_gpu_projection_remains_conservative`
+  - 文档与审计：
+    - 新增 `qa/deep_algorithm_self_audit_R6_2026-02-11.md`
+    - 更新 `spec/algorithm_pseudocode.md`
+    - 追加 `spec/data_model.md` 可观测性说明
+  - 回归验证：
+    - 单测 `38/38` 通过
+    - 配置校验 PASS
+    - 结构检查 PASS
+    - `run_experiments.py` / `run_patent_evidence.py` 执行成功
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `prototype/run_patent_evidence.py`
+  - `spec/algorithm_pseudocode.md`
+  - `spec/data_model.md`
+  - `qa/deep_algorithm_self_audit_R6_2026-02-11.md`
+  - `logs/work_progress.md`
+  - `figures/scheduler_experiment_metrics.csv`
+  - `figures/scheduler_experiment_metrics.json`
+  - `figures/patent_evidence_metrics.csv`
+  - `figures/patent_evidence_metrics.json`
+- 文件评审清单：
+  - [x] 绑定 GPU 的任务不再被其他卡的 planned load 误阻断
+  - [x] 未绑定 GPU 的任务仍维持保守防护
+  - [x] 证据脚本兼容（NoCumulativeProjectionScheduler）
+  - [x] R7 低级项修复在本轮后仍有效
+  - [x] 全量回归、配置与结构检查通过
+- 风险与后续：
+  - 风险：dry_run 下 GPU 运行负载仍是聚合估算，未做 per-card 运行态估算。
+  - 后续：若继续，可引入运行态 task->gpu_index 跟踪，补齐 dry_run/real-run 一致性的 per-card 估算路径。
+
+## 2026-02-11 10:41:10 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（采纳严格评审并继续深度改进）
+- 工作内容：
+  - 修复 Critical 问题 F-19（BUG-3）：
+    1. `_smooth_snapshot()` 保留 `gpu_cards`，避免 `ema_alpha<1.0` 下 GPU affinity 被误判为 `target gpu unavailable`。
+  - 完成一致性增强 F-20：
+    1. 新增 `_running_estimated_gpu_breakdown()`，在 dry_run 中按 GPU 卡维度估算运行态显存预算；
+    2. `_can_admit()` 在 dry_run 路径改为使用 per-card running budget，减少跨卡误阻断；
+    3. real-run 的 per-card planned budget 行为继续保持并回归验证。
+  - 同步证据链文档：
+    1. 更新 `qa/technique_claim_mapping_2026-02-10.md` 过期行号映射；
+    2. 新增 `qa/deep_algorithm_self_audit_R7_2026-02-11.md`（本轮问题、修复、测试、残余风险）。
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/run_patent_evidence.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `qa/technique_claim_mapping_2026-02-10.md`
+  - `qa/deep_algorithm_self_audit_R7_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] BUG-3 修复覆盖真实生产路径（`ema_alpha=0.6`）并有回归测试
+  - [x] dry_run/real-run GPU 预算策略一致性增强后行为可解释
+  - [x] 行号映射已刷新，避免评审时证据链失配
+  - [x] 全量验证通过（40/40 测试 + 配置校验 PASS + 结构检查 PASS）
+  - [x] 专利证据脚本与实验脚本可执行且产出成功
+- 风险与后续：
+  - 风险：`qa/claude_deep_audit_R8_2026-02-11.md` 当前文件编码异常（显示乱码），如需长期留档建议统一转 UTF-8。
+  - 后续：等待你下一轮 Claude 审核意见后，逐条做差异闭环并进入下一阶段实现。
+
+## 2026-02-11 10:55:12 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（算法推进：紧急抢占精度增强）
+- 工作内容：
+  - 完成 F-21（stuck 回收计量修复）：
+    1. `_stop_task()` 在强制移除路径下按原因更新指标（`PREEMPTED`/`TIMEOUT`）；
+    2. `_preempt_low_priority()` 把“已从 running 移除但 stop 返回 false”的任务计入有效回收，避免同 tick 过度多杀。
+  - 完成 F-22（GPU 紧急定向抢占）：
+    1. 在紧急回收中识别内存/显存压力维度；
+    2. 引入 pressure-aware reclaim score（含目标卡 affinity 权重）；
+    3. 增加显存回收目标（回落到 `gpu_memory_high_pct`）并与内存目标联合停止。
+  - 新增测试：
+    - `test_stuck_removed_counts_toward_preempt_reclaim_target`
+    - `test_gpu_emergency_preempts_gpu_heavy_task_first`
+    - 同步更新 `test_stuck_task_removed_after_timeout` 指标断言（timeout_total）
+  - 文档与审计同步：
+    - 更新 `spec/algorithm_pseudocode.md`
+    - 更新 `spec/data_model.md`
+    - 新增 `qa/deep_algorithm_self_audit_R8_2026-02-11.md`
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `spec/algorithm_pseudocode.md`
+  - `spec/data_model.md`
+  - `qa/deep_algorithm_self_audit_R8_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 抢占回收计量覆盖 stuck 强制移除路径
+  - [x] GPU 紧急场景抢占顺序由“内存优先”升级为“瓶颈资源优先”
+  - [x] 新增回归测试覆盖两条改进路径
+  - [x] 全量回归通过（42/42）
+  - [x] 配置校验 PASS / 结构检查 PASS
+  - [x] 实验脚本和证据脚本执行成功
+- 风险与后续：
+  - 风险：GPU 回收目标目前基于“最危险卡 + 任务估算值”，在估算偏差较大时仍可能保守。
+  - 后续：可继续推进“基于历史观测的任务估算自校准”，进一步降低误杀与误阻断。
+
+## 2026-02-11 11:08:22 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（采纳 R9 严格评审后继续深度改进）
+- 工作内容：
+  - 完成 F-23：dry_run 准入路径引入同 tick 运行态估算缓存，减少重复遍历 `running_set`。
+    1. `tick()` 内一次性预计算 `running_est_*` 与 `running_gpu_*`；
+    2. `_can_admit()` 新增可选缓存入参并保持 fallback 兼容；
+    3. 每次启动成功后增量更新缓存，保证同 tick 投影正确。
+  - 完成 F-24：新增 `ema_alpha<1.0` 全路径集成测试，覆盖“EMA 平滑 + affinity 准入 + raw GPU 紧急触发 + 紧急抢占”。
+  - 同步兼容：
+    1. `NoCumulativeProjectionScheduler._can_admit` 签名跟随更新，证据脚本保持可运行。
+  - 文档同步：
+    1. `spec/algorithm_pseudocode.md` 补充 dry_run 缓存逻辑；
+    2. `spec/data_model.md` 补充 `Dry-Run Admission Cache (R9)` 说明；
+    3. 新增 `qa/deep_algorithm_self_audit_R10_2026-02-11.md`。
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `prototype/run_patent_evidence.py`
+  - `spec/algorithm_pseudocode.md`
+  - `spec/data_model.md`
+  - `qa/deep_algorithm_self_audit_R10_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] dry_run 路径没有回归到 F-07 双计数问题
+  - [x] 运行态估算函数每 tick 只计算一次（新增测试断言）
+  - [x] `ema_alpha<1.0` 生产默认路径具备端到端覆盖
+  - [x] 证据脚本签名兼容，仍可执行
+  - [x] 全量验证通过（44/44、配置 PASS、结构 PASS）
+- 风险与后续：
+  - 风险：当前任务资源估算仍依赖静态输入，估算误差大时会影响准入与抢占最优性。
+  - 后续：进入“资源画像学习（估算自校准）”阶段，按历史真实运行表现动态修正 `estimated_*`。
+
+## 2026-02-11 12:31:00 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（深度解析同事评审意见并规划下一步）
+- 工作内容：
+  - 深度解析输入评审意见，形成三类结论：
+    1. 算法层：当前主干可用，但 ISSUE-36/37 仍需闭环；
+    2. 测试层：覆盖广但有真实进程/长序列/估算误差盲区；
+    3. 专利层：`prior_art/` 与 `patent/` 仍是旧方向，必须重建。
+  - 形成跨阶段执行计划（R11-R13）并落盘：
+    - R11：ISSUE-36/37 算法一致性与评分归一化；
+    - R12：测试盲区补齐（真实进程、长序列、误差容错）；
+    - R13：资源调度方向 prior art 重建 + patent 文档重写 + 路线决策报告。
+  - 输出计划文档：
+    - `qa/r11_r13_execution_plan_2026-02-11.md`
+- 文件变更：
+  - `qa/r11_r13_execution_plan_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 计划按优先级拆解为可执行阶段（R11/R12/R13）
+  - [x] 每阶段包含目标、改动点、验收标准、风险控制
+  - [x] 专利推进明确绑定“先检索、后写作、再决策”流程
+  - [x] 计划可直接用于下一轮评审与交接
+- 风险与后续：
+  - 风险：专利路线仍受 prior art 结果强约束，存在“发明路线中止”可能。
+  - 后续：立即执行 R11（ISSUE-36/37），完成后提交 R11 审计包等待下一轮评审。
+
+## 2026-02-11 12:42:18 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R11 算法一致性闭环）
+- 工作内容：
+  - 完成 F-25（ISSUE-36）：
+    1. `tick()` 将 `raw_snapshot` 传入 `_preempt_low_priority`；
+    2. 抢占维度判定改为 `emergency_view = raw_snapshot or snapshot`，与 `_evaluate_mode` 保持一致。
+  - 完成 F-26（ISSUE-37）：
+    1. 混合紧急评分由“mem_mb + gpu_mb”改为按缺口归一化评分：
+       - `mem_score = mem_mb / reclaim_needed_mem_mb`
+       - `gpu_score = effective_gpu_reclaim / reclaim_needed_gpu_mb`
+    2. 保留 affinity 权重机制，减少单位混合带来的排序偏差。
+  - 新增测试：
+    - `test_preempt_uses_raw_view_for_emergency_dimension_detection`
+    - `test_mixed_emergency_preempt_score_uses_normalized_resources`
+  - 中途自查修正：
+    - 发现冷却保护条件导致两条历史测试回归失败，已修正为“仅在 tick-path 且无活跃紧急维度时早退”，恢复兼容。
+  - 文档与审计：
+    - 更新 `spec/algorithm_pseudocode.md`
+    - 更新 `spec/data_model.md`
+    - 新增 `qa/deep_algorithm_self_audit_R11_2026-02-11.md`
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `spec/algorithm_pseudocode.md`
+  - `spec/data_model.md`
+  - `qa/deep_algorithm_self_audit_R11_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] ISSUE-36/37 均有代码变更与回归测试
+  - [x] 发现并修复中途回归（两条旧测试恢复通过）
+  - [x] 全量测试通过（46/46）
+  - [x] 配置校验 PASS / 结构检查 PASS
+  - [x] 实验脚本与证据脚本执行成功
+  - [x] claim mapping 行号引用有效（ALL_MAPPING_REFS_VALID）
+- 风险与后续：
+  - 风险：真实进程、长序列、估算误差三类盲区仍未完全补齐（R12 计划项）。
+  - 后续：进入 R12，补真实进程与鲁棒性测试，再启动 R13 的 prior_art 重建与 patent 重写。
+
+## 2026-02-11 12:47:27 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R12 测试盲区补齐 + 彻底自查）
+- 工作内容：
+  - 完成 F-27：真实进程生命周期测试补齐（`dry_run=False`）。
+    1. 新增“真实进程完成并计数”测试；
+    2. 新增“真实进程超时终止并退出”测试。
+  - 完成 F-28：长序列随机扰动鲁棒性测试。
+    1. 固定 seed 的 220 ticks 噪声序列；
+    2. 每 tick 校验状态不变量（running/pending/metrics/events 上界）。
+  - 完成 F-29：估算误差容错测试。
+    1. 过估算：大任务被阻断但小任务可继续推进；
+    2. 低估算：后续 raw 紧急尖峰触发预抢占，验证安全路径。
+  - 彻底自查与稳定性复验：
+    1. 全量 `51/51` 通过；
+    2. 关键新增测试重复运行 5 轮，全部通过；
+    3. 配置/结构检查 PASS；
+    4. 实验脚本与证据脚本执行成功；
+    5. claim mapping 引用校验 `ALL_MAPPING_REFS_VALID`。
+  - 新增审计文档：
+    - `qa/deep_algorithm_self_audit_R12_2026-02-11.md`
+- 文件变更：
+  - `prototype/tests/test_resource_scheduler.py`
+  - `qa/deep_algorithm_self_audit_R12_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 三类盲区均有新增用例覆盖（真实进程/长序列/估算误差）
+  - [x] 新增测试命中真实代码路径而非纯 mock 断言
+  - [x] 重复运行验证通过，未发现新增波动性
+  - [x] 回归与校验全绿
+- 风险与后续：
+  - 风险：当前实验仍以合成负载为主，真机对照证据仍是 R13 重点。
+  - 后续：进入 R13（prior_art 重建 + patent 重写 + 路线决策报告）。
+
+## 2026-02-11 13:08:41 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R13 专利前置产出 + 彻底自查）
+- 工作内容：
+  - 完成资源调度方向 R13 文档链：
+    1. `prior_art/resource_scheduler_search_plan.md`（检索计划）
+    2. `prior_art/resource_scheduler_prior_art_index.md`（先有技术索引）
+    3. `prior_art/resource_scheduler_claim_chart.md`（三核心保护点对照）
+    4. `patent/权利要求书_资源调度_v1.md`（新版权利要求草案）
+    5. `patent/说明书_资源调度_v1.md`（新版说明书草案）
+    6. `qa/patent_route_decision_report_2026-02-11.md`（路线决策报告）
+    7. `qa/technique_claim_mapping_resource_scheduler_v1_2026-02-11.md`（代码-权利映射）
+  - 更新交接锚点：
+    - `prior_art/README.md`、`patent/README.md`、`qa/README.md`、`.claude.md`
+  - 完成彻底自查并输出：
+    - `qa/deep_algorithm_self_audit_R13_2026-02-11.md`
+- 文件变更：
+  - `.claude.md`
+  - `prior_art/README.md`
+  - `prior_art/resource_scheduler_search_plan.md`
+  - `prior_art/resource_scheduler_prior_art_index.md`
+  - `prior_art/resource_scheduler_claim_chart.md`
+  - `patent/README.md`
+  - `patent/权利要求书_资源调度_v1.md`
+  - `patent/说明书_资源调度_v1.md`
+  - `qa/README.md`
+  - `qa/patent_route_decision_report_2026-02-11.md`
+  - `qa/technique_claim_mapping_resource_scheduler_v1_2026-02-11.md`
+  - `qa/deep_algorithm_self_audit_R13_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 新文档全部围绕资源调度方向，不再混入旧主线术语
+  - [x] 权利要求关键点与当前代码能力一致（非虚构）
+  - [x] claim mapping 行号自动核验通过（`CLAIM_MAPPING_LINE_CHECK_PASS`）
+  - [x] 全量测试通过（`51/51`）
+  - [x] 配置校验 PASS
+  - [x] 结构检查 PASS
+  - [x] 证据脚本与实验脚本均可执行并产出
+- 风险与后续：
+  - 风险：专利候选项仍缺 claim-level 全文比对，发明专利新颖性判断仍有不确定性。
+  - 后续：进入“专利全文级检索 + 真机基线实验 + 代理人收敛 v2 文本”阶段。
+
+## 2026-02-11 14:39:43 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R14：采纳 R12 评审意见并推进数据集/算法实验）
+- 工作内容：
+  - 按评审意见完成文档修复闭环：
+    1. ISSUE-45：`RS-P01` 风险由中调整为高，并新增 claim-level 对照文档；
+    2. ISSUE-46：修正 `RS-P02` 为“GPU 虚拟化 timeslice 调度”描述；
+    3. ISSUE-47：扩展专利候选到 9 条并补 CNIPA 官方检索入口；
+    4. ISSUE-48：`权利要求书_资源调度_v1.md` 独立权利要求第 6 步加入“归一化回收评分”；
+    5. ISSUE-49/50：说明书补充量化有益效果与参数化实施例。
+  - 新增高算力研究脚本：`prototype/run_advanced_research.py`
+    1. P-04：per-GPU 投影 vs 总量投影误阻断率消融；
+    2. P-05：归一化评分 vs 原始MB评分 vs 随机抢占消融；
+    3. 可选真机基线（A 无调度 / B 固定并发 / C 动态调度器）。
+  - 新增测试：`prototype/tests/test_advanced_research.py`（2 个用例）。
+  - 新增附图：
+    - `patent/附图_资源调度_图1_系统模块.svg`
+    - `patent/附图_资源调度_图2_调度周期流程.svg`
+  - 新增自查：`qa/deep_algorithm_self_audit_R14_2026-02-11.md`
+- 文件变更：
+  - `.claude.md`
+  - `figures/README.md`
+  - `patent/README.md`
+  - `patent/权利要求书_资源调度_v1.md`
+  - `patent/说明书_资源调度_v1.md`
+  - `patent/附图_资源调度_图1_系统模块.svg`
+  - `patent/附图_资源调度_图2_调度周期流程.svg`
+  - `prior_art/README.md`
+  - `prior_art/resource_scheduler_search_plan.md`
+  - `prior_art/resource_scheduler_prior_art_index.md`
+  - `prior_art/resource_scheduler_claim_chart.md`
+  - `prior_art/resource_scheduler_claim_level_RS-P01_2026-02-11.md`
+  - `prototype/README.md`
+  - `prototype/run_advanced_research.py`
+  - `prototype/tests/test_advanced_research.py`
+  - `qa/README.md`
+  - `qa/patent_route_decision_report_2026-02-11.md`
+  - `qa/technique_claim_mapping_resource_scheduler_v1_2026-02-11.md`
+  - `qa/deep_algorithm_self_audit_R14_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] R12 指出的 ISSUE-45/46/48 已明确落文件修复
+  - [x] 检索范围已补 CNIPA 入口与更多专利候选
+  - [x] 新增实验脚本支持大样本运行，参数可扩展
+  - [x] 新增实验脚本有独立单测覆盖
+  - [x] 全量测试 `53/53` 通过
+  - [x] 配置校验 PASS
+  - [x] 结构检查 PASS
+  - [x] claim mapping 行号核验 PASS
+- 风险与后续：
+  - 风险：CNKI/万方中文学术论文检索仍需进一步补齐。
+  - 后续：
+    1. 先跑大样本 `run_advanced_research.py --trials 10000`（利用本地算力）
+    2. 再做 RS-P01 family 的 claim-level 深比对并收敛 v2 权利要求。
+
+## 2026-02-11 14:42:04 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R14 补充：大样本消融）
+- 工作内容：
+  - 运行 `python prototype/run_advanced_research.py --trials 20000`，产出高样本证据：
+    1. P-04 误阻断率：aggregate `0.350918` vs per-GPU `0.0`；
+    2. P-05 平均抢占数：normalized `3.7551`，raw-MB `3.886`，random `3.8641`。
+  - 更新 `qa/deep_algorithm_self_audit_R14_2026-02-11.md` 记录大样本结果。
+- 文件变更：
+  - `figures/advanced_research_metrics.csv`
+  - `figures/advanced_research_metrics.json`
+  - `qa/deep_algorithm_self_audit_R14_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 大样本脚本执行成功
+  - [x] 输出指标字段完整
+  - [x] 结果已同步入审计文档
+- 风险与后续：
+  - 风险：真机基线实验结果受本地负载干扰，需固定实验窗口。
+  - 后续：下一轮执行多轮重复实验并输出置信区间。
+
+## 2026-02-11 18:01:20 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R16：实验严谨性增强 + 自查）
+- 工作内容：
+  - 升级 `prototype/run_advanced_research.py`：
+    1. P-04 从单场景改为四类混合场景分层评估（other/same/mixed/none）；
+    2. 新增 `scenario_breakdown` 分层指标输出；
+    3. P-05 增加紧约束变体（`tight_preempt_limit`），并保留全量基线；
+    4. CLI 新增 `--p05-tight-preempt-limit`；
+    5. CSV 新增 `P-04-SCENARIO` 与 `P-05-TIGHT` 行。
+  - 更新测试 `prototype/tests/test_advanced_research.py`：
+    1. 校验 P-04 分层统计一致性；
+    2. 校验 P-05 紧约束指标存在与基本趋势。
+  - 跑大样本与真机基线：
+    - `python prototype/run_advanced_research.py --trials 20000 --p05-tight-preempt-limit 5 --run-real-baseline --real-task-count 24 --real-task-duration-sec 2.0 --real-base-mem-mb 96 --real-fixed-workers 6`
+  - 新增审计：`qa/deep_algorithm_self_audit_R16_2026-02-11.md`
+- 文件变更：
+  - `prototype/run_advanced_research.py`
+  - `prototype/tests/test_advanced_research.py`
+  - `prototype/README.md`
+  - `figures/README.md`
+  - `figures/advanced_research_metrics.csv`
+  - `figures/advanced_research_metrics.json`
+  - `qa/deep_algorithm_self_audit_R16_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 新增 P-04 分层场景统计字段完整，且总数守恒
+  - [x] 新增 P-05 紧约束变体字段完整
+  - [x] `test_advanced_research.py` 通过
+  - [x] 全量测试 `58/58` 通过
+  - [x] 配置校验 PASS
+  - [x] 结构检查 PASS
+  - [x] `run_experiments.py` / `run_patent_evidence.py` / `run_advanced_research.py` 均成功执行
+- 关键结果摘要：
+  - P-04 总体误阻断：aggregate `0.182961` vs per-GPU `0.0`；
+  - P-04 other-card 场景误阻断：aggregate `0.376155` vs per-GPU `0.0`；
+  - P-05 全量：normalized 平均抢占 `3.7551`，优于 raw `3.886` 与 random `3.8641`；
+  - P-05 紧约束(k=5)：normalized 平均抢占 `3.5421`，raw `3.6456`，random `3.6825`。
+- 风险与后续：
+  - 风险：当前环境 `psutil` 不可用时，真机基线 `peak_memory_pct/peak_swap_pct` 可能为 `null`。
+  - 后续：下一轮补 `psutil` 缺失显式告警与可替代采样策略，避免评审误判为数据缺失。
+
+## 2026-02-11 18:24:05 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R17：混合紧急抢占评分优化）
+- 工作内容：
+  - 算法增强（`prototype/resource_scheduler.py`）：
+    1. 在 mixed emergency（内存+GPU）下，引入“单维收益封顶 + 双维协同加分”评分：
+       - `mem_unit=min(1, mem_norm)`
+       - `gpu_unit=min(1, gpu_norm)`
+       - `score=mem_unit+gpu_unit+min(mem_unit,gpu_unit)`
+    2. 目标：避免单维度超大任务在双瓶颈场景下挤占优先级，提升紧约束恢复效率。
+  - 新增回归测试（`prototype/tests/test_resource_scheduler.py`）：
+    - `test_mixed_emergency_prefers_dual_reclaim_contributor`
+  - 运行大样本实验（`--trials 20000`）复核：
+    - P-05 紧约束(k=5)恢复率：normalized `0.913` > random `0.89855` > raw `0.872`。
+- 文件变更：
+  - `prototype/resource_scheduler.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `figures/advanced_research_metrics.csv`
+  - `figures/advanced_research_metrics.json`
+  - `figures/scheduler_experiment_metrics.csv`
+  - `figures/scheduler_experiment_metrics.json`
+  - `figures/patent_evidence_metrics.csv`
+  - `figures/patent_evidence_metrics.json`
+  - `qa/deep_algorithm_self_audit_R17_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 算法改动具备新增单测覆盖
+  - [x] 关键历史测试保持通过
+  - [x] 全量测试 `59/59` 通过
+  - [x] 配置校验 PASS
+  - [x] 结构检查 PASS
+  - [x] 实验脚本与证据脚本回归通过
+- 关键结果摘要：
+  - P-05 全量平均抢占：normalized `3.6864`，优于 raw `3.886`、random `3.8641`
+  - P-05 紧约束平均抢占：normalized `3.5164`，优于 raw `3.6456`、random `3.6825`
+  - P-05 紧约束恢复率：normalized `0.913`，领先 raw `+0.041`、领先 random `+0.01445`
+- 风险与后续：
+  - 风险：评分参数仍是启发式，需多 seed 置信区间验证稳健性。
+  - 后续：下一轮补“多 seed 重复实验 + 置信区间输出”，并考虑将 mixed-emergency 权重参数化。
+
+## 2026-02-11 18:43:37 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R18：多 seed 置信区间证据增强）
+- 工作内容：
+  - 升级 `prototype/run_advanced_research.py`：
+    1. 新增 `_mean_ci95` 统计函数；
+    2. 新增 `run_multiseed_confidence_summary`（多 seed 重复实验）；
+    3. 新增 CLI：`--multi-seed-runs` / `--multi-seed-trials` / `--multi-seed-step`；
+    4. JSON 增加 `multiseed` 块，CSV 增加 `MULTI-SEED-CI` 行。
+  - 测试增强：
+    - `prototype/tests/test_advanced_research.py` 新增 `test_multiseed_confidence_summary_has_ci_bounds`。
+  - 跑高样本多 seed：
+    - `python prototype/run_advanced_research.py --trials 20000 --p05-tight-preempt-limit 5 --multi-seed-runs 7 --multi-seed-trials 5000 --multi-seed-step 9973`
+  - 新增审计：`qa/deep_algorithm_self_audit_R18_2026-02-11.md`
+- 文件变更：
+  - `prototype/run_advanced_research.py`
+  - `prototype/tests/test_advanced_research.py`
+  - `prototype/README.md`
+  - `figures/README.md`
+  - `figures/advanced_research_metrics.csv`
+  - `figures/advanced_research_metrics.json`
+  - `figures/scheduler_experiment_metrics.csv`
+  - `figures/scheduler_experiment_metrics.json`
+  - `figures/patent_evidence_metrics.csv`
+  - `figures/patent_evidence_metrics.json`
+  - `qa/deep_algorithm_self_audit_R18_2026-02-11.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 多 seed 统计结构完整（seed_list/per_seed/metrics）
+  - [x] 95% CI 字段齐全并通过测试断言
+  - [x] `test_advanced_research.py` 通过（3/3）
+  - [x] 全量测试通过（60/60）
+  - [x] 配置校验 PASS
+  - [x] 结构检查 PASS
+  - [x] 实验脚本与证据脚本回归通过
+- 关键结果摘要（7 seeds, 5000 trials/seed）：
+  - P-04 false_block_reduction 均值 `0.186426`，95% CI `[0.180939, 0.191913]`
+  - P-05 紧约束恢复优势（vs raw）均值 `0.036571`，95% CI `[0.035565, 0.037578]`
+  - P-05 紧约束恢复优势（vs random）均值 `0.012486`，95% CI `[0.009903, 0.015069]`
+- 风险与后续：
+  - 风险：当前 CI 基于合成负载；真机重复实验 CI 仍需补齐。
+  - 后续：增加可选“真机多轮重复”与冷却窗口控制，避免跨轮资源残留干扰。
+
+## 2026-02-12 11:07:51 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R19：GPU 自校准闭环 + 真机基线有效性增强）
+- 工作内容：
+  - `spec/` 先行同步：
+    1. `spec/architecture.md` 补 R19 真机基线有效性约束；
+    2. `spec/algorithm_pseudocode.md` 补 GPU 自校准伪代码与 R19 参数规划/质量标记；
+    3. `spec/data_model.md` 补 `observed_peak_gpu_mem_mb` 与 `ResourceProfile.ema_peak_gpu_mem_mb`。
+  - 算法与实验实现：
+    1. `prototype/resource_scheduler.py` 增加 GPU 进程显存采样、GPU EMA 画像、GPU 估算自校准；
+    2. `prototype/run_advanced_research.py` 增加 `plan_real_baseline_params()`；
+    3. 真机基线输出新增质量字段：`started_total`、`low_signal_dynamic`、`emergency_signal_missing`、`cpu_clip_events`；
+    4. 新增实验专用 `CpuCappedMonitor`，减弱宿主机 CPU 饱和噪声对内存实验的遮蔽。
+  - 测试补齐：
+    - `prototype/tests/test_resource_scheduler.py`：
+      `test_task_profile_updates_with_gpu_ema`、
+      `test_autocalibration_adjusts_gpu_estimate_on_submit`
+    - `prototype/tests/test_advanced_research.py`：
+      `test_plan_real_baseline_params_strengthens_weak_inputs`、
+      `test_plan_real_baseline_params_reduces_oversized_task_count`
+  - 审计文档新增：`qa/deep_algorithm_self_audit_R19_2026-02-12.md`
+- 文件变更：
+  - `spec/architecture.md`
+  - `spec/algorithm_pseudocode.md`
+  - `spec/data_model.md`
+  - `prototype/resource_scheduler.py`
+  - `prototype/run_advanced_research.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `prototype/tests/test_advanced_research.py`
+  - `prototype/README.md`
+  - `figures/README.md`
+  - `qa/deep_algorithm_self_audit_R19_2026-02-12.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] `spec` 与 `prototype` 代码逻辑一致
+  - [x] 新增 GPU 自校准链路具备单测覆盖
+  - [x] 真机基线参数规划逻辑具备单测覆盖
+  - [x] 全量单测通过（65/65）
+  - [x] 配置校验 PASS
+  - [x] 结构检查 PASS
+  - [x] 三个实验脚本可执行且输出正常
+- 关键结果摘要：
+  - 真机基线弱参数（`duration=2, base_mem=96`）会被规划提升（`duration=6, base_mem=2048`）；
+  - 动态阶段不再默认为“零启动无标记”：输出 `started_total` 与低信号标记；
+  - 示例运行（6 任务）得到：`started_total=3`，`completion_rate=0.5`，`emergency_signal_missing=1`（明确提示紧急路径证据缺失）。
+- 风险与后续：
+  - 风险：在持续高负载主机上，真机实验仍可能难以触发 emergency/preempt。
+  - 后续：实现“目标事件驱动”的自动升压重跑策略，确保至少一轮产生 emergency/preempt 证据。
+
+## 2026-02-12 12:12:36 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R20：目标事件驱动真机基线重试）
+- 工作内容：
+  - 先更新 `spec/`：
+    1. `spec/architecture.md` 增加 R20 目标事件驱动流程；
+    2. `spec/algorithm_pseudocode.md` 增加重试策略伪代码；
+    3. `spec/data_model.md` 增加尝试轨迹数据模型说明。
+  - 先写测试：
+    1. `test_need_eventful_retry_flags`
+    2. `test_escalate_real_baseline_params_increases_pressure`
+    3. `test_run_real_machine_baseline_until_eventful_stops_early`
+    4. `test_gpu_pid_memory_parser_aggregates_and_skips_invalid_rows`
+  - 再实现代码（`prototype/run_advanced_research.py`）：
+    1. 新增 `need_eventful_retry` / `escalate_real_baseline_params` / `run_real_machine_baseline_until_eventful`；
+    2. CLI 新增 `--real-target-eventful`、`--real-max-attempts`、`--real-attempt-seed-step`；
+    3. CSV 新增 `REAL-BASELINE-ATTEMPT` 行导出。
+  - 文档同步：
+    - `prototype/README.md`
+    - `figures/README.md`
+  - 新增审计：
+    - `qa/deep_algorithm_self_audit_R20_2026-02-12.md`
+- 文件变更：
+  - `spec/architecture.md`
+  - `spec/algorithm_pseudocode.md`
+  - `spec/data_model.md`
+  - `prototype/run_advanced_research.py`
+  - `prototype/tests/test_advanced_research.py`
+  - `prototype/tests/test_resource_scheduler.py`
+  - `prototype/README.md`
+  - `figures/README.md`
+  - `qa/deep_algorithm_self_audit_R20_2026-02-12.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] spec -> tests -> prototype 顺序执行
+  - [x] 新策略具备回归测试覆盖
+  - [x] 全量单测通过（69/69）
+  - [x] 配置校验 PASS
+  - [x] 结构检查 PASS
+  - [x] 实验脚本回归通过
+- 关键结果摘要：
+  - `--real-target-eventful` 可输出多轮尝试轨迹与终止原因；
+  - 2 次尝试示例均正确标注 `retry_needed=1` 且 `eventful_achieved=0`，避免无效样本误判；
+  - GPU PID 显存解析测试验证了聚合与异常容错路径。
+- 风险与后续：
+  - 风险：受宿主机高负载干扰，仍可能难以在有限尝试中触发 emergency/preempt。
+  - 后续：下一轮实现“目标事件导向参数搜索”，提高触发成功率并减少无效轮次。
+
+## 2026-02-12 13:10:40 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R21：R16 评审意见闭环改进）
+- 工作内容：
+  - 深度参考 R16 评审，针对 P1 继续推进：
+    1. 在 R20 重试链路上新增 `plan_eventful_scheduler_thresholds`，按 attempt 收紧内存阈值；
+    2. `run_real_machine_baseline` 增加动态阈值参数透传（memory/cpu/preempt）；
+    3. `run_real_machine_baseline_until_eventful` 每轮注入阈值并记录到 attempt trace；
+    4. `REAL-BASELINE-ATTEMPT` CSV 行增加阈值字段，便于评审复核。
+  - 测试先行补强：
+    1. `test_plan_eventful_scheduler_thresholds_are_valid_and_tighten`
+    2. `test_run_real_machine_baseline_until_eventful_stops_early` 增加调用参数断言
+  - 真机实测验证：
+    - `--real-target-eventful --real-max-attempts 3 --real-task-count 6 --real-task-duration-sec 2 --real-base-mem-mb 96 --real-fixed-workers 4 --real-max-wall-sec 12`
+    - 首轮即达成 `eventful_achieved=1`，并触发 `emergency_ticks=9`、`preempted_total=1`。
+- 文件变更：
+  - `prototype/run_advanced_research.py`
+  - `prototype/tests/test_advanced_research.py`
+  - `qa/deep_algorithm_self_audit_R21_2026-02-12.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 新增阈值策略具备单测覆盖
+  - [x] 事件驱动重试具备调用参数断言
+  - [x] 全量测试通过（70/70）
+  - [x] 配置校验 PASS
+  - [x] 结构检查 PASS
+  - [x] 三个实验脚本回归通过
+- 关键结果摘要：
+  - ISSUE-58 由“方向修复”升级为“实测闭环”；
+  - `real_baseline_eventful` 输出包含可审计 attempt 参数与动态结果；
+  - ISSUE-59 对应的测试数口径已统一为 70（本轮自查与命令输出一致）。
+- 风险与后续：
+  - 风险：主机环境背景负载偏高，A/B 对照仍可能受外部任务影响；
+  - 后续：按评审建议推进 P2/P3（专利文本同步 + RS-P01 claim 逐条 + CNIPA 检索）。
+
+## 2026-02-12 13:19:22 +08:00
+- 执行人：Codex (GPT-5)
+- 评审人：Codex（R21 收尾一致性同步）
+- 工作内容：
+  - 将 R21 阈值收紧策略完整同步回 `spec` 与说明文档：
+    1. `spec/architecture.md`（R20 小节补充“按尝试轮次收紧阈值”）
+    2. `spec/algorithm_pseudocode.md`（补 `plan_eventful_scheduler_thresholds` 伪代码）
+    3. `spec/data_model.md`（补 attempt 参数中的动态阈值字段）
+    4. `prototype/README.md`、`figures/README.md` 同步输出字段说明
+  - 重新执行全量回归与语法检查（Python 文件）。
+- 文件变更：
+  - `spec/architecture.md`
+  - `spec/algorithm_pseudocode.md`
+  - `spec/data_model.md`
+  - `prototype/README.md`
+  - `figures/README.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] R21 策略在 spec / code / docs 三处一致
+  - [x] 全量测试通过（70/70）
+  - [x] 配置校验 PASS
+  - [x] 结构检查 PASS
+  - [x] Python 语法检查通过（相关 `.py` 文件）
+- 风险与后续：
+  - 风险：跨主机复现实验仍受环境噪声影响；
+  - 后续：保持 `REAL-BASELINE-ATTEMPT` 轨迹作为评审复核主证据。
+
+## 2026-02-13 01:20:44 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R23（基于 R18 后续建议的双目标收敛改进）
+- 工作内容：
+  - 先更新 spec，再改 prototype（符合 AGENTS.md 顺序）：
+    1. `spec/algorithm_pseudocode.md` 增加 R23 自适应阈值偏置伪代码；
+    2. `spec/architecture.md` 增加 R23 双目标收敛策略描述；
+    3. `spec/data_model.md` 增加 `threshold_bias` / `adaptation_action` 字段语义。
+  - 先补测试再改实现：
+    1. 新增 `test_apply_eventful_threshold_bias_is_reasonable`；
+    2. 新增 `test_update_eventful_threshold_bias_rules`；
+    3. 强化 completion 分支测试，断言放宽阈值、保留 workload 参数、延长 wall。
+  - 实现改进：
+    1. `prototype/run_advanced_research.py` 新增 `apply_eventful_threshold_bias`、`update_eventful_threshold_bias`；
+    2. `run_real_machine_baseline_until_eventful` 改为按 retry_reason 分支：
+       - `insufficient_completion` -> `relax_and_hold`；
+       - `low_signal_dynamic` / `missing_emergency_signal` -> `tighten_and_escalate`；
+    3. attempt trace 与 CSV 增加 `threshold_bias`、`adaptation_action`。
+  - 文档同步：
+    1. `prototype/README.md` 增加 R23 说明；
+    2. `figures/README.md` 增加 R23 字段说明。
+- 真机验证结果（本轮关键）：
+  - 命令：
+    `python prototype/run_advanced_research.py --trials 20 --run-real-baseline --real-target-eventful --real-require-completion --real-min-completed 1 --real-max-attempts 4 --real-task-count 6 --real-task-duration-sec 2 --real-base-mem-mb 96 --real-fixed-workers 4 --real-max-wall-sec 12`
+  - 输出：`eventful_achieved=1`，`attempts_executed=2`，动态阶段 `completed=3`、`emergency_ticks=13`、`preempted_total=2`。
+- 文件变更：
+  - `spec/algorithm_pseudocode.md`
+  - `spec/architecture.md`
+  - `spec/data_model.md`
+  - `prototype/tests/test_advanced_research.py`
+  - `prototype/run_advanced_research.py`
+  - `prototype/README.md`
+  - `figures/README.md`
+  - `qa/deep_algorithm_self_audit_R23_2026-02-13.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] spec -> tests -> prototype 顺序执行
+  - [x] 新策略有新增单测覆盖
+  - [x] 全量测试通过（75/75）
+  - [x] 配置校验 PASS
+  - [x] 结构检查 PASS
+  - [x] 实验脚本回归通过（run_experiments / run_patent_evidence / run_advanced_research）
+- 风险与后续：
+  - 风险：真实主机负载波动可能影响双目标收敛轮次；
+  - 后续：建议做 repeated real-baseline CI，统计双目标达成率置信区间。
+## 2026-02-13 11:36:45 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R24（基于 R19 建议推进 P1+P3）
+- 工作内容：
+  - P1 专利文本补强：
+    1. 新增 `patent/权利要求书_资源调度_v2.md`，在独立权利要求中保留三核心保护点，并新增 R23 自适应重试从属权利要求；
+    2. 新增 `patent/说明书_资源调度_v2.md`，补“按失败原因分支调参”实施方式与参数区间；
+    3. 新增 `patent/附图说明_资源调度_v2.md`；
+    4. 新增附图：`图3_真机三模式对比`、`图4_自适应重试轨迹`。
+  - P3 强证据真机实验（使用本地算力）：
+    1. 执行 `--real-min-completed 5` 场景（max_attempts=6, wall=24）；
+    2. 达成 `eventful_achieved=1`，最终 `completed=7`、`emergency_ticks=3`、`preempted_total=1`；
+    3. 将输出固化为独立快照文件（R24 命名），避免覆盖历史评审证据。
+  - 映射文档更新：
+    1. 新增 `qa/technique_claim_mapping_resource_scheduler_v2_2026-02-13.md`，补 CP-3/CP-3A/CP-4 到代码/测试/证据的映射。
+- 文件变更：
+  - `patent/权利要求书_资源调度_v2.md`
+  - `patent/说明书_资源调度_v2.md`
+  - `patent/附图说明_资源调度_v2.md`
+  - `patent/附图_资源调度_图3_真机三模式对比.svg`
+  - `patent/附图_资源调度_图4_自适应重试轨迹.svg`
+  - `patent/README.md`
+  - `qa/technique_claim_mapping_resource_scheduler_v2_2026-02-13.md`
+  - `qa/README.md`
+  - `figures/advanced_research_metrics_R24_completed_ge5_2026-02-13.json`
+  - `figures/advanced_research_metrics_R24_completed_ge5_2026-02-13.csv`
+  - `figures/real_baseline_eventful_R24_summary_2026-02-13.json`
+  - `figures/real_baseline_eventful_R24_summary_2026-02-13.csv`
+  - `figures/README.md`
+  - `prototype/README.md`
+  - `qa/deep_algorithm_self_audit_R24_2026-02-13.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 本轮产出全部落文件
+  - [x] 真机命令与结果可复现
+  - [x] 结构检查 PASS
+  - [x] 配置校验 PASS
+  - [x] 全量单测 PASS（75/75）
+  - [x] 新增 SVG 文件 XML 解析通过
+- 风险与后续：
+  - 风险：真机结果仍受背景负载影响；
+  - 后续：推进 P2（CNIPA + RS-P01 claim-level）与多轮真机 CI 统计。
+
+## 2026-02-13 14:52:00 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R25（P2 专利前置检索与对照补强）
+- 工作内容：
+  1. 完成 RS-P01 claim-level 对照文档重写：
+     - `prior_art/resource_scheduler_claim_level_RS-P01_v2_2026-02-13.md`
+     - 逐条拆解独立权利要求（system/method/medium），并与当前资源调度实现做 element-level 映射。
+  2. 新增 CNIPA 检索日志：
+     - `prior_art/resource_scheduler_cnipa_search_log_2026-02-13.md`
+     - 补充 CNIPA 官方入口、检索式、10 条 CN 候选专利 URL、已核验项与未完成项。
+  3. 新增干净版 prior-art 索引与导航：
+     - `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`
+     - `prior_art/README.md`
+  4. 生成本轮自查报告：
+     - `qa/deep_algorithm_self_audit_R25_2026-02-13.md`
+- 文件变更：
+  - `prior_art/resource_scheduler_claim_level_RS-P01_v2_2026-02-13.md`
+  - `prior_art/resource_scheduler_cnipa_search_log_2026-02-13.md`
+  - `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`
+  - `prior_art/README.md`
+  - `qa/deep_algorithm_self_audit_R25_2026-02-13.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 每条新增 prior-art 证据附可访问 URL
+  - [x] RS-P01 风险分级明确为 High
+  - [x] CNIPA 路径、检索词、候选集完整落盘
+  - [x] 保留“未完成项”并标注不可虚假闭环
+  - [x] 结构检查 PASS
+  - [x] 配置校验 PASS
+  - [x] 全量单测 PASS（75/75）
+- 风险与后续：
+  - 风险：当前仍缺 CN top-3 的全文 claim-level 逐条对照与法律状态归档；
+  - 后续：下一轮直接做 CN-RS-01/04/06 claim chart + CNIPA legal-status 附录，推动 ISSUE-51 最终闭环。
+
+
+## 2026-02-13 15:42:00 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R26（P2 延续：CN top3 claim-level + 法律状态附录）
+- 工作内容：
+  1. 新增 CN top3 claim-level 对照：
+     - `prior_art/resource_scheduler_claim_level_CN_top3_2026-02-13.md`
+     - 覆盖 `CN117788264A`、`CN111736987B`、`CN116719628B` 的独立权利要求要素抽象、重叠点、差异点与风险分级。
+  2. 新增 CN 法律状态附录：
+     - `prior_art/resource_scheduler_cnipa_legal_status_appendix_2026-02-13.md`
+     - 记录状态信号、CNIPA 官方入口和后续法务级核验项。
+  3. 同步索引与导航：
+     - `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`
+     - `prior_art/README.md`
+  4. 生成本轮自查报告：
+     - `qa/deep_algorithm_self_audit_R26_2026-02-13.md`
+- 文件变更：
+  - `prior_art/resource_scheduler_claim_level_CN_top3_2026-02-13.md`
+  - `prior_art/resource_scheduler_cnipa_legal_status_appendix_2026-02-13.md`
+  - `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`
+  - `prior_art/README.md`
+  - `qa/deep_algorithm_self_audit_R26_2026-02-13.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] CN top3 每条有可核验 URL
+  - [x] claim-level 工程对照已结构化
+  - [x] 法律状态附录与检索日志互相可追溯
+  - [x] 保留法务未闭环项（不虚假宣称 closed）
+  - [x] 结构检查 PASS
+  - [x] 配置校验 PASS
+  - [x] 全量单测 PASS（75/75）
+- 风险与后续：
+  - 风险：仍需 CNIPA 法律状态正式归档截图与代理人法务版 claim chart；
+  - 后续：下一轮做 prior-art 一体化交付包 + CNKI/Wanfang 非专利文献补全。
+## 2026-02-13 15:56:00 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R26-Supplement（交付包补齐）
+- 工作内容：
+  1. 新增评审打包索引：
+     - `prior_art/resource_scheduler_prior_art_package_R26_2026-02-13.md`
+     - 明确阅读顺序、已闭环项、未闭环项与外部审计清单。
+  2. 同步导航引用：
+     - `prior_art/README.md`
+     - `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`
+  3. 同步自查报告文件列表与下一步：
+     - `qa/deep_algorithm_self_audit_R26_2026-02-13.md`
+- 文件变更：
+  - `prior_art/resource_scheduler_prior_art_package_R26_2026-02-13.md`
+  - `prior_art/README.md`
+  - `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`
+  - `qa/deep_algorithm_self_audit_R26_2026-02-13.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 交付包可独立供外部评审阅读
+  - [x] 导航与索引无断链
+  - [x] 未闭环项显式保留
+- 风险与后续：
+  - 风险：仍未补齐 CNKI/Wanfang 非专利文献与 CNIPA 状态归档截图；
+  - 后续：R27 直接做非专利文献矩阵 + 法律状态证据归档。
+## 2026-02-13 12:31:24 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R27（流程规范文档重构）
+- 工作内容：
+  1. 重写 `AGENTS.md`，补齐角色边界、编码规范、自审计模板、10 条红线、双 LLM 协作流程。
+  2. 重写 `RUNBOOK.md`，加入“验证三板斧”与真机事件驱动基线命令，强化“禁止 git add .”规则。
+  3. 重写 `qa/review_checklist.md`，扩展为 28 项，新增自审计/Spec 同步/安全三个维度。
+  4. 重写 `qa/codex_prompt_template.md`，补全系统提示词、四类任务模板、评审修复模板和 R19 P1 使用示例。
+  5. 新增自审计：`qa/deep_algorithm_self_audit_R27_2026-02-13.md`。
+- 文件变更：
+  - `AGENTS.md`
+  - `RUNBOOK.md`
+  - `qa/review_checklist.md`
+  - `qa/codex_prompt_template.md`
+  - `qa/deep_algorithm_self_audit_R27_2026-02-13.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] 关键章节与更新清单对齐
+  - [x] review_checklist 条目数为 28
+  - [x] 包含测试计数准确/实跑验证/防虚假修复与核验/清除 pycache 规则
+  - [x] 包含禁止 `git add .` 的提交安全规则
+  - [x] 结构检查 PASS
+  - [x] 配置校验 PASS
+  - [x] 全量单测 PASS（75/75）
+- 风险与后续：
+  - 风险：当前环境对 UTF-8 无 BOM 的终端显示存在乱码假象；
+  - 后续：下一轮回到主线，推进 CNKI/Wanfang 非专利文献矩阵与证据包闭环。
+
+## 2026-02-13 16:52:00 +08:00
+- Executor: Codex (GPT-5)
+- Review status: R28 (prior-art evidence continuation)
+- Work summary:
+  1. Added non-patent matrix: `prior_art/resource_scheduler_non_patent_cnki_wanfang_matrix_R28_2026-02-13.md`.
+  2. Added CN legal-status archive: `prior_art/resource_scheduler_cnipa_legal_status_archive_R28_2026-02-13.md`.
+  3. Added package index: `prior_art/resource_scheduler_prior_art_package_R28_2026-02-13.md`.
+  4. Updated index/navigation: `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`, `prior_art/README.md`.
+  5. Added self-audit file: `qa/deep_algorithm_self_audit_R28_2026-02-13.md`.
+- File review checklist:
+  - [x] New evidence files have traceable source URLs.
+  - [x] CN legal-status section separates engineering evidence from legal conclusion.
+  - [x] Open legal-grade gaps remain explicit (no fake closure).
+  - [x] Structure check PASS.
+  - [x] Config validation PASS.
+  - [x] Unit tests PASS (75/75).
+- Risks and next actions:
+  - Risk: CNIPA official snapshot archive is still pending.
+  - Next: add CNIPA screenshot/export bundle + CNKI query-result snapshot archive.
+
+## 2026-02-13 17:22:00 +08:00
+- Executor: Codex (GPT-5)
+- Review status: R29 (snapshot-archive evidence hardening)
+- Work summary:
+  1. Created snapshot evidence roots:
+     - `prior_art/evidence/cnipa_status_R29_2026-02-13/`
+     - `prior_art/evidence/cnki_route_R29_2026-02-13/`
+  2. Captured and archived HTML snapshots + hash manifest:
+     - `prior_art/evidence/R29_snapshot_manifest.json`
+     - per-folder `snapshot_summary.md`
+  3. Added archive report and package:
+     - `prior_art/resource_scheduler_cnipa_cnki_snapshot_archive_R29_2026-02-13.md`
+     - `prior_art/resource_scheduler_prior_art_package_R29_2026-02-13.md`
+  4. Synced index/navigation:
+     - `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`
+     - `prior_art/README.md`
+  5. Added self-audit:
+     - `qa/deep_algorithm_self_audit_R29_2026-02-13.md`
+- File review checklist:
+  - [x] Evidence files include direct source URLs.
+  - [x] Hash and byte-count manifest is present.
+  - [x] Failed capture is explicitly logged (HTTP 412), not hidden.
+  - [x] Structure check PASS.
+  - [x] Config validation PASS.
+  - [x] Unit tests PASS (75/75).
+- Risks and next actions:
+  - Risk: CNIPA search endpoint scripted fetch still blocked.
+  - Next: add manual CNIPA screenshots/exports and CNKI result-page snapshots.
+
+## 2026-02-13 18:42:00 +08:00
+- Executor: Codex (GPT-5)
+- Review status: R30 (snapshot pipeline + result-page archive)
+- Work summary:
+  1. Added reusable snapshot archiver: `qa/archive_web_snapshots.py`.
+  2. Added reproducible target config: `prior_art/evidence/R30_targets.json`.
+  3. Executed R30 capture and generated `prior_art/evidence/R30_snapshot_manifest.json`.
+  4. Added new evidence groups:
+     - `prior_art/evidence/cnipa_status_R30_2026-02-13/`
+     - `prior_art/evidence/cnki_route_R30_2026-02-13/`
+     - `prior_art/evidence/cnki_result_R30_2026-02-13/`
+  5. Added R30 archive report/package:
+     - `prior_art/resource_scheduler_cnipa_cnki_snapshot_archive_R30_2026-02-13.md`
+     - `prior_art/resource_scheduler_prior_art_package_R30_2026-02-13.md`
+  6. Synced index/navigation:
+     - `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`
+     - `prior_art/README.md`
+  7. Added self-audit:
+     - `qa/deep_algorithm_self_audit_R30_2026-02-13.md`
+- File review checklist:
+  - [x] Snapshot captures include headers + sha256 hashes.
+  - [x] CNKI result-page routes are archived (not only entry routes).
+  - [x] CNIPA 412 failure is explicit with archived error body.
+  - [x] Structure check PASS.
+  - [x] Config validation PASS.
+  - [x] Unit tests PASS (75/75).
+- Risks and next actions:
+  - Risk: CNIPA scripted search endpoint remains blocked (HTTP 412).
+  - Next: add manual CNIPA/CNKI screenshots and attach to R30 evidence folders.
+
+## 2026-02-13 20:20:40 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R31（Review-Repair + B-专利文档合并轮）
+- 工作内容：
+  1. 完成专利文档 v3 重构并修复 4 个 Critical：
+     - 新增 `patent/权利要求书_资源调度_v3.md`（独立权利要求去测试方法论，方法/系统/介质三层结构保留）；
+     - 新增 `patent/说明书_资源调度_v3.md`（扩写至 821 行，补齐摘要、背景引证、三段式发明内容、实施方式、数值演算、对比表、附图详述、权利要求支撑映射）；
+     - 新增 `patent/附图说明_资源调度_v3.md`（每幅图 5-10 行详细说明）。
+  2. 修复 ISSUE-64：
+     - 更新 `prior_art/evidence/R30_targets.json` 三个 CNKI 关键词 URL 为 UTF-8 编码版本；
+     - 重新执行抓取：
+       `python qa/archive_web_snapshots.py --targets prior_art/evidence/R30_targets.json --out prior_art/evidence --manifest-name R30_snapshot_manifest.json`；
+     - 重跑结果：`ok=13 err=1`（CNIPA 412 保持显式归档）。
+  3. 完成 R31 自审文件：
+     - 新增 `qa/deep_algorithm_self_audit_R31_2026-02-13.md`，包含问题闭环矩阵、三板斧结果、UTF-8 无 BOM 校验、残余风险。
+- 文件变更：
+  - `patent/权利要求书_资源调度_v3.md`
+  - `patent/说明书_资源调度_v3.md`
+  - `patent/附图说明_资源调度_v3.md`
+  - `prior_art/evidence/R30_targets.json`
+  - `prior_art/evidence/R30_snapshot_manifest.json`
+  - `prior_art/evidence/cnipa_status_R30_2026-02-13/*`（重跑刷新）
+  - `prior_art/evidence/cnki_route_R30_2026-02-13/*`（重跑刷新）
+  - `prior_art/evidence/cnki_result_R30_2026-02-13/*`（重跑刷新）
+  - `qa/deep_algorithm_self_audit_R31_2026-02-13.md`
+  - `logs/work_progress.md`
+  - `.claude.md`
+- 文件评审清单：
+  - [x] 独立权利要求已剔除测试方法论，仅保留核心调度机制
+  - [x] 权利要求与说明书权利要求支撑部分未出现代码变量名
+  - [x] 说明书包含至少 5 项可核验背景技术引证并逐项说明不足
+  - [x] 说明书行数满足 500-1000 行要求（当前 821 行）
+  - [x] 系统权利要求补齐模块间数据流描述
+  - [x] R30 CNKI URL 编码修复并完成重跑
+  - [x] 三板斧全部通过（structure/config/tests）
+  - [x] 新增目标文件 UTF-8 无 BOM 校验通过
+- 风险与后续：
+  - 风险：在当前脚本化环境下，CNKI 关键词结果页仍呈现相同哈希，说明“路由级抓取有效、语义检索页面差异仍不足”；
+  - 后续：建议补充人工浏览器截图证据，并由专利代理人进行法律语言精修。
+
+## 2026-02-13 20:30:07 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R32（继续推进：prior-art 深化与风险定性修正）
+- 工作内容：
+  1. 修正 CN top-3 评审中的定性偏差：
+     - 将 `CN116719628B` 风险从中风险下调为低风险，明确其为“数据链路并发调度域”，与主线“主机 CPU/内存/GPU 准入+回收”存在领域错位。
+  2. 新增英文高相关文献矩阵：
+     - 新建 `prior_art/resource_scheduler_non_patent_global_matrix_R32_2026-02-13.md`；
+     - 补齐 Gandiva / Tiresias / AntMan / Pollux / Linux OOM / MIG / MPS / YARN 等基线。
+  3. 新增检索方法升级记录：
+     - 新建 `prior_art/resource_scheduler_search_method_upgrade_R32_2026-02-13.md`；
+     - 落盘检索范围、关键词主题、质量规则、已修正项与未闭环项。
+  4. 同步索引与导航：
+     - 更新 `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`；
+     - 更新 `prior_art/README.md`。
+  5. 同步说明书背景技术覆盖：
+     - 更新 `patent/说明书_资源调度_v3.md`，新增 2.2.7 节（Gandiva/Tiresias/AntMan/Pollux）与引证清单条目。
+  6. 产出本轮自审：
+     - 新增 `qa/deep_algorithm_self_audit_R32_2026-02-13.md`。
+- 文件变更：
+  - `prior_art/resource_scheduler_claim_level_CN_top3_2026-02-13.md`
+  - `prior_art/resource_scheduler_non_patent_global_matrix_R32_2026-02-13.md`
+  - `prior_art/resource_scheduler_search_method_upgrade_R32_2026-02-13.md`
+  - `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`
+  - `prior_art/README.md`
+  - `patent/说明书_资源调度_v3.md`
+  - `qa/deep_algorithm_self_audit_R32_2026-02-13.md`
+  - `logs/work_progress.md`
+  - `.claude.md`
+- 文件评审清单：
+  - [x] CN116719628B 风险定性已显式修正并在索引、README 同步
+  - [x] 英文高相关文献缺口已补矩阵化文档
+  - [x] 检索方法升级过程已形成可审查工件
+  - [x] 说明书背景技术与 prior_art 检索覆盖同步
+  - [x] 三板斧全部通过（structure/config/tests）
+- 风险与后续：
+  - 风险：CNIPA scripted 入口仍有 412 限制；CNKI 仍需人工截图补强法律证据；
+  - 后续：建议产出“claim risk appendix”给代理人直接使用（元素级重叠/差异/措辞建议）。
+
+## 2026-02-13 20:44:28 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R32-D（D-前置检索专项：英文学术 claim-level 对照）
+- 工作内容：
+  1. 完成 Gandiva (OSDI 2018) claim-level 对照：
+     - 提取 USENIX 页面摘要；
+     - 按权利要求书 v3 独立权利要求1的 5 个特征逐条映射；
+     - 输出逐特征风险等级与差异化结论。
+  2. 完成 Linux OOM Killer `oom_badness` 对照：
+     - 读取 Linux kernel 源码 `mm/oom_kill.c` 中 `oom_badness` 核心注释与公式；
+     - 对比本方案归一化双资源评分（内存+GPU+协同项）差异；
+     - 给出“F4 局部中风险、完整5特征组合低中风险”结论。
+  3. 可选补充完成：
+     - AntMan (OSDI 2020)、Pollux (OSDI 2021) 风险与差异结论。
+  4. 交付与同步：
+     - 新增 `prior_art/resource_scheduler_claim_level_english_lit_2026-02-13.md`；
+     - 更新 `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`；
+     - 更新 `prior_art/README.md`；
+     - 保持 CN-RS-06（CN116719628B）为 Low 风险同步状态。
+  5. 自审同步：
+     - 更新 `qa/deep_algorithm_self_audit_R32_2026-02-13.md`（新增 R32-D 扩展章节）。
+- 文件变更：
+  - `prior_art/resource_scheduler_claim_level_english_lit_2026-02-13.md`
+  - `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`
+  - `prior_art/README.md`
+  - `qa/deep_algorithm_self_audit_R32_2026-02-13.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] Gandiva 对照已覆盖独立权利要求1的 5 个特征
+  - [x] Linux `oom_badness` 差异已按机制级逐项展开
+  - [x] 每项输出风险等级（Low/Medium/High）与差异化结论
+  - [x] 索引文件已同步新交付物
+  - [x] CN-RS-06 风险为 Low 且已在索引中保留
+  - [x] 三板斧通过（structure/config/tests）
+- 风险与后续：
+  - 风险：英文学术对照目前为工程级 claim chart，尚非法务级权利要求解释；
+  - 后续：建议下一轮产出面向代理人的 claim risk appendix（逐条 element-level 规避措辞建议）。
+
+## 2026-02-13 21:05:09 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R33（B-专利文档：元素级风险附录）
+- 工作内容：
+  1. 生成代理人可直接使用的元素级风险附录：
+     - 新增 `prior_art/resource_scheduler_claim_risk_appendix_R33_2026-02-13.md`；
+     - 按独立权利要求1的五个特征（F1-F5）逐项输出：
+       - 已知重叠证据（专利/文献/系统）；
+       - 可主张边界（defensible scope）；
+       - 规避措辞建议（建议用语/建议避免）；
+       - 风险等级（Low/Medium/High）。
+  2. 补充从属权利要求7（亲和权重）与8（协同评分）同结构分析，含风险结论与代理人措辞模板。
+  3. 产出 R33 自审计文档：
+     - 新增 `qa/deep_algorithm_self_audit_R33_2026-02-13.md`。
+- 文件变更：
+  - `prior_art/resource_scheduler_claim_risk_appendix_R33_2026-02-13.md`
+  - `prior_art/resource_scheduler_prior_art_index_v2_2026-02-13.md`
+  - `prior_art/README.md`
+  - `qa/deep_algorithm_self_audit_R33_2026-02-13.md`
+  - `.claude.md`
+  - `logs/work_progress.md`
+- 文件评审清单：
+  - [x] claim1 五特征逐元素风险分析完整
+  - [x] claim7/8 逐元素风险分析完整
+  - [x] 每元素均有“证据 + 可主张边界 + 措辞建议”
+  - [x] 附录结构可直接给代理人使用
+  - [x] prior_art 索引与导航已同步收录 R33
+  - [x] 三板斧通过（structure/config/tests）
+- 风险与后续：
+  - 风险：当前附录为工程视角，需代理人转换为法律主张语言；
+  - 后续：建议代理人据此形成“独立权利要求收敛版 + 从属权利要求补强版”两套文本。
+
+## 2026-02-13 21:26:47 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R34（下一步推进：权利要求收敛草案双方案）
+- 工作内容：
+  1. 产出代理人重写底稿：
+     - 新增 `patent/权利要求书_资源调度_v4_收敛草案.md`；
+     - 提供两套独立权利要求策略：
+       - 方案A（保守防御型，授权确定性优先）；
+       - 方案B（平衡覆盖型，覆盖范围优先）。
+  2. 在 v4 中保持方法/系统/介质结构，并附“代理人改写注意事项”与两方案比较表。
+  3. 更新 `patent/README.md`，同步 v3/v4 当前状态和用途。
+  4. 新增自审计：
+     - `qa/deep_algorithm_self_audit_R34_2026-02-13.md`。
+- 文件变更：
+  - `patent/权利要求书_资源调度_v4_收敛草案.md`
+  - `patent/README.md`
+  - `qa/deep_algorithm_self_audit_R34_2026-02-13.md`
+  - `logs/work_progress.md`
+  - `.claude.md`
+- 文件评审清单：
+  - [x] v4 草案含 A/B 双方案独立权利要求
+  - [x] 方案A绑定高防御组合链路（F2+F3+F4+F5）
+  - [x] 方案B给出范围/风险权衡
+  - [x] 方法/系统/介质三层结构保留
+  - [x] 三板斧通过（structure/config/tests）
+- 风险与后续：
+  - 风险：v4 仍为工程侧草案，需代理人法律语言收敛；
+  - 后续：建议代理人基于 A/B 双方案出正式申报版并做一轮术语统一。

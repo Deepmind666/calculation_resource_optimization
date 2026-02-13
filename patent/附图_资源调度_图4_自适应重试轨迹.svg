@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <rect width="1200" height="700" fill="#f8fafc"/>
+  <text x="40" y="44" font-family="Arial, sans-serif" font-size="28" fill="#0f172a">
+    Figure 4: Reason-Aware Adaptive Retry Trajectory (R24)
+  </text>
+  <text x="40" y="72" font-family="Arial, sans-serif" font-size="16" fill="#334155">
+    Dual target: emergency/preempt evidence + completed >= 5
+  </text>
+
+  <line x1="80" y1="150" x2="1120" y2="150" stroke="#64748b" stroke-width="3"/>
+
+  <!-- attempt nodes -->
+  <circle cx="180" cy="150" r="22" fill="#0ea5e9"/>
+  <circle cx="380" cy="150" r="22" fill="#0ea5e9"/>
+  <circle cx="580" cy="150" r="22" fill="#0284c7"/>
+  <circle cx="780" cy="150" r="22" fill="#f59e0b"/>
+  <circle cx="980" cy="150" r="22" fill="#16a34a"/>
+
+  <text x="170" y="156" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">A1</text>
+  <text x="370" y="156" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">A2</text>
+  <text x="570" y="156" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">A3</text>
+  <text x="770" y="156" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">A4</text>
+  <text x="970" y="156" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">A5</text>
+
+  <!-- boxes -->
+  <rect x="80" y="210" width="200" height="180" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="94" y="236" font-family="Arial, sans-serif" font-size="14" fill="#0f172a">Attempt 1</text>
+  <text x="94" y="260" font-family="Arial, sans-serif" font-size="13" fill="#334155">reason: low_signal_dynamic</text>
+  <text x="94" y="282" font-family="Arial, sans-serif" font-size="13" fill="#334155">action: tighten_and_escalate</text>
+  <text x="94" y="304" font-family="Arial, sans-serif" font-size="13" fill="#334155">bias: 0</text>
+  <text x="94" y="326" font-family="Arial, sans-serif" font-size="13" fill="#334155">completed: 8</text>
+  <text x="94" y="348" font-family="Arial, sans-serif" font-size="13" fill="#334155">emergency_ticks: 0</text>
+
+  <rect x="280" y="210" width="200" height="180" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="294" y="236" font-family="Arial, sans-serif" font-size="14" fill="#0f172a">Attempt 2</text>
+  <text x="294" y="260" font-family="Arial, sans-serif" font-size="13" fill="#334155">reason: low_signal_dynamic</text>
+  <text x="294" y="282" font-family="Arial, sans-serif" font-size="13" fill="#334155">action: tighten_and_escalate</text>
+  <text x="294" y="304" font-family="Arial, sans-serif" font-size="13" fill="#334155">bias: -4</text>
+  <text x="294" y="326" font-family="Arial, sans-serif" font-size="13" fill="#334155">completed: 8</text>
+  <text x="294" y="348" font-family="Arial, sans-serif" font-size="13" fill="#334155">emergency_ticks: 0</text>
+
+  <rect x="480" y="210" width="200" height="180" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="494" y="236" font-family="Arial, sans-serif" font-size="14" fill="#0f172a">Attempt 3</text>
+  <text x="494" y="260" font-family="Arial, sans-serif" font-size="13" fill="#334155">reason: missing_emergency_signal</text>
+  <text x="494" y="282" font-family="Arial, sans-serif" font-size="13" fill="#334155">action: tighten_and_escalate</text>
+  <text x="494" y="304" font-family="Arial, sans-serif" font-size="13" fill="#334155">bias: -8</text>
+  <text x="494" y="326" font-family="Arial, sans-serif" font-size="13" fill="#334155">completed: 8</text>
+  <text x="494" y="348" font-family="Arial, sans-serif" font-size="13" fill="#334155">emergency_ticks: 0</text>
+
+  <rect x="680" y="210" width="200" height="180" rx="8" fill="#ffffff" stroke="#f59e0b"/>
+  <text x="694" y="236" font-family="Arial, sans-serif" font-size="14" fill="#0f172a">Attempt 4</text>
+  <text x="694" y="260" font-family="Arial, sans-serif" font-size="13" fill="#334155">reason: insufficient_completion</text>
+  <text x="694" y="282" font-family="Arial, sans-serif" font-size="13" fill="#334155">action: relax_and_hold</text>
+  <text x="694" y="304" font-family="Arial, sans-serif" font-size="13" fill="#334155">bias: -12</text>
+  <text x="694" y="326" font-family="Arial, sans-serif" font-size="13" fill="#334155">completed: 2</text>
+  <text x="694" y="348" font-family="Arial, sans-serif" font-size="13" fill="#334155">emergency_ticks: 7</text>
+
+  <rect x="880" y="210" width="240" height="180" rx="8" fill="#ffffff" stroke="#16a34a"/>
+  <text x="894" y="236" font-family="Arial, sans-serif" font-size="14" fill="#0f172a">Attempt 5 (Stop)</text>
+  <text x="894" y="260" font-family="Arial, sans-serif" font-size="13" fill="#334155">reason: satisfied</text>
+  <text x="894" y="282" font-family="Arial, sans-serif" font-size="13" fill="#334155">action: stop</text>
+  <text x="894" y="304" font-family="Arial, sans-serif" font-size="13" fill="#334155">bias: -4</text>
+  <text x="894" y="326" font-family="Arial, sans-serif" font-size="13" fill="#334155">completed: 7</text>
+  <text x="894" y="348" font-family="Arial, sans-serif" font-size="13" fill="#334155">emergency_ticks: 3</text>
+
+  <rect x="80" y="430" width="1040" height="210" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="100" y="462" font-family="Arial, sans-serif" font-size="18" fill="#0f172a">R23 Branching Rule (Implemented)</text>
+  <text x="100" y="492" font-family="Arial, sans-serif" font-size="14" fill="#334155">
+    1) If reason = low_signal_dynamic or missing_emergency_signal -> tighten thresholds and escalate workload pressure.
+  </text>
+  <text x="100" y="520" font-family="Arial, sans-serif" font-size="14" fill="#334155">
+    2) If reason = insufficient_completion -> relax thresholds and extend scheduler wall time, hold workload pressure.
+  </text>
+  <text x="100" y="548" font-family="Arial, sans-serif" font-size="14" fill="#334155">
+    3) Stop when both objectives are satisfied: (emergency or preempt evidence) AND completed >= min_completed.
+  </text>
+  <text x="100" y="582" font-family="Arial, sans-serif" font-size="14" fill="#334155">
+    Evidence: figures/real_baseline_eventful_R24_summary_2026-02-13.json
+  </text>
+</svg>

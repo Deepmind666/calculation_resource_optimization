@@ -1,0 +1,13 @@
+status: 200
+Content-Security-Policy-Report-Only: script-src 'none'; form-action 'none'; frame-src 'none'; report-uri https://csp.withgoogle.com/csp/goa-cf66a5ad_2
+Content-Type: text/html
+Cross-Origin-Opener-Policy: same-origin
+Vary: Sec-Fetch-Dest
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+X-Frontend-Version: patent-search.search_20250707_RC00
+X-Xss-Protection: 0
+Date: Fri, 13 Feb 2026 12:18:09 GMT
+Transfer-Encoding: chunked
+Alt-Svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+Connection: close

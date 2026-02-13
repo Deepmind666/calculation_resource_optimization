@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="860" viewBox="0 0 1200 860">
+  <rect width="1200" height="860" fill="#ffffff"/>
+  <text x="40" y="50" font-size="28" font-family="Arial">图2 调度周期流程图（含同 tick 累计投影）</text>
+
+  <rect x="440" y="90" width="320" height="70" rx="10" fill="#e8f2ff" stroke="#2c5aa0" stroke-width="2"/>
+  <text x="490" y="135" font-size="20" font-family="Arial">开始一个 tick</text>
+
+  <rect x="420" y="200" width="360" height="80" rx="10" fill="#e9ffe8" stroke="#2e7d32" stroke-width="2"/>
+  <text x="455" y="235" font-size="18" font-family="Arial">采集 raw snapshot 并更新 EMA</text>
+  <text x="465" y="260" font-size="16" font-family="Arial">raw 用于紧急，EMA 用于稳态</text>
+
+  <polygon points="520,320 680,320 730,380 680,440 520,440 470,380" fill="#fff3e8" stroke="#b85c00" stroke-width="2"/>
+  <text x="530" y="370" font-size="18" font-family="Arial">是否 EMERGENCY?</text>
+  <text x="575" y="400" font-size="16" font-family="Arial">是 / 否</text>
+
+  <rect x="120" y="500" width="420" height="100" rx="10" fill="#ffe8e8" stroke="#b71c1c" stroke-width="2"/>
+  <text x="150" y="545" font-size="18" font-family="Arial">是：阻断准入 + 定向抢占</text>
+  <text x="150" y="575" font-size="16" font-family="Arial">归一化评分，达到双目标后停止</text>
+
+  <rect x="660" y="500" width="420" height="120" rx="10" fill="#f4e8ff" stroke="#6a1b9a" stroke-width="2"/>
+  <text x="690" y="545" font-size="18" font-family="Arial">否：按优先级逐个尝试准入</text>
+  <text x="690" y="575" font-size="16" font-family="Arial">每成功一个任务，立即累计到同 tick 预算</text>
+  <text x="690" y="600" font-size="16" font-family="Arial">含内存/CPU/per-GPU 与 unbound 预算</text>
+
+  <rect x="420" y="690" width="360" height="90" rx="10" fill="#f0f0f0" stroke="#424242" stroke-width="2"/>
+  <text x="485" y="735" font-size="20" font-family="Arial">输出事件与指标并结束 tick</text>
+
+  <line x1="600" y1="160" x2="600" y2="200" stroke="#333" stroke-width="3"/>
+  <line x1="600" y1="280" x2="600" y2="320" stroke="#333" stroke-width="3"/>
+  <line x1="500" y1="420" x2="330" y2="500" stroke="#333" stroke-width="3"/>
+  <line x1="700" y1="420" x2="870" y2="500" stroke="#333" stroke-width="3"/>
+  <line x1="330" y1="600" x2="500" y2="690" stroke="#333" stroke-width="3"/>
+  <line x1="870" y1="620" x2="700" y2="690" stroke="#333" stroke-width="3"/>
+</svg>

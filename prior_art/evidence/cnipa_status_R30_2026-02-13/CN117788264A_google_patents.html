@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>CN117788264A - GPU virtualization method, device, equipment and storage medium 
+        - Google Patents</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="referrer" content="origin-when-crossorigin">
+    <link rel="canonical" href="https://patents.google.com/patent/CN117788264A/en">
+    <meta name="description" content="
+     The application discloses a GPU virtualization method, device, equipment and storage medium, and relates to the technical field of virtualization. The method comprises the following steps: triggering and loading a preconfigured target library file in the container group according to GPU tasks operated by the application program in the container group; intercepting an image processing instruction initiated by the application program in the container group by running the target library file, judging whether GPU resources are allocated to the container group according to a resource allocation rule, and if so, forwarding the image processing instruction to a task scheduling component of a host machine; and allocating corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task by the task scheduling component, and sending a processing result output by the GPU to the container group. And the GPU virtualization flow is optimized, and the flexibility of GPU virtual resource allocation is improved. 
+     
+   
+   ">
+    <meta name="DC.type" content="patent">
+    <meta name="DC.title" content="GPU virtualization method, device, equipment and storage medium 
+       ">
+    <meta name="DC.date" content="2023-12-28" scheme="dateSubmitted">
+    <meta name="DC.description" content="
+     The application discloses a GPU virtualization method, device, equipment and storage medium, and relates to the technical field of virtualization. The method comprises the following steps: triggering and loading a preconfigured target library file in the container group according to GPU tasks operated by the application program in the container group; intercepting an image processing instruction initiated by the application program in the container group by running the target library file, judging whether GPU resources are allocated to the container group according to a resource allocation rule, and if so, forwarding the image processing instruction to a task scheduling component of a host machine; and allocating corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task by the task scheduling component, and sending a processing result output by the GPU to the container group. And the GPU virtualization flow is optimized, and the flexibility of GPU virtual resource allocation is improved. 
+     
+   
+   ">
+    <meta name="citation_patent_application_number" content="CN:202311843374.5A">
+    <meta name="citation_pdf_url" content="https://patentimages.storage.googleapis.com/22/bd/16/a8d4651eb398d1/CN117788264A.pdf">
+    <meta name="citation_patent_publication_number" content="CN:117788264:A">
+    <meta name="DC.date" content="2024-03-29">
+    <meta name="DC.contributor" content="孙汉源" scheme="inventor">
+    <meta name="DC.contributor" content="Suzhou Metabrain Intelligent Technology Co Ltd" scheme="assignee">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Product+Sans">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700">
+
+    <style>
+      
+      #gb { top: 15px; left: auto; right: 0; width: auto; min-width: 135px !important; }   
+      body { transition: none; }
+    </style>
+    <script></script>
+
+    <script>
+      window.version = 'patent-search.search_20250707_RC00';
+
+      function sendFeedback() {
+        userfeedback.api.startFeedback({
+          'productId': '713680',
+          'bucket': 'patent-search-web',
+          'productVersion': window.version,
+        });
+      }
+
+      window.experiments = {};
+      window.experiments.patentCountries = "ae,ag,al,am,ao,ap,ar,at,au,aw,az,ba,bb,bd,be,bf,bg,bh,bj,bn,bo,br,bw,bx,by,bz,ca,cf,cg,ch,ci,cl,cm,cn,co,cr,cs,cu,cy,cz,dd,de,dj,dk,dm,do,dz,ea,ec,ee,eg,em,ep,es,fi,fr,ga,gb,gc,gd,ge,gh,gm,gn,gq,gr,gt,gw,hk,hn,hr,hu,ib,id,ie,il,in,ir,is,it,jo,jp,ke,kg,kh,km,kn,kp,kr,kw,kz,la,lc,li,lk,lr,ls,lt,lu,lv,ly,ma,mc,md,me,mg,mk,ml,mn,mo,mr,mt,mw,mx,my,mz,na,ne,ng,ni,nl,no,nz,oa,om,pa,pe,pg,ph,pl,pt,py,qa,ro,rs,ru,rw,sa,sc,sd,se,sg,si,sk,sl,sm,sn,st,su,sv,sy,sz,td,tg,th,tj,tm,tn,tr,tt,tw,tz,ua,ug,us,uy,uz,vc,ve,vn,wo,yu,za,zm,zw";
+      
+      
+      window.experiments.keywordWizard = true;
+      
+      
+      
+      window.experiments.definitions = true;
+      window.experiments.plogs = true;
+
+      window.Polymer = {
+        dom: 'shady',
+        lazyRegister: true,
+      };
+    </script>
+
+    <script src="//www.gstatic.com/patent-search/frontend/patent-search.search_20250707_RC00/scs/compiled_dir/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="//www.gstatic.com/patent-search/frontend/patent-search.search_20250707_RC00/scs/compiled_dir/search-app-vulcanized.html">
+  </head>
+  <body unresolved>
+    
+    
+    <script></script>
+    <script src="//www.gstatic.com/patent-search/frontend/patent-search.search_20250707_RC00/scs/compiled_dir/search-app-vulcanized.js"></script>
+    <search-app>
+      
+      
+
+      <article class="result" itemscope itemtype="http://schema.org/ScholarlyArticle">
+  <h1 itemprop="pageTitle">CN117788264A - GPU virtualization method, device, equipment and storage medium 
+        - Google Patents</h1>
+  <span itemprop="title">GPU virtualization method, device, equipment and storage medium 
+       </span>
+
+  <meta itemprop="type" content="patent">
+  <a href="https://patentimages.storage.googleapis.com/22/bd/16/a8d4651eb398d1/CN117788264A.pdf" itemprop="pdfLink">Download PDF</a>
+  <h2>Info</h2>
+
+  <dl>
+    <dt>Publication number</dt>
+    <dd itemprop="publicationNumber">CN117788264A</dd>
+    <meta itemprop="numberWithoutCodes" content="117788264">
+    <meta itemprop="kindCode" content="A">
+    <meta itemprop="publicationDescription" content="Unexaminded application">
+    <span>CN117788264A</span>
+    <span>CN202311843374.5A</span>
+    <span>CN202311843374A</span>
+    <span>CN117788264A</span>
+    <span>CN 117788264 A</span>
+    <span>CN117788264 A</span>
+    <span>CN 117788264A</span>
+    <span>  </span>
+    <span> </span>
+    <span> </span>
+    <span>CN 202311843374 A</span>
+    <span>CN202311843374 A</span>
+    <span>CN 202311843374A</span>
+    <span>CN 117788264 A</span>
+    <span>CN117788264 A</span>
+    <span>CN 117788264A</span>
+
+    <dt>Authority</dt>
+    <dd itemprop="countryCode">CN</dd>
+    <dd itemprop="countryName">China</dd>
+
+    <dt>Prior art keywords</dt>
+    <dd itemprop="priorArtKeywords" repeat>gpu</dd>
+    <dd itemprop="priorArtKeywords" repeat>container group</dd>
+    <dd itemprop="priorArtKeywords" repeat>scheduling component</dd>
+    <dd itemprop="priorArtKeywords" repeat>task scheduling</dd>
+    <dd itemprop="priorArtKeywords" repeat>video memory</dd>
+
+    <dt>Prior art date</dt>
+    <dd><time itemprop="priorArtDate" datetime="2023-12-28">2023-12-28</time></dd>
+
+    <dt>Legal status (The legal status is an assumption and is not a legal conclusion. Google has not performed a legal analysis and makes no representation as to the accuracy of the status listed.)</dt>
+    <dd itemprop="legalStatusIfi" itemscope>
+      <span itemprop="status">Pending</span>
+    </dd>
+  </dl>
+
+  <dt>Application number</dt>
+  <dd itemprop="applicationNumber">CN202311843374.5A</dd>
+
+  <dt>Other languages</dt>
+  <dd itemprop="otherLanguages" itemscope repeat>
+    <a href="/patent/CN117788264A/zh">
+      <span itemprop="name">Chinese</span> (<span itemprop="code">zh</span>)
+    </a>
+  </dd>
+
+  
+
+  <dt>Inventor</dt>
+  <dd itemprop="inventor" repeat>孙汉源</dd>
+
+  <dt>Current Assignee (The listed assignees may be inaccurate. Google has not performed a legal analysis and makes no representation or warranty as to the accuracy of the list.)</dt>
+  <dd itemprop="assigneeCurrent" repeat>
+    Suzhou Metabrain Intelligent Technology Co Ltd
+  </dd>
+
+  <dt>Original Assignee</dt>
+  <dd itemprop="assigneeOriginal" repeat>Suzhou Metabrain Intelligent Technology Co Ltd</dd>
+
+  <dt>Priority date (The priority date is an assumption and is not a legal conclusion. Google has not performed a legal analysis and makes no representation as to the accuracy of the date listed.)</dt>
+  <dd><time itemprop="priorityDate" datetime="2023-12-28">2023-12-28</time></dd>
+
+  <dt>Filing date</dt>
+  <dd><time itemprop="filingDate" datetime="2023-12-28">2023-12-28</time></dd>
+
+  <dt>Publication date</dt>
+  <dd><time itemprop="publicationDate" datetime="2024-03-29">2024-03-29</time></dd>
+
+  
+  <dd itemprop="events" itemscope repeat>
+    <time itemprop="date" datetime="2023-12-28">2023-12-28</time>
+    <span itemprop="title">Application filed by Suzhou Metabrain Intelligent Technology Co Ltd</span>
+    <span itemprop="type">filed</span>
+    <span itemprop="critical" content="true" bool>Critical</span>
+    
+    
+    
+    <span itemprop="assigneeSearch">Suzhou Metabrain Intelligent Technology Co Ltd</span>
+  </dd>
+  <dd itemprop="events" itemscope repeat>
+    <time itemprop="date" datetime="2023-12-28">2023-12-28</time>
+    <span itemprop="title">Priority to CN202311843374.5A</span>
+    <span itemprop="type">priority</span>
+    <span itemprop="critical" content="true" bool>Critical</span>
+    
+    
+    <span itemprop="documentId">patent/CN117788264A/en</span>
+    
+  </dd>
+  <dd itemprop="events" itemscope repeat>
+    <time itemprop="date" datetime="2024-03-29">2024-03-29</time>
+    <span itemprop="title">Publication of CN117788264A</span>
+    <span itemprop="type">publication</span>
+    <span itemprop="critical" content="true" bool>Critical</span>
+    
+    
+    <span itemprop="documentId">patent/CN117788264A/en</span>
+    
+  </dd>
+  <dd itemprop="events" itemscope repeat>
+    <time itemprop="date">Status</time>
+    <span itemprop="title">Pending</span>
+    <span itemprop="type">legal-status</span>
+    <span itemprop="critical" content="true" bool>Critical</span>
+    <span itemprop="current" content="true" bool>Current</span>
+    
+    
+    
+  </dd>
+
+  <h2>Links</h2>
+  <ul>
+    
+
+    <li itemprop="links" itemscope repeat>
+        <meta itemprop="id" content="espacenetLink">
+        <a href="https://worldwide.espacenet.com/publicationDetails/biblio?CC=CN&amp;NR=117788264A&amp;KC=A&amp;FT=D" itemprop="url" target="_blank"><span itemprop="text">Espacenet</span></a>
+      </li>
+      
+
+    
+
+    <li itemprop="links" itemscope repeat>
+      <meta itemprop="id" content="globalDossierLink">
+      <a href="https://globaldossier.uspto.gov/result/application/CN/202311843374/1" itemprop="url" target="_blank"><span itemprop="text">Global Dossier</span></a>
+    </li>
+
+    
+
+      
+
+      
+
+      
+      <li itemprop="links" itemscope repeat>
+        <meta itemprop="id" content="stackexchangeLink">
+        <a href="https://patents.stackexchange.com/questions/tagged/CN117788264A" itemprop="url"><span itemprop="text">Discuss</span></a>
+      </li>
+  </ul>
+
+  <ul itemprop="concept" itemscope>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000000034</span>
+      <span itemprop="name">method</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>title</span>
+      <span itemprop="sections" repeat>claims</span>
+      <span itemprop="sections" repeat>abstract</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">90</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000012545</span>
+      <span itemprop="name">processing</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>claims</span>
+      <span itemprop="sections" repeat>abstract</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">115</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000013468</span>
+      <span itemprop="name">resource allocation</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>claims</span>
+      <span itemprop="sections" repeat>abstract</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">58</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">230000008569</span>
+      <span itemprop="name">process</span>
+      <span itemprop="domain">Effects</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>claims</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">49</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000007726</span>
+      <span itemprop="name">management method</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>claims</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">20</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000004891</span>
+      <span itemprop="name">communication</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>claims</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">16</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000004590</span>
+      <span itemprop="name">computer program</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>claims</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">15</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000012544</span>
+      <span itemprop="name">monitoring process</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>claims</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">12</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000012216</span>
+      <span itemprop="name">screening</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>claims</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">5</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">230000006870</span>
+      <span itemprop="name">function</span>
+      <span itemprop="domain">Effects</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">42</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000012549</span>
+      <span itemprop="name">training</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">8</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">230000001960</span>
+      <span itemprop="name">triggered effect</span>
+      <span itemprop="domain">Effects</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">4</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">230000009471</span>
+      <span itemprop="name">action</span>
+      <span itemprop="domain">Effects</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">3</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000010586</span>
+      <span itemprop="name">diagram</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">3</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000005516</span>
+      <span itemprop="name">engineering process</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">3</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">230000002452</span>
+      <span itemprop="name">interceptive effect</span>
+      <span itemprop="domain">Effects</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">3</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000013135</span>
+      <span itemprop="name">deep learning</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">2</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000000638</span>
+      <span itemprop="name">solvent extraction</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">2</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000004458</span>
+      <span itemprop="name">analytical method</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">1</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">230000005540</span>
+      <span itemprop="name">biological transmission</span>
+      <span itemprop="domain">Effects</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">1</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000011161</span>
+      <span itemprop="name">development</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">1</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">230000006872</span>
+      <span itemprop="name">improvement</span>
+      <span itemprop="domain">Effects</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">1</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">230000007246</span>
+      <span itemprop="name">mechanism</span>
+      <span itemprop="domain">Effects</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">1</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">230000003287</span>
+      <span itemprop="name">optical effect</span>
+      <span itemprop="domain">Effects</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">1</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">230000000750</span>
+      <span itemprop="name">progressive effect</span>
+      <span itemprop="domain">Effects</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">1</span>
+    </li>
+    <li itemprop="match" itemscope repeat>
+      <span itemprop="id">238000009877</span>
+      <span itemprop="name">rendering</span>
+      <span itemprop="domain">Methods</span>
+      <span itemprop="svg_large"></span>
+      <span itemprop="svg_small"></span>
+      <span itemprop="smiles"></span>
+      <span itemprop="inchi_key"></span>
+      <span itemprop="similarity">0.000</span>
+      <span itemprop="sections" repeat>description</span>
+      <span itemprop="count">1</span>
+    </li>
+  </ul>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <section>
+    <h2>Landscapes</h2>
+    <ul>
+      <li itemprop="landscapes" itemscope repeat>
+        <span itemprop="name">Stored Programmes</span>
+        (<span itemprop="type">AREA</span>)
+      </li>
+    </ul>
+  </section>
+
+
+  <section itemprop="abstract" itemscope>
+    <h2>Abstract</h2>
+    
+    <div itemprop="content" html><abstract mxw-id="PA664622725" lang="EN" load-source="patent-office">
+    <div num="0001" class="abstract">The application discloses a GPU virtualization method, device, equipment and storage medium, and relates to the technical field of virtualization. The method comprises the following steps: triggering and loading a preconfigured target library file in the container group according to GPU tasks operated by the application program in the container group; intercepting an image processing instruction initiated by the application program in the container group by running the target library file, judging whether GPU resources are allocated to the container group according to a resource allocation rule, and if so, forwarding the image processing instruction to a task scheduling component of a host machine; and allocating corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task by the task scheduling component, and sending a processing result output by the GPU to the container group. And the GPU virtualization flow is optimized, and the flexibility of GPU virtual resource allocation is improved.</div>
+    </abstract>
+  </div>
+  </section>
+
+  <section itemprop="description" itemscope>
+    <h2>Description</h2>
+    
+    <div itemprop="content" html><div mxw-id="PDES457714118" lang="EN" load-source="patent-office" class="description">
+    <invention-title lang="EN" id="en-title1">GPU virtualization method, device, equipment and storage medium</invention-title>
+    <technical-field>
+      <div id="p0001" class="description-paragraph">Technical Field</div>
+      <div id="p0002" num="0001" class="description-paragraph">The present invention relates to the field of virtual machines, and in particular, to a method, an apparatus, a device, and a storage medium for GPU virtualization.</div>
+    </technical-field>
+    <background-art>
+      <div id="p0003" class="description-paragraph">Background</div>
+      <div id="p0004" num="0002" class="description-paragraph">GPU (graphics processing unit, graphics processor, training process and reasoning process for computer graphics rendering and deep learning), GPU virtualization technology is a technology that virtualizes physical GPU resources into multiple virtual GPU resources so that multiple virtual machines can share graphics operations using the same GPU processor or processors. In the related art, the GPU resource virtualization needs to compile a longer code to execute the GPU resource partitioning process, so that the efficiency of GPU virtualization is reduced.</div>
+    </background-art>
+    <disclosure>
+      <div id="p0005" class="description-paragraph">Disclosure of Invention</div>
+      <div id="p0006" num="0003" class="description-paragraph">In view of the above, the present invention aims to provide a GPU virtualization method, device, equipment and storage media, which can improve flexibility of GPU virtual resource allocation. The specific scheme is as follows:</div>
+      <div id="p0007" num="0004" class="description-paragraph">in a first aspect, the present application discloses a GPU virtualization method, comprising:</div>
+      <div id="p0008" num="0005" class="description-paragraph">triggering and loading a preconfigured target library file in the container group according to GPU tasks operated by the application program in the container group;</div>
+      <div id="p0009" num="0006" class="description-paragraph">intercepting an image processing instruction initiated by the application program in the container group by running the target library file, and judging whether GPU resources are allocated to the container group according to a resource allocation rule;</div>
+      <div id="p0010" num="0007" class="description-paragraph">if the GPU resources are judged to be allocated to the container group, forwarding the image processing instruction to a task scheduling component of a host machine;</div>
+      <div id="p0011" num="0008" class="description-paragraph">and allocating corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task by the task scheduling component, and sending a processing result output by the GPU to the container group.</div>
+      <div id="p0012" num="0009" class="description-paragraph">Optionally, the determining whether to allocate GPU resources to the container group according to the resource allocation rule includes:</div>
+      <div id="p0013" num="0010" class="description-paragraph">acquiring the total video memory capacity and the residual video memory capacity corresponding to the container group;</div>
+      <div id="p0014" num="0011" class="description-paragraph">judging whether the container group needs to reallocate GPU resources or not by comparing the residual video memory capacity with the video memory demand corresponding to the image processing instruction;</div>
+      <div id="p0015" num="0012" class="description-paragraph">if so, judging whether the container group meets GPU resource allocation conditions according to the resource allocation rule corresponding to the container group and the total video memory capacity corresponding to the container group; the resource allocation rule comprises a resource allocation threshold;</div>
+      <div id="p0016" num="0013" class="description-paragraph">and if so, judging that the GPU resources are allocated to the container group. .</div>
+      <div id="p0017" num="0014" class="description-paragraph">Optionally, the GPU virtualization method further includes:</div>
+      <div id="p0018" num="0015" class="description-paragraph">intercepting a system management command through the target library file; the system management command is used for inquiring GPU information;</div>
+      <div id="p0019" num="0016" class="description-paragraph">replacing a host process ID field in the system management command with a container process ID field to obtain a custom query command;</div>
+      <div id="p0020" num="0017" class="description-paragraph">and inquiring the GPU process ID corresponding to the container group by executing the custom inquiry command.</div>
+      <div id="p0021" num="0018" class="description-paragraph">Optionally, before the task scheduling component allocates the corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task, the method further includes:</div>
+      <div id="p0022" num="0019" class="description-paragraph">establishing connection between the host and a target port through the task scheduling component; the target port is a port corresponding to the container group;</div>
+      <div id="p0023" num="0020" class="description-paragraph">monitoring a target port by utilizing the connection between the host and the target port, and acquiring a message sent by the container group;</div>
+      <div id="p0024" num="0021" class="description-paragraph">and screening the image processing instruction according to the message type of the message.</div>
+      <div id="p0025" num="0022" class="description-paragraph">Optionally, the allocating, by the task scheduling component, a corresponding virtual GPU resource for the container group according to a video memory demand corresponding to the GPU task includes:</div>
+      <div id="p0026" num="0023" class="description-paragraph">determining a target GPU from all GPUs according to the performance requirements of the application program;</div>
+      <div id="p0027" num="0024" class="description-paragraph">and distributing virtual GPU resources corresponding to the target GPU for the container group.</div>
+      <div id="p0028" num="0025" class="description-paragraph">Optionally, the GPU virtualization method further includes:</div>
+      <div id="p0029" num="0026" class="description-paragraph">executing respective corresponding program error reporting processing in the running process of the target library file and the task scheduling component;</div>
+      <div id="p0030" num="0027" class="description-paragraph">the program error processing corresponding to the target library file comprises monitoring the communication state of the container group and the host machine, and stopping running the target library file if the communication is overtime; program error processing corresponding to the task scheduling component comprises generating an operation log file according to a log path.</div>
+      <div id="p0031" num="0028" class="description-paragraph">Optionally, the allocating, by the task scheduling component, a corresponding virtual GPU resource for the container group according to a video memory demand corresponding to the GPU task, and sending a processing result output by the GPU to the container group, includes:</div>
+      <div id="p0032" num="0029" class="description-paragraph">creating a corresponding number of message processing threads according to the number of the GPUs contained in the local node through the task scheduling component; wherein one message processing thread corresponds to one GPU;</div>
+      <div id="p0033" num="0030" class="description-paragraph">and the task scheduling component monitors the processing result output by each GPU through the message processing thread and forwards the processing result to the corresponding container group.</div>
+      <div id="p0034" num="0031" class="description-paragraph">In a second aspect, the present application discloses a GPU virtualization device, comprising:</div>
+      <div id="p0035" num="0032" class="description-paragraph">the target library file loading module is used for triggering loading of a preset target library file in the container group according to a GPU task operated by an application program in the container group;</div>
+      <div id="p0036" num="0033" class="description-paragraph">the image processing instruction interception module is used for intercepting an image processing instruction initiated by the application program in the container group by running the target library file and judging whether GPU resources are allocated to the container group according to a resource allocation rule;</div>
+      <div id="p0037" num="0034" class="description-paragraph">the image processing instruction forwarding module is used for forwarding the image processing instruction to a task scheduling component of a host machine if the GPU resource is judged to be allocated to the container group;</div>
+      <div id="p0038" num="0035" class="description-paragraph">the resource allocation module is used for allocating corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task through the task scheduling component and sending the processing result output by the GPU to the container group.</div>
+      <div id="p0039" num="0036" class="description-paragraph">In a third aspect, the present application discloses an electronic device comprising:</div>
+      <div id="p0040" num="0037" class="description-paragraph">a memory for storing a computer program;</div>
+      <div id="p0041" num="0038" class="description-paragraph">and the processor is used for executing the computer program to realize the GPU virtualization method.</div>
+      <div id="p0042" num="0039" class="description-paragraph">In a fourth aspect, the present application discloses a computer-readable storage medium for storing a computer program; wherein the computer program, when executed by the processor, implements the GPU virtualization method described previously.</div>
+      <div id="p0043" num="0040" class="description-paragraph">In the application, according to a GPU task operated by an application program in a container group, a pre-configured target library file in the container group is triggered to be loaded; intercepting an image processing instruction initiated by the application program in the container group by running the target library file, judging whether GPU resources are allocated to the container group according to a resource allocation rule, and if so, forwarding the image processing instruction to a task scheduling component of a host machine; and allocating corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task by the task scheduling component, and sending a processing result output by the GPU to the container group.</div>
+      <div id="p0044" num="0041" class="description-paragraph">Therefore, the image processing instruction initiated by the application program in the container group is intercepted through the target library file passively called and loaded by the GPU task, and is judged according to the resource allocation rule, and after the GPU resource is determined to be allocated to the container group according to the resource allocation rule, the image processing instruction is forwarded to the task scheduling component of the host machine, so that the control of the GPU resource can be realized; and then the host machine uniformly receives the image processing tasks corresponding to the container groups, and distributes the needed virtual GPU resources to the container groups corresponding to the GPU tasks, so that each application program can interact with the GPU without interfering with the existence of other application programs, and the safety and privacy of data are ensured. And the GPU virtualization flow is optimized, and the flexibility of GPU virtual resource allocation is improved.</div>
+    </disclosure>
+    <description-of-drawings>
+      <div id="p0045" class="description-paragraph">Drawings</div>
+      <div id="p0046" num="0042" class="description-paragraph">In order to more clearly illustrate the embodiments of the present invention or the technical solutions in the prior art, the drawings that are required to be used in the embodiments or the description of the prior art will be briefly described below, and it is obvious that the drawings in the following description are only embodiments of the present invention, and that other drawings can be obtained according to the provided drawings without inventive effort for a person skilled in the art.</div>
+      <div id="p0047" num="0043" class="description-paragraph">FIG. 1 is a flowchart of a GPU virtualization method provided in the present application;</div>
+      <div id="p0048" num="0044" class="description-paragraph">FIG. 2 is a flowchart of a specific object library file operation provided in the present application;</div>
+      <div id="p0049" num="0045" class="description-paragraph">FIG. 3 is a schematic view of a specific GPU virtualization architecture provided herein;</div>
+      <div id="p0050" num="0046" class="description-paragraph">fig. 4 is a schematic structural diagram of a GPU virtualization device provided in the present application;</div>
+      <div id="p0051" num="0047" class="description-paragraph">fig. 5 is a block diagram of an electronic device provided in the present application.</div>
+    </description-of-drawings>
+    <mode-for-invention>
+      <div id="p0052" class="description-paragraph">Detailed Description</div>
+      <div id="p0053" num="0048" class="description-paragraph">For the purpose of making the objects, technical solutions and advantages of the embodiments of the present invention more apparent, the technical solutions of the embodiments of the present invention will be clearly and completely described below with reference to the accompanying drawings in the embodiments of the present invention, and it is apparent that the described embodiments are only some embodiments of the present invention, not all embodiments. All other embodiments, which can be made by those skilled in the art based on the embodiments of the invention without making any inventive effort, are intended to be within the scope of the invention.</div>
+      <div id="p0054" num="0049" class="description-paragraph">In the prior art, the GPU resource virtualization needs to compile a longer code to execute the GPU resource partitioning process, so that the GPU virtualization efficiency is reduced. In order to overcome the technical problems, the application provides a GPU virtualization method which can optimize the GPU virtualization process and improve the flexibility of GPU virtual resource allocation.</div>
+      <div id="p0055" num="0050" class="description-paragraph">The embodiment of the application discloses a GPU virtualization method, which is shown in FIG. 1, and can comprise the following steps:</div>
+      <div id="p0056" num="0051" class="description-paragraph">step S11: and triggering loading of the preconfigured target library file in the container group according to the GPU task operated by the application program in the container group.</div>
+      <div id="p0057" num="0052" class="description-paragraph">In this embodiment, each container group (i.e., the smallest scheduling unit of the PODs) is preconfigured with a target library file, and the target library file runs in the development environment of the user (i.e., in the container or POD), and the target library file is invoked in a passive manner, i.e., when the user runs the GPU task, loading of the target library file is triggered. The object library file is specifically a so file, and can be used for instruction hijacking and redefining the function.</div>
+      <div id="p0058" num="0053" class="description-paragraph">Step S12: and intercepting an image processing instruction initiated by the application program in the container group by running the target library file, and judging whether GPU resources are allocated to the container group according to a resource allocation rule.</div>
+      <div id="p0059" num="0054" class="description-paragraph">After the target library file is called, the image processing instruction initiated by the application program in the container group where the library file is located is intercepted by running the file, wherein the image processing instruction can be a training instruction issued by a training framework in the application program, namely an instruction needing GPU processing, and the instruction contains various information related to GPU tasks, including but not limited to the type of the tasks, the data needing processing and the like. And judging whether GPU resources are allocated to the container groups according to the resource allocation rule, if so, forwarding the image processing instructions to a task scheduling component of the host machine, wherein it is understood that the call of each application program to the GPU is not directly initiated, hijacking is performed by a target library file in each container group, and the judgment is performed, if the resource allocation rule is met, the resource allocation rule contains the resource allocation upper limit, and the display memory is referred to as GPU memory. It can be appreciated that the resource allocation rule may perform upper limit control on the allocated video memory and various resources, such as GPU task corresponding GPU process duration, so as to increase control over resource allocation.</div>
+      <div id="p0060" num="0055" class="description-paragraph">In this embodiment, the determining whether to allocate GPU resources to the container group according to the resource allocation rule may include: acquiring the total video memory capacity and the residual video memory capacity corresponding to the container group; judging whether the container group needs to reallocate GPU resources or not by comparing the residual video memory capacity with the video memory demand corresponding to the image processing instruction; if so, judging whether the container group meets GPU resource allocation conditions according to the resource allocation rule corresponding to the container group and the total video memory capacity corresponding to the container group; the resource allocation rule comprises a resource allocation threshold; and if so, judging that the GPU resources are allocated to the container group. The total video memory capacity and the residual video memory capacity corresponding to the container group are obtained through operating the target library file, namely the total video memory capacity which is historically allocated to the container group, and the residual video memory capacity after the current used video memory capacity of the container group is removed, and the video memory demand of the task is combined, if the video memory demand is larger than the residual video memory capacity, GPU resources need to be reallocated, and if the video memory demand is smaller than the residual video memory capacity, the allocation is not needed at the present time, namely the image processing instruction is not forwarded. Then, it needs to determine whether the GPU resources in the present node still meet the allocation, i.e. whether there are enough GPU resources locally for the container group to use, if there are enough resources, then proceed to the next step, if not, then do not need to forward the image processing instruction. Further, it is further required to determine whether the container group meets the GPU resource allocation condition according to the resource allocation rule corresponding to the container group and the total memory capacity corresponding to the container group, where the resource allocation rule includes a resource allocation threshold, that is, according to the current resource usage amount of the container group and the upper limit of the resource usage for the container group, whether the container group can be allocated with resources continuously is determined, for example, if the upper limit of the memory of the container group is preconfigured to be 5G and the 5G resource is already allocated to the container group currently, when the container group applies for the resource again, the resource is not reallocated, so that it can be ensured that each application program in different container groups can use the memory resource.</div>
+      <div id="p0061" num="0056" class="description-paragraph">For example, as shown in fig. 2, main functions of the object library file (libuda_nvml_part.so) include POD video memory control and POD process display. Specifically, in this embodiment, the determining whether to allocate GPU resources to the container group according to the resource allocation rule includes: intercepting a dynamic library loading function through the target library file, and redefining to obtain a custom dynamic library loading function; when a user triggers a first function, the user-defined dynamic library loading function is called; redefining the first function by using the custom dynamic library loading function to obtain a custom first function; and executing the operation of judging whether GPU resources are allocated to the container group according to the resource allocation rule by executing the self-defined first function. It can be understood that, in this embodiment, improvement is performed on the original GPU virtualization scheme, and video memory control cannot be achieved in the original scheme, so that by configuring the target library file, during initial operation, the original dynamic library loading function (dlsym) is redefined as a custom dynamic library loading function by intercepting the original dynamic library loading function, so that when a user triggers the first function for the first time, the custom dynamic library loading function is called; it will be appreciated that the dynamic library load function is self-defined in the system, but for version reasons, a new dynamic library load function needs to be self-defined in order to ensure that trigger calls can be made to the dynamic library load function to define the business function.</div>
+      <div id="p0062" num="0057" class="description-paragraph">Redefining a first function by using the custom dynamic library loading function to obtain the custom first function, and executing the operation of judging whether GPU resources are allocated to the container group according to the resource allocation rule by executing the custom first function. The first function is a cuda function, and after redefining, the control of the video memory of the container group is realized, that is, the control function of the video memory of the container group is added by replacing an application programming interface (Application Programming Interface, API) in the original framework to be a function customized by the embodiment. Aiming at the video memory size (such as cuda context) which cannot be obtained and implicitly distributed, the video memory of the process corresponding to the GPU is obtained by calling the nvml function, the video memory is managed by a drive, the video memory is very accurate, meanwhile, the video memory size used by all GPU processes in a container is obtained based on container GPU process information in a shared memory, and the video memory is accurately controlled by combining the container quota and the size to be distributed.</div>
+      <div id="p0063" num="0058" class="description-paragraph">Specifically, taking GPU virtualization under nvidia architecture as an example, the code for determining whether to allocate GPU resources to the container group according to the resource allocation rule is as follows:</div>
+      <div id="p0064" num="0059" class="description-paragraph">
+        <span class="patent-image-not-available"></span>
+      </div>
+      <div id="p0065" num="0060" class="description-paragraph">
+        <span class="patent-image-not-available"></span>
+      </div>
+      <div id="p0066" num="0061" class="description-paragraph">in this embodiment, after the task scheduling component allocates corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task, the method may further include: intercepting a system management command through the target library file; the system management command is used for inquiring GPU information; replacing a host process ID field in the system management command with a container process ID field to obtain a custom query command; and inquiring the GPU Process ID (PID) corresponding to the container group by executing the custom inquiry command. It can be understood that the original system management command is invalid in the container group, that is, cannot be executed in the POD, and can only be executed for the host, but there are many PODs on the host, and if the original system management command is executed in the original manner to perform process query, so as to obtain a host PID (host PID), the data of the rest PODs will be leaked, and by redefining the query command, the query command is executed only to tell the user about the process ID related to the POD, that is, the POD PID. It will be appreciated that after redefinition by a primary function, the subsequent execution follows the redefined function.</div>
+      <div id="p0067" num="0062" class="description-paragraph">In this embodiment, before intercepting the system management command through the target library file, the method further includes: when a user triggers a second function, calling the custom dynamic library loading function, and redefining the second function by using the custom dynamic library loading function to obtain a custom second function; and executing the system management command and subsequent operations intercepted by the target library file by executing the custom second function. Therefore, the target library file can realize the display of the GPU process in the container by intercepting the system management command and replacing the system management command with the process query command aiming at the container.</div>
+      <div id="p0068" num="0063" class="description-paragraph">Specifically, taking GPU virtualization as an example under nvidia architecture, the second function is an nvai function, and the system management command is an nvidia-smi command. The code of the container group process ID display procedure is as follows:</div>
+      <div id="p0069" num="0064" class="description-paragraph">
+        <span class="patent-image-not-available"></span>
+      </div>
+      <div id="p0070" num="0065" class="description-paragraph">
+        <span class="patent-image-not-available"></span>
+      </div>
+      <div id="p0071" num="0066" class="description-paragraph">step S13: and if the GPU resources are judged to be allocated to the container group, forwarding the image processing instruction to a task scheduling component of a host machine.</div>
+      <div id="p0072" num="0067" class="description-paragraph">And if judging that the conditions are met, allocating GPU resources to the container group, and forwarding the image processing instruction to a task scheduling component of the host machine. If the resource allocation condition is judged not to be met, the image processing instruction is not processed.</div>
+      <div id="p0073" num="0068" class="description-paragraph">Step S14: and allocating corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task by the task scheduling component, and sending a processing result output by the GPU to the container group.</div>
+      <div id="p0074" num="0069" class="description-paragraph">In this embodiment, the task scheduling component on the host machine divides GPU resources according to the video memory demand corresponding to the GPU task, allocates corresponding virtual GPU resources for the container group, and simultaneously sends the allocated GPU process ID corresponding to the host machine to the container group, and sends the processing result output by the GPU to the container group.</div>
+      <div id="p0075" num="0070" class="description-paragraph">In this embodiment, before the task scheduling component allocates the corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task, the method may further include: establishing connection between the host and a target port through the task scheduling component; the target port is a port corresponding to the container group; monitoring a target port by utilizing the connection between the host and the target port, and acquiring a message sent by the container group; and screening the image processing instruction according to the message type of the message. Specifically, the host and the container communicate by adopting a UDP (user datagram protocol ) protocol, specifically, the destination port of the container component in the configuration file (port. Conf) is read, the host is created and connected with the destination port UDP, and listens, and waits for a message, it can be understood that the messages sent by all the container groups are sent to the host through the destination port, and the sent messages not only contain the image processing instruction but also contain other instructions, so that the image processing instruction needs to be screened according to the message type of the message, if the message type of the image processing instruction is 10, only the message with the message type of 10 can be processed, and other types are ignored.</div>
+      <div id="p0076" num="0071" class="description-paragraph">In this embodiment, the allocating, by the task scheduling component, a corresponding virtual GPU resource for the container group according to the video memory demand corresponding to the GPU task may include: determining a target GPU from all GPUs according to the performance requirements of the application program; and distributing virtual GPU resources corresponding to the target GPU for the container group. Different GPU resource allocation can be provided for different application programs, so that the performance requirements of the different application programs are met.</div>
+      <div id="p0077" num="0072" class="description-paragraph">In addition, in this embodiment, the application programs are run in the containers in the container group, the image processing instruction is forwarded to the host through the API, the host uniformly allocates resources, and each application program can interact with the GPU without interfering with the existence of other application programs, so that the security and privacy of the data are ensured. And each application program has own virtual GPU environment, so that even if one application program fails or crashes, the normal operation of other application programs is not influenced. Meanwhile, the GPU virtualization technology can be operated on different operating systems and platforms, so that compatibility and portability are improved.</div>
+      <div id="p0078" num="0073" class="description-paragraph">In this embodiment, the allocating, by the task scheduling component, a corresponding virtual GPU resource for the container group according to a video memory demand corresponding to the GPU task, and sending a processing result output by the GPU to the container group may include: creating a corresponding number of message processing threads according to the number of the GPUs contained in the local node through the task scheduling component; wherein one message processing thread corresponds to one GPU; and the task scheduling component monitors the processing result output by each GPU through the message processing thread and forwards the processing result to the corresponding container group. The method comprises the steps that corresponding message processing threads are created according to the number of node GPUs, each thread only processes messages of the corresponding GPU, after the threads are created, thread IDs are sent to corresponding container groups, and the threads are used for monitoring processing results output by the GPUs. In this embodiment, the task scheduling component (host_proc_ctled) runs on the host in a daemon manner, and is provided with a mechanism for starting up or restarting the process automatically, but the process is not restarted automatically if the process is killed actively.</div>
+      <div id="p0079" num="0074" class="description-paragraph">In this embodiment, the GPU virtualization method may further include: executing respective corresponding program error reporting processing in the running process of the target library file and the task scheduling component; program error processing corresponding to the task scheduling component comprises generating an operation log file according to a log path. It is understood that the error reporting process of the program refers to a process of finding and processing errors during the running process of the program. The error reporting process is an unavoidable part of the program development process. The purpose of the error handling process is to find errors in the program and to correct them to ensure that the program can run in the intended manner. The task scheduling component reports error log processing, a directory aiming at GPU virtualization is created under a preset log path according to whether the preset log path exists or not, and a log file is generated according to the current time; if not, not generating the log. In addition, whether a configuration file is missing is also needed to be judged, the configuration file comprises a target port corresponding to the container group, and if the configuration file is missing, the corresponding file needs to be reminded to be set. The program error processing corresponding to the target library file comprises monitoring the communication state of the container group and the host machine, and stopping running the target library file if the communication is overtime; if the communication timeout of the GPU process ID sent by the target library file acquisition host is set to 90s, if the timeout or the analysis process ID is wrong, the target library file can be directly exited, and the exiting stack information can be seen.</div>
+      <div id="p0080" num="0075" class="description-paragraph">For example, FIG. 3 illustrates a specific GPU virtualization system that can be run using a training framework (e.g., tensorFlow or Pytorch) when a user initiates a deep learning task in a container. The training framework may issue various instructions to perform the training process. However, these instructions are intercepted by a target library file before being sent to the system floor. This library file is capable of observing and modifying instructions issued by the framework. The object library file is provided with a function called a forwarding module (communication device), and the main function of the function is to receive instructions sent from a training framework, then parse information in the target library file, and specifically extract various information related to tasks, such as the types of the tasks, data to be processed and the like. The target library file parses the information in the instruction, and sends the information to a task scheduling component (host_proc_ctled) of the host (host), which takes on the function of the task scheduler, and forwards the corresponding computing demands to the appropriate hardware resources according to the received information, i.e. sends the computing demands to the GPU hardware on the physical host. The forwarding module (communication module) in the task scheduling component is specifically used for forwarding instructions with the POD, and the pid map manager module is used for scheduling resources. After the GPU begins processing these computing tasks, the task scheduling component may pay close attention to the execution of the tasks. When the task is completed, the task scheduling component obtains the results of the task from the GPU and returns those results to the POD. In this way, the POD can decide the next operation based on the returned result. In this way, the use of virtualized GPUs is enabled, and the user can tell the training framework how to use the GPUs for computation by simple instructions without concern for specific hardware details.</div>
+      <div id="p0081" num="0076" class="description-paragraph">As can be seen from the above, in this embodiment, according to the GPU task operated by the application program in the container set, the loading of the preconfigured target library file in the container set is triggered; intercepting an image processing instruction initiated by the application program in the container group by running the target library file, judging whether GPU resources are allocated to the container group according to a resource allocation rule, and if so, forwarding the image processing instruction to a task scheduling component of a host machine; and allocating corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task by the task scheduling component, and sending a processing result output by the GPU to the container group. Therefore, the image processing instruction initiated by the application program in the container group is intercepted through the target library file passively called and loaded by the GPU task, and is judged according to the resource allocation rule, and after the GPU resource is determined to be allocated to the container group according to the resource allocation rule, the image processing instruction is forwarded to the task scheduling component of the host machine, so that the control of the GPU resource can be realized; and then the host machine uniformly receives the image processing tasks corresponding to the container groups, and distributes the needed virtual GPU resources to the container groups corresponding to the GPU tasks, so that each application program can interact with the GPU without interfering with the existence of other application programs, and the safety and privacy of data are ensured. And the GPU virtualization flow is optimized, and the flexibility of GPU virtual resource allocation is improved.</div>
+      <div id="p0082" num="0077" class="description-paragraph">Correspondingly, the embodiment of the application also discloses a GPU virtualization device, referring to fig. 4, the device includes:</div>
+      <div id="p0083" num="0078" class="description-paragraph">the target library file loading module 11 is used for triggering loading of a preset target library file in the container group according to a GPU task operated by an application program in the container group;</div>
+      <div id="p0084" num="0079" class="description-paragraph">the image processing instruction interception module 12 is configured to intercept an image processing instruction initiated by the application program in the container group by running the object library file, and determine whether to allocate GPU resources to the container group according to a resource allocation rule;</div>
+      <div id="p0085" num="0080" class="description-paragraph">the image processing instruction forwarding module 13 is configured to forward the image processing instruction to a task scheduling component of a host if it is determined that GPU resources are allocated to the container group;</div>
+      <div id="p0086" num="0081" class="description-paragraph">the resource allocation module 14 is configured to allocate corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task by using the task scheduling component, and send a processing result output by the GPU to the container group.</div>
+      <div id="p0087" num="0082" class="description-paragraph">As can be seen from the above, in this embodiment, according to the GPU task operated by the application program in the container set, the loading of the preconfigured target library file in the container set is triggered; intercepting an image processing instruction initiated by the application program in the container group by running the target library file, judging whether GPU resources are allocated to the container group according to a resource allocation rule, and if so, forwarding the image processing instruction to a task scheduling component of a host machine; and allocating corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task by the task scheduling component, and sending a processing result output by the GPU to the container group. Therefore, the image processing instruction initiated by the application program in the container group is intercepted through the target library file passively invoked and loaded by the GPU task, the judgment is carried out according to the resource allocation rule, after the GPU resource is determined to be allocated to the container group according to the resource allocation rule, the image processing instruction is forwarded to the task scheduling component of the host machine, the control of the GPU resource can be realized, the host machine uniformly receives the image processing task corresponding to each container group, the virtual GPU resource required by the allocation of the container group corresponding to each GPU task is allocated, and each application program can interact with the GPU under the condition that other application programs are not interfered, so that the safety and privacy of data are ensured, the GPU virtualization flow is optimized, and the flexibility of GPU virtual resource allocation is improved.</div>
+      <div id="p0088" num="0083" class="description-paragraph">In some embodiments, the image processing instruction interception module 12 may specifically include:</div>
+      <div id="p0089" num="0084" class="description-paragraph">the container group video memory information acquisition unit is used for acquiring the total video memory capacity and the residual video memory capacity corresponding to the container group;</div>
+      <div id="p0090" num="0085" class="description-paragraph">the first judging unit is used for judging whether the container group needs to reallocate GPU resources or not by comparing the residual video memory capacity with the video memory demand corresponding to the image processing instruction;</div>
+      <div id="p0091" num="0086" class="description-paragraph">the second judging unit is used for judging whether the container group meets GPU resource allocation conditions according to the resource allocation rule corresponding to the container group and the total memory capacity corresponding to the container group if the container group is needed; the resource allocation rule comprises a resource allocation threshold;</div>
+      <div id="p0092" num="0087" class="description-paragraph">and the resource allocation judging unit is used for judging that the GPU resources are allocated to the container group if the GPU resources are met.</div>
+      <div id="p0093" num="0088" class="description-paragraph">In some embodiments, the image processing instruction interception module 12 may specifically include:</div>
+      <div id="p0094" num="0089" class="description-paragraph">the system management command interception unit is used for intercepting a system management command through the target library file; the system management command is used for inquiring GPU information;</div>
+      <div id="p0095" num="0090" class="description-paragraph">a replacing unit, configured to replace a host process ID field in the system management command with a container process ID field, so as to obtain a custom query command;</div>
+      <div id="p0096" num="0091" class="description-paragraph">and the process query unit is used for querying the GPU process ID corresponding to the container group by executing the custom query command.</div>
+      <div id="p0097" num="0092" class="description-paragraph">In some embodiments, the GPU virtualization device may specifically include:</div>
+      <div id="p0098" num="0093" class="description-paragraph">the connection establishing unit is used for establishing connection between the host and the target port through the task scheduling component before corresponding virtual GPU resources are allocated to the container group through the task scheduling component according to the video memory demand corresponding to the GPU task; the target port is a port corresponding to the container group;</div>
+      <div id="p0099" num="0094" class="description-paragraph">the port monitoring unit is used for monitoring the target port by utilizing the connection between the host and the target port and acquiring the message sent by the container group;</div>
+      <div id="p0100" num="0095" class="description-paragraph">and the image processing instruction screening unit is used for screening the image processing instructions according to the message type of the message.</div>
+      <div id="p0101" num="0096" class="description-paragraph">In some embodiments, the resource allocation module 14 may specifically include:</div>
+      <div id="p0102" num="0097" class="description-paragraph">the target GPU determining unit is used for determining a target GPU from all the GPUs according to the performance requirements of the application program;</div>
+      <div id="p0103" num="0098" class="description-paragraph">and the resource allocation unit is used for allocating virtual GPU resources corresponding to the target GPU for the container group.</div>
+      <div id="p0104" num="0099" class="description-paragraph">In some embodiments, the GPU virtualization device may specifically include:</div>
+      <div id="p0105" num="0100" class="description-paragraph">the error reporting processing unit is used for executing corresponding program error reporting processing in the running process of the target library file and the task scheduling component;</div>
+      <div id="p0106" num="0101" class="description-paragraph">the program error processing corresponding to the target library file comprises monitoring the communication state of the container group and the host machine, and stopping running the target library file if the communication is overtime; program error processing corresponding to the task scheduling component comprises generating an operation log file according to a log path.</div>
+      <div id="p0107" num="0102" class="description-paragraph">In some embodiments, the resource allocation module 14 may specifically include:</div>
+      <div id="p0108" num="0103" class="description-paragraph">the message processing thread creation unit is used for creating a corresponding number of message processing threads according to the number of the GPUs contained in the local node through the task scheduling component; wherein one message processing thread corresponds to one GPU;</div>
+      <div id="p0109" num="0104" class="description-paragraph">and the processing result monitoring unit is used for monitoring the processing result output by each GPU through the message processing thread by the task scheduling component and forwarding the processing result to the corresponding container group.</div>
+      <div id="p0110" num="0105" class="description-paragraph">Further, the embodiment of the application further discloses an electronic device, and referring to fig. 5, the content in the drawing should not be considered as any limitation on the scope of use of the application.</div>
+      <div id="p0111" num="0106" class="description-paragraph">Fig. 5 is a schematic structural diagram of an electronic device 20 according to an embodiment of the present application. The electronic device 20 may specifically include: at least one processor 21, at least one memory 22, a power supply 23, a communication interface 24, an input output interface 25, and a communication bus 26. The memory 22 is used for storing a computer program, and the computer program is loaded and executed by the processor 21 to implement relevant steps in the GPU virtualization method disclosed in any of the foregoing embodiments.</div>
+      <div id="p0112" num="0107" class="description-paragraph">In this embodiment, the power supply 23 is configured to provide an operating voltage for each hardware device on the electronic device 20; the communication interface 24 can create a data transmission channel between the electronic device 20 and an external device, and the communication protocol to be followed is any communication protocol applicable to the technical solution of the present application, which is not specifically limited herein; the input/output interface 25 is used for acquiring external input data or outputting external output data, and the specific interface type thereof may be selected according to the specific application requirement, which is not limited herein.</div>
+      <div id="p0113" num="0108" class="description-paragraph">The memory 22 may be a carrier for storing resources, such as a read-only memory, a random access memory, a magnetic disk, or an optical disk, and the resources stored thereon include an operating system 221, a computer program 222, and data 223 including a target library file, and the storage may be temporary storage or permanent storage.</div>
+      <div id="p0114" num="0109" class="description-paragraph">The operating system 221 is used for managing and controlling various hardware devices on the electronic device 20 and the computer program 222, so as to implement the operation and processing of the processor 21 on the mass data 223 in the memory 22, which may be Windows Server, netware, unix, linux, etc. The computer program 222 may further comprise a computer program capable of performing other specific tasks in addition to the computer program capable of performing the GPU virtualization method performed by the electronic device 20 as disclosed in any of the previous embodiments.</div>
+      <div id="p0115" num="0110" class="description-paragraph">Further, the embodiment of the application also discloses a computer storage medium, in which computer executable instructions are stored, and when the computer executable instructions are loaded and executed by a processor, the steps of the GPU virtualization method disclosed in any of the previous embodiments are implemented.</div>
+      <div id="p0116" num="0111" class="description-paragraph">In this specification, each embodiment is described in a progressive manner, and each embodiment is mainly described in a different point from other embodiments, so that the same or similar parts between the embodiments are referred to each other. For the device disclosed in the embodiment, since it corresponds to the method disclosed in the embodiment, the description is relatively simple, and the relevant points refer to the description of the method section.</div>
+      <div id="p0117" num="0112" class="description-paragraph">The steps of a method or algorithm described in connection with the embodiments disclosed herein may be embodied directly in hardware, in a software module executed by a processor, or in a combination of the two. The software modules may be disposed in Random Access Memory (RAM), memory, read Only Memory (ROM), electrically programmable ROM, electrically erasable programmable ROM, registers, hard disk, a removable disk, a CD-ROM, or any other form of storage medium known in the art.</div>
+      <div id="p0118" num="0113" class="description-paragraph">Finally, it is further noted that relational terms such as first and second, and the like are used solely to distinguish one entity or action from another entity or action without necessarily requiring or implying any actual such relationship or order between such entities or actions. Moreover, the terms &#34;comprises,&#34; &#34;comprising,&#34; or any other variation thereof, are intended to cover a non-exclusive inclusion, such that a process, method, article, or apparatus that comprises a list of elements does not include only those elements but may include other elements not expressly listed or inherent to such process, method, article, or apparatus. Without further limitation, an element defined by the phrase &#34;comprising one … …&#34; does not exclude the presence of other like elements in a process, method, article, or apparatus that comprises the element.</div>
+      <div id="p0119" num="0114" class="description-paragraph">The GPU virtualization method, device, equipment and storage medium provided by the present invention are described in detail, and specific examples are applied to illustrate the principles and implementation of the present invention, and the description of the above examples is only used to help understand the method and core idea of the present invention; meanwhile, as those skilled in the art will have variations in the specific embodiments and application scope in accordance with the ideas of the present invention, the present description should not be construed as limiting the present invention in view of the above.</div>
+    </mode-for-invention>
+  </div>
+  </div>
+  </section>
+
+  <section itemprop="claims" itemscope>
+    <h2>Claims (<span itemprop="count">10</span>)</h2>
+    
+    <div itemprop="content" html><div mxw-id="PCLM454025402" lang="EN" load-source="patent-office" class="claims">
+    <div class="claim"> <div id="en-cl0001" num="0001" class="claim">
+      <div class="claim-text">1. A method for virtualizing a GPU, comprising:</div>
+      <div class="claim-text">triggering and loading a preconfigured target library file in the container group according to GPU tasks operated by the application program in the container group;</div>
+      <div class="claim-text">intercepting an image processing instruction initiated by the application program in the container group by running the target library file, and judging whether GPU resources are allocated to the container group according to a resource allocation rule;</div>
+      <div class="claim-text">if the GPU resources are judged to be allocated to the container group, forwarding the image processing instruction to a task scheduling component of a host machine;</div>
+      <div class="claim-text">and allocating corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task by the task scheduling component, and sending a processing result output by the GPU to the container group.</div>
+    </div>
+    </div> <div class="claim-dependent"> <div id="en-cl0002" num="0002" class="claim">
+      <div class="claim-text">
+        <claim-ref idref="en-cl0001"> </claim-ref>
+      </div>
+      <div class="claim-text">2. The GPU virtualization method of claim 1, wherein the determining whether to allocate GPU resources to the container group according to a resource allocation rule comprises:</div>
+      <div class="claim-text">acquiring the total video memory capacity and the residual video memory capacity corresponding to the container group;</div>
+      <div class="claim-text">judging whether the container group needs to reallocate GPU resources or not by comparing the residual video memory capacity with the video memory demand corresponding to the image processing instruction;</div>
+      <div class="claim-text">if so, judging whether the container group meets GPU resource allocation conditions according to the resource allocation rule corresponding to the container group and the total video memory capacity corresponding to the container group; the resource allocation rule comprises a resource allocation threshold;</div>
+      <div class="claim-text">and if so, judging that the GPU resources are allocated to the container group.</div>
+    </div>
+    </div> <div class="claim-dependent"> <div id="en-cl0003" num="0003" class="claim">
+      <div class="claim-text">
+        <claim-ref idref="en-cl0001"> </claim-ref>
+      </div>
+      <div class="claim-text">3. The GPU virtualization method of claim 1, wherein after the task scheduling component allocates corresponding virtual GPU resources for the container group according to the video memory requirements corresponding to the GPU tasks, further comprises:</div>
+      <div class="claim-text">intercepting a system management command through the target library file; the system management command is used for inquiring GPU information;</div>
+      <div class="claim-text">replacing a host process ID field in the system management command with a container process ID field to obtain a custom query command;</div>
+      <div class="claim-text">and inquiring the GPU process ID corresponding to the container group by executing the custom inquiry command.</div>
+    </div>
+    </div> <div class="claim-dependent"> <div id="en-cl0004" num="0004" class="claim">
+      <div class="claim-text">
+        <claim-ref idref="en-cl0001"> </claim-ref>
+      </div>
+      <div class="claim-text">4. The GPU virtualization method of claim 1, wherein before the task scheduling component allocates corresponding virtual GPU resources for the container group according to the video memory requirements corresponding to the GPU tasks, further comprises:</div>
+      <div class="claim-text">establishing connection between the host and a target port through the task scheduling component; the target port is a port corresponding to the container group;</div>
+      <div class="claim-text">monitoring a target port by utilizing the connection between the host and the target port, and acquiring a message sent by the container group;</div>
+      <div class="claim-text">and screening the image processing instruction according to the message type of the message.</div>
+    </div>
+    </div> <div class="claim-dependent"> <div id="en-cl0005" num="0005" class="claim">
+      <div class="claim-text">
+        <claim-ref idref="en-cl0001"> </claim-ref>
+      </div>
+      <div class="claim-text">5. The GPU virtualization method according to claim 1, wherein the allocating, by the task scheduling component, the corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task comprises:</div>
+      <div class="claim-text">determining a target GPU from all GPUs according to the performance requirements of the application program;</div>
+      <div class="claim-text">and distributing virtual GPU resources corresponding to the target GPU for the container group.</div>
+    </div>
+    </div> <div class="claim-dependent"> <div id="en-cl0006" num="0006" class="claim">
+      <div class="claim-text">
+        <claim-ref idref="en-cl0001"> </claim-ref>
+      </div>
+      <div class="claim-text">6. The GPU virtualization method of claim 1, further comprising:</div>
+      <div class="claim-text">executing respective corresponding program error reporting processing in the running process of the target library file and the task scheduling component;</div>
+      <div class="claim-text">the program error processing corresponding to the target library file comprises monitoring the communication state of the container group and the host machine, and stopping running the target library file if the communication is overtime; program error processing corresponding to the task scheduling component comprises generating an operation log file according to a log path.</div>
+    </div>
+    </div> <div class="claim-dependent"> <div id="en-cl0007" num="0007" class="claim">
+      <div class="claim-text">
+        <claim-ref idref="en-cl0001"> </claim-ref>
+        <claim-ref idref="en-cl0002"> </claim-ref>
+        <claim-ref idref="en-cl0003"> </claim-ref>
+        <claim-ref idref="en-cl0004"> </claim-ref>
+        <claim-ref idref="en-cl0005"> </claim-ref>
+        <claim-ref idref="en-cl0006"> </claim-ref>
+      </div>
+      <div class="claim-text">7. The GPU virtualization method according to any one of claims 1 to 6, wherein the allocating, by the task scheduling component, a corresponding virtual GPU resource for the container group according to a video memory demand corresponding to the GPU task, and sending a processing result output by the GPU to the container group, includes:</div>
+      <div class="claim-text">creating a corresponding number of message processing threads according to the number of the GPUs contained in the local node through the task scheduling component; wherein one message processing thread corresponds to one GPU;</div>
+      <div class="claim-text">and the task scheduling component monitors the processing result output by each GPU through the message processing thread and forwards the processing result to the corresponding container group.</div>
+    </div>
+    </div> <div class="claim"> <div id="en-cl0008" num="0008" class="claim">
+      <div class="claim-text">8. A GPU virtualization apparatus, comprising:</div>
+      <div class="claim-text">the target library file loading module is used for triggering loading of a preset target library file in the container group according to a GPU task operated by an application program in the container group;</div>
+      <div class="claim-text">the image processing instruction interception module is used for intercepting an image processing instruction initiated by the application program in the container group by running the target library file and judging whether GPU resources are allocated to the container group according to a resource allocation rule;</div>
+      <div class="claim-text">the image processing instruction forwarding module is used for forwarding the image processing instruction to a task scheduling component of a host machine if the GPU resource is judged to be allocated to the container group;</div>
+      <div class="claim-text">the resource allocation module is used for allocating corresponding virtual GPU resources for the container group according to the video memory demand corresponding to the GPU task through the task scheduling component and sending the processing result output by the GPU to the container group.</div>
+    </div>
+    </div> <div class="claim-dependent"> <div id="en-cl0009" num="0009" class="claim">
+      <div class="claim-text">9. An electronic device, comprising:</div>
+      <div class="claim-text">a memory for storing a computer program;</div>
+      <div class="claim-text">a processor for executing the computer program to implement the GPU virtualization method as claimed in any one of claims 1 to 7.</div>
+    </div>
+    </div> <div class="claim-dependent"> <div id="en-cl0010" num="0010" class="claim">
+      <div class="claim-text">10. A computer-readable storage medium storing a computer program; wherein the computer program, when executed by a processor, implements a GPU virtualization method as claimed in any of claims 1 to 7.</div>
+    </div>
+  </div> </div>
+  </div>
+  </section>
+
+  <section itemprop="application" itemscope>
+
+    <section itemprop="metadata" itemscope>
+      <span itemprop="applicationNumber">CN202311843374.5A</span>
+      <span itemprop="priorityDate">2023-12-28</span>
+      <span itemprop="filingDate">2023-12-28</span>
+      <span itemprop="title">GPU virtualization method, device, equipment and storage medium 
+       </span>
+      <span itemprop="ifiStatus">Pending</span>
+      
+      <a href="/patent/CN117788264A/en">
+        <span itemprop="representativePublication">CN117788264A</span>
+        (<span itemprop="primaryLanguage">en</span>)
+      </a>
+    </section>
+
+    <h2>Priority Applications (1)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Application Number</th>
+          <th>Priority Date</th>
+          <th>Filing Date</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="priorityApps" itemscope repeat>
+          <td>
+            <span itemprop="applicationNumber">CN202311843374.5A</span>
+            
+            <a href="/patent/CN117788264A/en">
+              <span itemprop="representativePublication">CN117788264A</span>
+                (<span itemprop="primaryLanguage">en</span>)
+            </a>
+          </td>
+          <td itemprop="priorityDate">2023-12-28</td>
+          <td itemprop="filingDate">2023-12-28</td>
+          <td itemprop="title">GPU virtualization method, device, equipment and storage medium 
+       </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Applications Claiming Priority (1)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Application Number</th>
+          <th>Priority Date</th>
+          <th>Filing Date</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="appsClaimingPriority" itemscope repeat>
+          <td>
+            <span itemprop="applicationNumber">CN202311843374.5A</span>
+            <a href="/patent/CN117788264A/en">
+              <span itemprop="representativePublication">CN117788264A</span>
+                (<span itemprop="primaryLanguage">en</span>)
+            </a>
+          </td>
+          <td itemprop="priorityDate">2023-12-28</td>
+          <td itemprop="filingDate">2023-12-28</td>
+          <td itemprop="title">GPU virtualization method, device, equipment and storage medium 
+       </td>
+        </tr>
+      </tbody>
+    </table>
+
+    
+
+    
+
+    <h2>Publications (1)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Publication Number</th>
+          <th>Publication Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="pubs" itemscope repeat>
+          <td>
+            <span itemprop="publicationNumber">CN117788264A</span>
+            
+            <span itemprop="thisPatent">true</span>
+            <a href="/patent/CN117788264A/en">
+              CN117788264A
+              (<span itemprop="primaryLanguage">en</span>)
+            </a>
+          </td>
+          <td itemprop="publicationDate">2024-03-29</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <section itemprop="family" itemscope>
+    <h1>Family</h1>
+    <h2>ID=90398089</h2>
+
+    <h2>Family Applications (1)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Application Number</th>
+          <th>Title</th>
+          <th>Priority Date</th>
+          <th>Filing Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="applications" itemscope repeat>
+          <td>
+            <span itemprop="applicationNumber">CN202311843374.5A</span>
+            <span itemprop="ifiStatus">Pending</span>
+            
+            <a href="/patent/CN117788264A/en">
+              <span itemprop="representativePublication">CN117788264A</span>
+                (<span itemprop="primaryLanguage">en</span>)
+            </a>
+          </td>
+          <td itemprop="priorityDate">2023-12-28</td>
+          <td itemprop="filingDate">2023-12-28</td>
+          <td itemprop="title">GPU virtualization method, device, equipment and storage medium 
+       </td>
+        </tr>
+      </tbody>
+    </table>
+
+    
+
+    
+
+    <h2>Country Status (1)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Country</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="countryStatus" itemscope repeat>
+          <td>
+            <span itemprop="countryCode">CN</span>
+            (<span itemprop="num">1</span>)
+            <meta itemprop="thisCountry" content="true">
+          </td>
+          <td>
+            <a href="/patent/CN117788264A/en">
+              <span itemprop="representativePublication">CN117788264A</span>
+              (<span itemprop="primaryLanguage">en</span>)
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Cited By (3)</h2>
+    <table>
+      <caption>* Cited by examiner, † Cited by third party</caption>
+      <thead>
+        <tr>
+          <th>Publication number</th>
+          <th>Priority date</th>
+          <th>Publication date</th>
+          <th>Assignee</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="forwardReferencesOrig" itemscope repeat>
+          <td>
+            <a href="/patent/CN118860566A/en">
+              <span itemprop="publicationNumber">CN118860566A</span>
+              (<span itemprop="primaryLanguage">en</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2024-06-26</td>
+          <td itemprop="publicationDate">2024-10-29</td>
+          <td><span itemprop="assigneeOriginal">深圳华泓智能有限公司</span></td>
+          <td itemprop="title">
+        A computing power fusion method combining GPU virtualization and AI
+       
+       </td>
+        </tr>
+        <tr itemprop="forwardReferencesOrig" itemscope repeat>
+          <td>
+            <a href="/patent/CN119273530A/en">
+              <span itemprop="publicationNumber">CN119273530A</span>
+              (<span itemprop="primaryLanguage">en</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2024-12-06</td>
+          <td itemprop="publicationDate">2025-01-07</td>
+          <td><span itemprop="assigneeOriginal">阿里云飞天(杭州)云计算技术有限公司</span></td>
+          <td itemprop="title">
+        Accelerator card resource monitoring method, device, storage medium and program product
+       
+       </td>
+        </tr>
+        <tr itemprop="forwardReferencesOrig" itemscope repeat>
+          <td>
+            <a href="/patent/CN119597404A/en">
+              <span itemprop="publicationNumber">CN119597404A</span>
+              (<span itemprop="primaryLanguage">en</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2024-11-27</td>
+          <td itemprop="publicationDate">2025-03-11</td>
+          <td><span itemprop="assigneeOriginal">天翼云科技有限公司</span></td>
+          <td itemprop="title">Virtualization method, device, equipment and storage medium of graphic processor GPU in container 
+       </td>
+        </tr>
+      </tbody>
+    </table>
+
+    
+
+    
+
+    
+
+    <ul>
+      <li itemprop="applicationsByYear" itemscope repeat>
+        <span itemprop="year">2023</span>
+        <ul>
+          <li itemprop="application" itemscope repeat>
+            <span itemprop="filingDate">2023-12-28</span>
+            <span itemprop="countryCode">CN</span>
+            <span itemprop="applicationNumber">CN202311843374.5A</span>
+            <a href="/patent/CN117788264A/en"><span itemprop="documentId">patent/CN117788264A/en</span></a>
+            <span itemprop="legalStatusCat">active</span>
+            <span itemprop="legalStatus">Pending</span>
+            <span itemprop="thisApp" content="true" bool></span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    </section>
+
+  
+
+  
+
+  <h2>Cited By (3)</h2>
+  <table>
+    <caption>* Cited by examiner, † Cited by third party</caption>
+    <thead>
+      <tr>
+        <th>Publication number</th>
+        <th>Priority date</th>
+        <th>Publication date</th>
+        <th>Assignee</th>
+        <th>Title</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr itemprop="forwardReferences" itemscope repeat>
+        <td>
+          <a href="/patent/CN118860566A/en">
+            <span itemprop="publicationNumber">CN118860566A</span>
+            (<span itemprop="primaryLanguage">en</span>)
+          </a>
+          <span itemprop="examinerCited">*</span>
+          
+        </td>
+        <td itemprop="priorityDate">2024-06-26</td>
+        <td itemprop="publicationDate">2024-10-29</td>
+        <td><span itemprop="assigneeOriginal">深圳华泓智能有限公司</span></td>
+        <td itemprop="title">
+        A computing power fusion method combining GPU virtualization and AI
+       
+       </td>
+      </tr>
+      <tr itemprop="forwardReferences" itemscope repeat>
+        <td>
+          <a href="/patent/CN119597404A/en">
+            <span itemprop="publicationNumber">CN119597404A</span>
+            (<span itemprop="primaryLanguage">en</span>)
+          </a>
+          <span itemprop="examinerCited">*</span>
+          
+        </td>
+        <td itemprop="priorityDate">2024-11-27</td>
+        <td itemprop="publicationDate">2025-03-11</td>
+        <td><span itemprop="assigneeOriginal">天翼云科技有限公司</span></td>
+        <td itemprop="title">Virtualization method, device, equipment and storage medium of graphic processor GPU in container 
+       </td>
+      </tr>
+      <tr itemprop="forwardReferences" itemscope repeat>
+        <td>
+          <a href="/patent/CN119273530A/en">
+            <span itemprop="publicationNumber">CN119273530A</span>
+            (<span itemprop="primaryLanguage">en</span>)
+          </a>
+          <span itemprop="examinerCited">*</span>
+          
+        </td>
+        <td itemprop="priorityDate">2024-12-06</td>
+        <td itemprop="publicationDate">2025-01-07</td>
+        <td><span itemprop="assigneeOriginal">阿里云飞天(杭州)云计算技术有限公司</span></td>
+        <td itemprop="title">
+        Accelerator card resource monitoring method, device, storage medium and program product
+       
+       </td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+
+  <section>
+    <h2>Similar Documents</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Publication</th>
+          <th>Publication Date</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN117788264A/en">
+                <span itemprop="publicationNumber">CN117788264A</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2024-03-29">2024-03-29</time>
+            
+            
+          </td>
+          <td itemprop="title">GPU virtualization method, device, equipment and storage medium 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/EP3340057B1/en">
+                <span itemprop="publicationNumber">EP3340057B1</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2020-07-29">2020-07-29</time>
+            
+            
+          </td>
+          <td itemprop="title">Container monitoring method and apparatus 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/US8301746B2/en">
+                <span itemprop="publicationNumber">US8301746B2</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2012-10-30">2012-10-30</time>
+            
+            
+          </td>
+          <td itemprop="title">Method and system for abstracting non-functional requirements based deployment of virtual machines 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/KR101116615B1/en">
+                <span itemprop="publicationNumber">KR101116615B1</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2012-03-07">2012-03-07</time>
+            
+            
+          </td>
+          <td itemprop="title">Resource management system and method for applications and threads in JAVA Virtual Machine 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/EP3913859B1/en">
+                <span itemprop="publicationNumber">EP3913859B1</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2025-06-25">2025-06-25</time>
+            
+            
+          </td>
+          <td itemprop="title">Vnf life cycle management method and apparatus 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/EP3313023A1/en">
+                <span itemprop="publicationNumber">EP3313023A1</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2018-04-25">2018-04-25</time>
+            
+            
+          </td>
+          <td itemprop="title">Life cycle management method and apparatus 
+     </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/US9397953B2/en">
+                <span itemprop="publicationNumber">US9397953B2</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2016-07-19">2016-07-19</time>
+            
+            
+          </td>
+          <td itemprop="title">Operation managing method for computer system, computer system and computer-readable storage medium having program thereon 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/US20200210241A1/en">
+                <span itemprop="publicationNumber">US20200210241A1</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2020-07-02">2020-07-02</time>
+            
+            
+          </td>
+          <td itemprop="title">Method and system for gpu virtualization based on container 
+     </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN110659131B/en">
+                <span itemprop="publicationNumber">CN110659131B</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2024-04-02">2024-04-02</time>
+            
+            
+          </td>
+          <td itemprop="title">Task processing method, electronic device, computer equipment and storage medium 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN110162397B/en">
+                <span itemprop="publicationNumber">CN110162397B</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2022-08-23">2022-08-23</time>
+            
+            
+          </td>
+          <td itemprop="title">Resource allocation method, device and system 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN114816662A/en">
+                <span itemprop="publicationNumber">CN114816662A</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2022-07-29">2022-07-29</time>
+            
+            
+          </td>
+          <td itemprop="title">Container arrangement method and system applied to Kubernetes 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/EP4006725A1/en">
+                <span itemprop="publicationNumber">EP4006725A1</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2022-06-01">2022-06-01</time>
+            
+            
+          </td>
+          <td itemprop="title">Virtual machine migration processing and strategy generation method, apparatus and device, and storage medium 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN112424749B/en">
+                <span itemprop="publicationNumber">CN112424749B</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2025-02-25">2025-02-25</time>
+            
+            
+          </td>
+          <td itemprop="title">
+        On-demand code execution with limited memory footprint
+       
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/KR102893319B1/en">
+                <span itemprop="publicationNumber">KR102893319B1</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2025-11-28">2025-11-28</time>
+            
+            
+          </td>
+          <td itemprop="title">
+        Resource allocation method and artificial intelligence training system
+       
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/US11593165B2/en">
+                <span itemprop="publicationNumber">US11593165B2</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2023-02-28">2023-02-28</time>
+            
+            
+          </td>
+          <td itemprop="title">Resource-usage notification framework in a distributed computing environment 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN107656804A/en">
+                <span itemprop="publicationNumber">CN107656804A</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2018-02-02">2018-02-02</time>
+            
+            
+          </td>
+          <td itemprop="title">Process pool system and method 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN112685132B/en">
+                <span itemprop="publicationNumber">CN112685132B</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2024-08-02">2024-08-02</time>
+            
+            
+          </td>
+          <td itemprop="title">Method, device and equipment for executing koji task and readable storage medium 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN115004626B/en">
+                <span itemprop="publicationNumber">CN115004626B</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2025-08-19">2025-08-19</time>
+            
+            
+          </td>
+          <td itemprop="title">Store provision 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN110502325B/en">
+                <span itemprop="publicationNumber">CN110502325B</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2023-06-02">2023-06-02</time>
+            
+            
+          </td>
+          <td itemprop="title">Task running method and device and computer readable storage medium 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/US20220358055A1/en">
+                <span itemprop="publicationNumber">US20220358055A1</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2022-11-10">2022-11-10</time>
+            
+            
+          </td>
+          <td itemprop="title">Method and apparatus for acquiring device information, storage medium and electronic device 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN109634721B/en">
+                <span itemprop="publicationNumber">CN109634721B</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2023-10-10">2023-10-10</time>
+            
+            
+          </td>
+          <td itemprop="title">Method and related device for starting communication between virtual machine and host 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/US20200334070A1/en">
+                <span itemprop="publicationNumber">US20200334070A1</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2020-10-22">2020-10-22</time>
+            
+            
+          </td>
+          <td itemprop="title">Management of dynamic sharing of central processing units 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN111475226B/en">
+                <span itemprop="publicationNumber">CN111475226B</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2022-04-29">2022-04-29</time>
+            
+            
+          </td>
+          <td itemprop="title">Electronic device, micro-service calling method, and computer-readable storage medium 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN112328598B/en">
+                <span itemprop="publicationNumber">CN112328598B</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2024-01-09">2024-01-09</time>
+            
+            
+          </td>
+          <td itemprop="title">ID generation method, ID generation device, electronic equipment and storage medium 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/US9668082B2/en">
+                <span itemprop="publicationNumber">US9668082B2</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2017-05-30">2017-05-30</time>
+            
+            
+          </td>
+          <td itemprop="title">Virtual machine based on a mobile device 
+       </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Legal Events</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Code</th>
+          <th>Title</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2024-03-29">2024-03-29</time></td>
+          <td itemprop="code">PB01</td>
+          <td itemprop="title">Publication</td>
+          <td>
+          </td>
+        </tr>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2024-03-29">2024-03-29</time></td>
+          <td itemprop="code">PB01</td>
+          <td itemprop="title">Publication</td>
+          <td>
+          </td>
+        </tr>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2024-04-16">2024-04-16</time></td>
+          <td itemprop="code">SE01</td>
+          <td itemprop="title">Entry into force of request for substantive examination</td>
+          <td>
+          </td>
+        </tr>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2024-04-16">2024-04-16</time></td>
+          <td itemprop="code">SE01</td>
+          <td itemprop="title">Entry into force of request for substantive examination</td>
+          <td>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</article>
+
+    </search-app>
+    
+    <script></script>
+    <script type="text/javascript" src="//www.gstatic.com/feedback/api.js"></script>
+    <script type="text/javascript" src="//www.gstatic.com/feedback/js/help/prod/service/lazy.min.js"></script>
+    <script type="text/javascript">
+      if (window.help && window.help.service) {
+        helpApi = window.help.service.Lazy.create(0, {apiKey: 'AIzaSyDTEI_0tLX4varJ7bwK8aT-eOI5qr3BmyI', locale: 'en-US'});
+        window.requestedSurveys = new Set();
+        window.requestSurvey = function(triggerId) {
+          if (window.requestedSurveys.has(triggerId)) {
+            return;
+          }
+          window.requestedSurveys.add(triggerId);
+          helpApi.requestSurvey({
+            triggerId: triggerId,
+            enableTestingMode: false,
+            callback: (requestSurveyCallbackParam) => {
+              if (!requestSurveyCallbackParam.surveyData) {
+                return;
+              }
+              helpApi.presentSurvey({
+                productData: {
+                  productVersion: window.version,
+                  customData: {
+                    "experiments": "",
+                  },
+                },
+                surveyData: requestSurveyCallbackParam.surveyData,
+                colorScheme: 1,
+                customZIndex: 10000,
+              });
+            }
+          });
+        };
+
+        window.requestSurvey('YXTwAsvoW0kedxbuTdH0RArc9VhT');
+      }
+    </script>
+    <script src="/sw/null_loader.js"></script>
+  </body>
+</html>

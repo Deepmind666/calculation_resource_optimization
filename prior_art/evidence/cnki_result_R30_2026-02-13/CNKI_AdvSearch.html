@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    
+    <meta name="referrer" content="always">
+    <meta name="format-detection" content="telephone=no">
+    <title>Advanced Search-CNKI</title>
+    <link rel="stylesheet" type="text/css" href="/kns8/content/css/en_min/kindex.min.css?v=2.6" />
+    <link rel="stylesheet" type="text/css" href="/kns8/content/css/en_min/public.min.css?v=2.6" />
+    <link rel="stylesheet" type="text/css" href="/kns8/content/css/en_min/layout.min.css?v=2.6" />
+    <link rel="stylesheet" type="text/css" href="/kns8/content/css/en_min/layer.min.css?v=2.6" id="layuicss-layer" />
+    <script type="text/javascript">
+        var APPPATH = '/KNS8';
+
+        var ResServerPath = '//piccache.oversea.cnki.net/2022/kdn';
+    </script>
+</head>
+<body>
+    <a class="_1gzv7750 " style=" margin-top :-60px;" href="#main-content"><span class="gv4p8b0 ">Skip to content</span></a>
+
+    <input id="isoversea" name="isoversea" type="hidden" value="1" />
+    <input id="language" name="language" type="hidden" value="en" />
+    <input id="isJoinCrossPlatform" name="isJoinCrossPlatform" type="hidden" value="1" />
+    <input id="hidVirtualPath" name="hidVirtualPath" type="hidden" value="/KNS8" />
+    <input id="KPCAPIPATH" name="KPCAPIPATH" type="hidden" value="//oversea.cnki.net/KPCAPI" />
+    <input id="OverSeaURL" name="OverSeaURL" type="hidden" value="" />
+    <input id="RecommendApi" name="RecommendApi" type="hidden" value="https://t.oversea.cnki.net/sug" />
+    <input id="KPCPATH" name="KPCPATH" type="hidden" value="//oversea.cnki.net/KPC" />
+    <input id="RecommAPI" name="RecommAPI" type="hidden" value="//recom.cnki.net/api/" />
+    <input id="RecSysAPI" name="RecSysAPI" type="hidden" value="//recsys.oversea.cnki.net/RCDService/" />
+    <input id="IsRecSys" name="IsRecSys" type="hidden" value="0" />
+    <input id="IsShowRecArticle" name="IsShowRecArticle" type="hidden" value="1" />
+    <input id="PlatFormName" name="PlatFormName" type="hidden" value="ENKNS8.0" />
+    <input id="isloadfromt" name="isloadfromt" type="hidden" value="0" />
+    
+<script type="text/javascript" src='/kns8/scripts/jquery-1.11.3.min.js'></script>
+
+    <script type="text/javascript" id="toploginoversea"  src="https://o.oversea.cnki.net/newOverseaLogin/js/loginHeader/topen.js" data="style=3&amp;laylocate=right&amp;nojquery=1&unclose=#SubjectCustomization"></script>
+<script type="text/javascript" src="/kns8/scripts/language/en/min/message.min.js?v=2.6" ></script>
+<script type="text/javascript" src="/kns8/scripts/min/login.min.js?v=2.6" ></script>
+
+
+
+
+    
+
+
+<link rel="stylesheet" type="text/css" href="/kns8/content/css/en_min/gradesearch.min.css?v=2.6" />
+<link rel="stylesheet" type="text/css" href="/kns8/content/css/en_min/jquery.datetimepicker.min.css?v=2.6" />
+
+
+
+<div class="search-box">
+    <div class="content">
+        <div class="search-left">
+            <div class="logo">
+                <a href="//kns.cnki.net">
+                  <span>CNKI</span>   
+                </a>
+                <input type="hidden" id="scdbCondition" />
+            </div>
+        </div>
+        <!--search-left-->
+        <div class="search-classify">
+            <ul class="search-classify-menu">
+                <li class="link">
+                        <a id="yikuang" href=/KNS8/defaultresult?dbcode=CFLS target="_blank">Basic Search</a>
+                                       <a id ="knowledgeElement"   href="//en.oversea.cnki.net/knavi?uniplatform=OVERSEA&language=en" target="_blank">Publication Search </a>
+                    
+                </li>
+                
+                
+                <li name="authorSearch">Author Search</li>
+                <li name="majorSearch">Professional Search</li>
+                <li name="gradeSearch" class="active">Advanced Search</li>
+                <li name="changeDb" style="display:none"></li>
+            </ul>
+            <div class="search-classify-content">
+                <!--高级检索 start-->
+                <div class="grade-search-content">
+                    <div class="search-mainbox is-off">
+
+    <div class="search-sidebar-a">
+        <a class="icon-arrow">Classification<i></i></a>
+        <div class="nav-content">
+            <div class="top-bar">
+                <span class="tit">Classification</span>
+                <div class="top-operate-btns">
+                    <a class="selectall">Select All</a>
+                    <a class="clearall">Clear</a>
+                </div>
+            </div>
+                        <ul id=defult data-id=defult data-searchField=专题子栏目代码 class="nav-content-list">
+                                <li name=A>
+                                    <div name=A class="item-nav">
+                                            <i name=1 id=A class="icon"></i>
+                                        <i class="icon-select"></i>
+                                        <a class="navi-search" href="javascript:void(0);">(A) Mathematics/ Physics/ Mechanics/ Astronomy</a>
+                                    </div>
+                                    <ul name=A></ul>
+                                </li>
+                                <li name=B>
+                                    <div name=B class="item-nav">
+                                            <i name=1 id=B class="icon"></i>
+                                        <i class="icon-select"></i>
+                                        <a class="navi-search" href="javascript:void(0);">(B) Chemistry/ Metallurgy/ Environment/ Mine Industry</a>
+                                    </div>
+                                    <ul name=B></ul>
+                                </li>
+                                <li name=C>
+                                    <div name=C class="item-nav">
+                                            <i name=1 id=C class="icon"></i>
+                                        <i class="icon-select"></i>
+                                        <a class="navi-search" href="javascript:void(0);">(C) Architecture/ Energy/ Traffic/ Electromechanics, etc</a>
+                                    </div>
+                                    <ul name=C></ul>
+                                </li>
+                                <li name=D>
+                                    <div name=D class="item-nav">
+                                            <i name=1 id=D class="icon"></i>
+                                        <i class="icon-select"></i>
+                                        <a class="navi-search" href="javascript:void(0);">(D) Agriculture</a>
+                                    </div>
+                                    <ul name=D></ul>
+                                </li>
+                                <li name=E>
+                                    <div name=E class="item-nav">
+                                            <i name=1 id=E class="icon"></i>
+                                        <i class="icon-select"></i>
+                                        <a class="navi-search" href="javascript:void(0);">(E) Medicine &amp; Public Health</a>
+                                    </div>
+                                    <ul name=E></ul>
+                                </li>
+                                <li name=F>
+                                    <div name=F class="item-nav">
+                                            <i name=1 id=F class="icon"></i>
+                                        <i class="icon-select"></i>
+                                        <a class="navi-search" href="javascript:void(0);">(F) Literature/ History/ Philosophy</a>
+                                    </div>
+                                    <ul name=F></ul>
+                                </li>
+                                <li name=G>
+                                    <div name=G class="item-nav">
+                                            <i name=1 id=G class="icon"></i>
+                                        <i class="icon-select"></i>
+                                        <a class="navi-search" href="javascript:void(0);">(G) Politics/ Military Affairs/ Law</a>
+                                    </div>
+                                    <ul name=G></ul>
+                                </li>
+                                <li name=H>
+                                    <div name=H class="item-nav">
+                                            <i name=1 id=H class="icon"></i>
+                                        <i class="icon-select"></i>
+                                        <a class="navi-search" href="javascript:void(0);">(H) Education &amp; Social Sciences</a>
+                                    </div>
+                                    <ul name=H></ul>
+                                </li>
+                                <li name=I>
+                                    <div name=I class="item-nav">
+                                            <i name=1 id=I class="icon"></i>
+                                        <i class="icon-select"></i>
+                                        <a class="navi-search" href="javascript:void(0);">(I) Electronic Technology &amp; Information Science</a>
+                                    </div>
+                                    <ul name=I></ul>
+                                </li>
+                                <li name=J>
+                                    <div name=J class="item-nav">
+                                            <i name=1 id=J class="icon"></i>
+                                        <i class="icon-select"></i>
+                                        <a class="navi-search" href="javascript:void(0);">(J) Economics &amp; Management</a>
+                                    </div>
+                                    <ul name=J></ul>
+                                </li>
+                        </ul>
+
+        </div>
+    </div>
+<script type="text/javascript">
+    $(function () {
+         // 没有学科导航，则隐藏左侧的导航按钮
+        if ($(".nav-content-list li").length == 0) {
+            $(".search-sidebar-a .icon-arrow").hide();
+        }
+
+    });
+</script>
+<ul class="search-classify-menu" style="display:none">
+    
+    
+    
+    <li name="authorSearch">作者发文检索</li>
+    <li name="majorSearch">专业检索</li>
+    <li name="gradeSearch" class="active">高级检索</li>
+</ul>
+<div class="search-middle">
+
+        <dl id="gradetxt" class="inputs-list" data-seq="3" data-maxlen="10">
+            <dt><a class="icon-btn add-group" href="javascript:void(0)">+</a></dt>
+            <dd>
+                <div class="nological"></div>
+                <div class="input-box">
+                    <div class="sort reopt">
+                        <div class="sort-default">
+                            <span value="SU">Subject</span>
+                            <i class="icon-sort"></i>
+                        </div>
+    <div class="sort-list">
+                <ul>
+                                                <li class="cur" name="defult" data-val=SU><a value=SU>Subject</a></li>
+                            <li data-val=TKA><a value=TKA>Title, Keyword and Abstract </a></li>
+                            <li data-val=KY><a value=KY>Keyword</a></li>
+                            <li data-val=TI><a value=TI>Title</a></li>
+                            <li data-val=FT><a value=FT>Full Text</a></li>
+                            <li data-val=AU><a value=AU>Author</a></li>
+                            <li data-val=FI><a value=FI>First Author</a></li>
+                            <li data-val=RP><a value=RP>Corresponding Author</a></li>
+                            <li data-val=AF><a value=AF>Author Affiliation</a></li>
+                            <li data-val=AB><a value=AB>Abstract</a></li>
+                            <li data-val=CO><a value=CO>Subhead</a></li>
+                            <li data-val=RF><a value=RF>Reference</a></li>
+                            <li data-val=CLC><a value=CLC$=|??>Chinese Library Classification</a></li>
+                            <li data-val=LY><a value=LY>Literature Sources</a></li>
+                            <li data-val=DOI><a value=DOI$=|?>DOI</a></li>
+                </ul>
+        
+    </div>
+
+
+                    </div>
+                    <input type="text" autocomplete="off" maxlength="120"  data-tipid="gradetxt-1" value="" aria-label="key word"/>
+                    <div class="sort special disableclick">
+                        <div class="sort-default">
+                            <span value="=">Precise</span>
+                            <em>∨</em>
+                        </div>
+                        <ul class="sort-list">
+                            <li class="cur"><a value="=">Precise</a></li>
+                            <li><a value="%">Fuzzy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </dd>
+            <dd>
+                <div class="sort logical">
+                    <div class="sort-default">
+                        <span>AND</span>
+                        <em>∨</em>
+                    </div>
+                    <ul class="sort-list">
+                        <li class="cur"><a href="javascript:void(0);">AND</a></li>
+                        <li><a href="javascript:void(0);">OR</a></li>
+                        <li><a href="javascript:void(0);">NOT</a></li>
+                    </ul>
+                </div>
+                <div class="input-box">
+                    <div class="sort reopt">
+                        <div class="sort-default">
+                            <span value="AU">Author</span>
+                            <i class="icon-sort"></i>
+                        </div>
+    <div class="sort-list">
+                <ul>
+                                                <li class="cur" name="defult" data-val=SU><a value=SU>Subject</a></li>
+                            <li data-val=TKA><a value=TKA>Title, Keyword and Abstract </a></li>
+                            <li data-val=KY><a value=KY>Keyword</a></li>
+                            <li data-val=TI><a value=TI>Title</a></li>
+                            <li data-val=FT><a value=FT>Full Text</a></li>
+                            <li data-val=AU><a value=AU>Author</a></li>
+                            <li data-val=FI><a value=FI>First Author</a></li>
+                            <li data-val=RP><a value=RP>Corresponding Author</a></li>
+                            <li data-val=AF><a value=AF>Author Affiliation</a></li>
+                            <li data-val=AB><a value=AB>Abstract</a></li>
+                            <li data-val=CO><a value=CO>Subhead</a></li>
+                            <li data-val=RF><a value=RF>Reference</a></li>
+                            <li data-val=CLC><a value=CLC$=|??>Chinese Library Classification</a></li>
+                            <li data-val=LY><a value=LY>Literature Sources</a></li>
+                            <li data-val=DOI><a value=DOI$=|?>DOI</a></li>
+                </ul>
+        
+    </div>
+
+
+                    </div>
+                    <input type="text" autocomplete="off" maxlength="120"  data-tipid="gradetxt-2" aria-label="key word"/>
+
+                    <div class="sort special">
+                        <div class="sort-default">
+                            <span value="=">Precise</span>
+                            <em>∨</em>
+                        </div>
+                        <ul class="sort-list">
+                            <li class="cur"><a value="=">Precise</a></li>
+                            <li><a value="%">Fuzzy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <a class="icon-btn del-group" href="javascript:void(0)">-</a>
+            </dd>
+            <dd>
+                <div class="sort logical">
+                    <div class="sort-default">
+                        <span>AND</span>
+                        <em>∨</em>
+                    </div>
+                    <ul class="sort-list">
+                        <li class="cur"><a href="javascript:void(0);">AND</a></li>
+                        <li><a href="javascript:void(0);">OR</a></li>
+                        <li><a href="javascript:void(0);">NOT</a></li>
+                    </ul>
+                </div>
+                <div class="input-box">
+                    <div class="sort reopt">
+                        <div class="sort-default">
+                            <span value="LY">Literature Sources</span>
+                            <i class="icon-sort"></i>
+                        </div>
+    <div class="sort-list">
+                <ul>
+                                                <li class="cur" name="defult" data-val=SU><a value=SU>Subject</a></li>
+                            <li data-val=TKA><a value=TKA>Title, Keyword and Abstract </a></li>
+                            <li data-val=KY><a value=KY>Keyword</a></li>
+                            <li data-val=TI><a value=TI>Title</a></li>
+                            <li data-val=FT><a value=FT>Full Text</a></li>
+                            <li data-val=AU><a value=AU>Author</a></li>
+                            <li data-val=FI><a value=FI>First Author</a></li>
+                            <li data-val=RP><a value=RP>Corresponding Author</a></li>
+                            <li data-val=AF><a value=AF>Author Affiliation</a></li>
+                            <li data-val=AB><a value=AB>Abstract</a></li>
+                            <li data-val=CO><a value=CO>Subhead</a></li>
+                            <li data-val=RF><a value=RF>Reference</a></li>
+                            <li data-val=CLC><a value=CLC$=|??>Chinese Library Classification</a></li>
+                            <li data-val=LY><a value=LY>Literature Sources</a></li>
+                            <li data-val=DOI><a value=DOI$=|?>DOI</a></li>
+                </ul>
+        
+    </div>
+
+
+                    </div>
+                    <input type="text" autocomplete="off" maxlength="120"  data-tipid="gradetxt-3" aria-label="key word"/>
+
+                    <div class="sort special">
+                        <div class="sort-default">
+                            <span value="=">Precise</span>
+                            <em>∨</em>
+                        </div>
+                        <ul class="sort-list">
+                            <li class="cur"><a value="=">Precise</a></li>
+                            <li><a value="%">Fuzzy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <a class="icon-btn del-group" href="javascript:void(0)">-</a>
+            </dd>
+        </dl>
+
+    <div class="extend">
+        <div class="extend-indent-labels">
+            <span class="colorful-lable">
+                <label class="sign">
+                    <input type="checkbox" value="OpenAccess =1">Open Access
+                </label>
+            </span>
+                <span class="colorful-lable">
+                    
+                    <label class="sign">
+                        <input type="checkbox" value="标识=2 || NOT 文献状态=2">Online First
+                    </label>
+                    <label class="sign">
+                        <input type="checkbox" value="新型出版模式=ZQ">Enhanced Publishing
+                    </label>
+                    
+                </span>
+
+                
+
+<span class="extend-label">
+    <label>
+        <input type="checkbox" data-id="EN" name="onlyChecked" value="中英文对照" checked>Cross-Language Search
+    </label>
+    <label>
+        <input type="checkbox" name="onlyChecked" value="SYS_XL_SYNONYM_DICT">Synonym Search
+    </label>
+</span>
+
+</div>
+
+        <div class="extend-row">
+            <b class="tit">Dates:</b>
+
+            <!--日历日期 start-->
+            <div class="tit-date-box">
+                <span class="subtit" value="PT">Publication Date</span>
+                <input class="publishdate" type="text" readonly maxlength="10" aria-label="publish date start"/>
+                <i>--</i>
+                <input class="publishdate" type="text" readonly maxlength="10" aria-label="publish date end"/>
+                <input type="hidden" value=2026-02-13 />
+            </div>
+            <!--日历日期 end-->
+
+            <div class="tit-dropdown-box">
+    <span class="subtit" value="RT">Date Of Update</span>
+    <div class="sort">
+        <div class="sort-default">
+            <span>All</span>
+            <em>∨</em>
+        </div>
+        <ul class="sort-list">
+            <li class="cur unlimited"><a value="">All</a></li>
+            <li><a value=2026-02-06|2026-02-13>Last week</a></li>
+            <li><a value=2026-01-13|2026-02-13>Last month</a></li>
+            <li><a value=2025-08-13|2026-02-13>Last half a year</a></li>
+            <li><a value=2025-02-13|2026-02-13>Last year</a></li>
+            <li><a value=2026-01-01|2026-02-13>Up to now</a></li>
+            <li><a value=2025-01-01|2025-12-31>Previous year</a></li>
+        </ul>
+    </div>
+</div>
+
+        </div>
+    </div>
+
+    <div class="search-buttons">
+    <a class="btn-reset" href="javascript:void(0);">Reset</a>
+    <input type="button" class="btn-search" value=Search>
+    <a class="btn-result-search is-hide btn-advResult-search" href="javascript:void(0)">Search in Result</a>
+</div>
+
+</div>
+
+
+
+
+                        <a href="javascript:void(0)" class="btn-fold is-hidden"></a>
+                    </div>
+                    <div class="search-sidebar-b">
+                        <dl class="default-info">
+        <dt class="default-tit">Advanced Search Usage:<a href="https://oversea.cnki.net/index/en/en-manual.html#frame2-1-2" target="_blank" title="View detailed instructions">&gt;&gt;</a></dt>        
+        <dd>
+            <p>Advanced search supports the combination of multiple search terms within the same search item using operators *, +, -, '', "", and (). The content entered in the search box should not exceed 120 characters.</p>
+            <p>When entering operators *, +, -, (), there should be a space before and after them, and the priority needs to be determined by English half-width parentheses.</p>
+            <p>If the search terms contain spaces or special characters such as *, +, -, (), /, %, =, etc., when performing multiple term combinations, to avoid ambiguity, the search terms should be enclosed in English single quotation marks or English double quotation marks.</p>
+        </dd>
+        <dt class="default-subtit">For example:</dt>
+        <dd>
+            <p class="major-p">(1) Entering Neural networks * natural language in the “title” search item:  literature which titles include both "neural networks" and "natural language" can be searched.</p>
+            <p class="major-p">(2) Entering (forging + free forging) * crack in the “subject” search item, literature which subjects contain either "forging" or "free forging", and related to "crack" can be searched.</p>
+            <p class="major-p">(3) Entering “digital library' * 'information service' after the title search item, literature with titles that include "digital library" and "information service" can be found.</p>
+            <p class="major-p">(4)Entering '2+3' * talent cultivation after the title search item, iterature with titles that include "2+3" and "talent cultivation" can be found.</p>
+        </dd>        
+
+                        </dl>
+                        <div class="recommend-info is-hide prototype">
+                            <i class="icon-triangle" style="top:89px"></i>
+                            <h5><span class="reopt-tit">title</span></h5>
+                            <p>The relevant recommendations are as follows. After being selected, it can be viewed in the search conditions.</p>
+                            <h6><span></span><a class="btn-clear-selected" href="javascript:void(0);">Clear</a></h6>
+                            <ul class="recommendList"></ul>
+                            <div class="btn-morefund" style="display:none"><a href="javascript:void(0)">more</a></div>
+                            <div class="search-page" style="display:none">
+                                <div id="fenye">
+                                    <a class="but-l">&lt;</a>
+                                    <b>1</b> / <em>10</em>
+                                    <a class="but-r">&gt;</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <!--高级检索 end-->
+
+                <div class="search-condition" style="display: none;">
+                    <div class="input-box" id="input-box">
+                        <div class="sort reopt">
+                            <div class="sort-default">
+                                <span>Subject</span>
+                                <i class="icon-sort"></i>
+                            </div>
+    <div class="sort-list">
+                <ul>
+                                                <li class="cur" name="defult" data-val=SU><a value=SU>Subject</a></li>
+                            <li data-val=TKA><a value=TKA>Title, Keyword and Abstract </a></li>
+                            <li data-val=KY><a value=KY>Keyword</a></li>
+                            <li data-val=TI><a value=TI>Title</a></li>
+                            <li data-val=FT><a value=FT>Full Text</a></li>
+                            <li data-val=AU><a value=AU>Author</a></li>
+                            <li data-val=FI><a value=FI>First Author</a></li>
+                            <li data-val=RP><a value=RP>Corresponding Author</a></li>
+                            <li data-val=AF><a value=AF>Author Affiliation</a></li>
+                            <li data-val=AB><a value=AB>Abstract</a></li>
+                            <li data-val=CO><a value=CO>Subhead</a></li>
+                            <li data-val=RF><a value=RF>Reference</a></li>
+                            <li data-val=CLC><a value=CLC$=|??>Chinese Library Classification</a></li>
+                            <li data-val=LY><a value=LY>Literature Sources</a></li>
+                            <li data-val=DOI><a value=DOI$=|?>DOI</a></li>
+                </ul>
+        
+    </div>
+
+
+                        </div><!--reopt-->
+                        <input type="text" autocomplete="off" maxlength="120" value="" aria-label="KeyWord">
+                        <div class="sort special disableclick">
+                            <div class="sort-default">
+                                <span>Precise</span>
+                                <em>∨</em>
+                            </div>
+                            <ul class="sort-list" style="display: none;">
+                                <li class="cur"><a value="=">Precise</a></li>
+                                <li><a value="%">Fuzzy</a></li>
+                            </ul>
+                        </div><!--mode-->
+                    </div>
+                    <input class="search-btn" type="button" value=Search />                  
+                    <a class="btn-result-search btn-advResult-search" href="javascript:void(0)">Search in Result</a>
+                    <div class="clear"></div>
+                    <a href="javascript:void(0)" class="btn-unfold" ><i class="icon-unfold"></i></a>
+                </div>
+            </div>
+            <!--search-classify-content-->
+        </div>
+        <!--search-classify-->
+    </div>
+</div>
+<!--search-box-->
+<div class="wrapper">
+    
+<div class="top-doctype">
+    <div class="content">
+        <input type="hidden" id="isscdb" value="0" />
+        <input type="hidden" id="dbcode" value="CFLS" />
+        <input type="hidden" id="curCode" />
+        <input type="hidden" id="CheckedDB" data-htime="" />
+        <input type="hidden" id="ilr" value="0" />
+            <input type="hidden" id="rssstatus" value="0" />
+                <input type="hidden" id="rsscodes" />
+                <input type="hidden" id="navicode" />
+        
+
+<div class="all-box cur">
+    <a data-id="all" dbcode="SCDB" class="all" name="dbcode" href="javascript:void(0)"><span>ALL</span><em></em></a>
+    <div class="switch-ChEn">
+        <a class="ch">Chinese</a>
+        <a class="en">Other Languages</a>
+    </div>
+</div>
+<ul class="doctype-menus keji">
+    <li data-id="xsqk"><a href="javascript:void(0)" name="dbcode" dbcode="CJFQ" data-lang="1"><span>Academic Journals</span><em></em></a></li>
+    <li data-id="xwlw" class="haschild">
+        <a href="javascript:void(0)" name="dbcode" dbcode="CDMD"><span>Theses &amp; Dissertations</span><em></em></a>
+        <ul>
+            <li class="is-hide"><a href="javascript:void(0)" name="dbcode" dbcode="CDMD"><span>Theses &amp; Dissertations</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="CDFD" prcode="CDMD"><span>Doctoral Dissertations</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="CMFD" prcode="CDMD"><span>Master&#39;s Theses</span><em></em></a></li>
+        </ul>
+    </li>
+    <li data-id="hy" class="haschild">
+        <a href="javascript:void(0)" name="dbcode" dbcode="CIPD" data-lang="1"><span>Conferences</span><em></em></a>
+        <ul>
+            <li class="is-hide"><a href="javascript:void(0)" name="dbcode" dbcode="CIPD" data-lang="1"><span>Conferences</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="CPFD" prcode="CIPD"><span>China Conferences</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="IPFD" prcode="CIPD"><span>International Conferences</span><em></em></a></li>
+            
+        </ul>
+    </li>
+    <li data-id="baozhi"><a href="javascript:void(0)" name="dbcode" dbcode="CCND"><span>Newspapers</span><em></em></a></li>
+    <li data-id="nj"><a href="javascript:void(0)" name="dbcode" dbcode="CYFD"><span>Yearbooks</span><em></em></a></li>
+        <li data-id="ts"><a href="javascript:void(0)" name="dbcode" dbcode="BDZK"><span>Books</span><em></em></a></li>
+    <li data-id="zl" class="haschild">
+        <a href="javascript:void(0)" name="dbcode" dbcode="SCOD"><span>Patents</span><em></em></a>
+        <ul>
+            <li class="is-hide"><a href="javascript:void(0)" name="dbcode" dbcode="SCOD"><span>Patents</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="SCPD" prcode="SCOD"><span>China Patent</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="SOPD" prcode="SCOD"><span>Overseas Patent</span><em></em></a></li>
+        </ul>
+    </li>
+    <li data-id="biaozhun" class="haschild">
+        <a href="javascript:void(0)" name="dbcode" dbcode="CISD"><span>Standards</span><em></em></a>
+        <ul>
+            <li class="is-hide"><a href="javascript:void(0)" name="dbcode" dbcode="CISD"><span>Standards</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="SCSF" prcode="CISD"><span>National Standard</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="SCHF" prcode="CISD"><span>Industrial Standard</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="SMSD" prcode="CISD"><span>Standard Bibliography</span><em></em></a></li>
+            <li><a target="_blank" href="http://r.cnki.net//KNS/brief/result.aspx?dbprefix=scef"><span>Corporate Standard</span><em></em></a></li>
+        </ul>
+    </li>
+    <li data-id="cg" class="is-last"><a href="javascript:void(0)" name="dbcode" dbcode="SNAD"><span>Achievements</span><em></em></a></li>
+        <li data-id="cg" class="is-bottom is-hide"><a href="javascript:void(0)" name="dbcode" dbcode="SNAD"><span>Achievements</span><em></em></a></li>
+      
+    <li data-id="xsjk" class="is-bottom"><a href="javascript:void(0)" dbcode="CCJD" name="dbcode"><span>Monographic Serials</span><em></em></a></li>
+    <li data-id="gj" class="is-bottom"><a href="javascript:void(0)" dbcode="GXDB_SECTION" name="dbcode"><span>Ancient Books</span><em></em></a></li>
+            <li data-id="gjs" class="is-bottom"><a target="_blank" href="https://gongjushu.oversea.cnki.net/oversea" dbcode="CRFD"><span>Reference Works</span></a></li>
+
+    <li data-id="tsqk" class="is-bottom"><a href="javascript:void(0)" dbcode="CJFN" name="dbcode"><span>Magazines</span><em></em></a></li>
+</ul>
+
+<ul class="doctype-menus sheke is-hide">
+    <li data-id="xsqk"><a href="javascript:void(0)" name="dbcode" dbcode="CJFQ" data-lang="1"><span>Academic Journals</span><em></em></a></li>
+    <li data-id="xwlw" class="haschild">
+        <a href="javascript:void(0)" name="dbcode" dbcode="CDMD"><span>Theses &amp; Dissertations</span><em></em></a>
+        <ul>
+            <li class="is-hide"><a href="javascript:void(0)" name="dbcode" dbcode="CDMD"><span>Theses &amp; Dissertations</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="CDFD" prcode="CDMD"><span>Doctoral Dissertations</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="CMFD" prcode="CDMD"><span>Master&#39;s Theses</span><em></em></a></li>
+        </ul>
+    </li>
+    <li data-id="hy" class="haschild">
+        <a href="javascript:void(0)" name="dbcode" dbcode="CIPD" data-lang="1"><span>Conferences</span><em></em></a>
+        <ul>
+            <li class="is-hide"><a href="javascript:void(0)" name="dbcode" dbcode="CIPD" data-lang="1"><span>Conferences</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="CPFD" prcode="CIPD"><span>China Conferences</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="IPFD" prcode="CIPD"><span>International Conferences</span><em></em></a></li>
+            
+        </ul>
+    </li>
+    <li data-id="baozhi"><a href="javascript:void(0)" name="dbcode" dbcode="CCND"><span>Newspapers</span><em></em></a></li>
+    <li data-id="nj"><a href="javascript:void(0)" name="dbcode" dbcode="CYFD"><span>Yearbooks</span><em></em></a></li>
+    <li data-id="ts"><a href="javascript:void(0)" name="dbcode" dbcode="BDZK"><span>Books</span><em></em></a></li>
+    <li data-id="gj"><a href="javascript:void(0)" dbcode="GXDB_SECTION" name="dbcode"><span>Ancient Books</span><em></em></a></li>    
+    <li data-id="zl" class="is-bottom haschild">
+        <a href="javascript:void(0)" name="dbcode" dbcode="SCOD"><span>Patents</span><em></em></a>
+        <ul>
+            <li class="is-hide"><a href="javascript:void(0)" name="dbcode" dbcode="SCOD"><span>Patents</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="SCPD" prcode="SCOD"><span>China Patent</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="SOPD" prcode="SCOD"><span>Overseas Patent</span><em></em></a></li>
+        </ul>
+    </li>
+    <li data-id="biaozhun" class="is-bottom haschild">
+        <a href="javascript:void(0)" name="dbcode" dbcode="CISD"><span>Standards</span><em></em></a>
+        <ul>
+            <li class="is-hide"><a href="javascript:void(0)" name="dbcode" dbcode="CISD"><span>Standards</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="SCSF" prcode="CISD"><span>National Standard</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="SCHF" prcode="CISD"><span>Industrial Standard</span><em></em></a></li>
+            <li><a href="javascript:void(0)" name="dbcode" dbcode="SMSD" prcode="CISD"><span>Standard Bibliography</span><em></em></a></li>
+            <li><a target="_blank" href="http://r.cnki.net//KNS/brief/result.aspx?dbprefix=scef"><span>Corporate Standard</span><em></em></a></li>
+             
+        </ul>
+    </li>
+    <li data-id="cg" class="is-bottom"><a href="javascript:void(0)" name="dbcode" dbcode="SNAD"><span>Achievements</span><em></em></a></li>
+
+    <li data-id="xsjk" class="is-bottom"><a href="javascript:void(0)" dbcode="CCJD" name="dbcode"><span>Monographic Serials</span><em></em></a></li>
+        <li data-id="gjs" class="is-bottom"><a target="_blank" href="https://gongjushu.oversea.cnki.net/oversea" dbcode="CRFD"><span>Reference Works</span></a></li>
+    <li data-id="tsqk" class="is-bottom"><a href="javascript:void(0)" dbcode="CJFN" name="dbcode"><span>Magazines</span><em></em></a></li>
+</ul>
+<a id="more" class="btn-crossDb-search" href="javascript:void(0);" title="More Resources">
+    <i></i>
+</a>
+    </div>
+
+</div>
+
+
+
+
+
+    <div class="content is-filter-off">
+        <div class="sidebar-filter">
+            <a class="icon-arrow-filter" style="display:none;"><i></i></a>
+            <div class="kjsk">
+                <dl>
+                    <dt id="btnKjSkTab" class="subtit sidedh-bar">
+                        <a class="" onclick="clickKjSkTab(this)" style="height:35px;width: 48%;border:1px #eee solid;margin: 1px;" value="kj">Sci &amp; Tech</a>
+                        <a class="" onclick="clickKjSkTab(this)" style="height:35px;width: 48%;border:1px #eee solid;margin: 1px;" value="sk">Humanity &amp; Social</a>
+                    </dt>
+                </dl>
+            </div>
+            <div id="rssreslut"></div>
+            <div id="divGroup" class="sidebar-filter-sort js-condition js-single"></div>
+
+            <div class="left-other">
+                
+                <div id="recommendTitle"></div>
+                
+                <div id="recommend" style="width:230px;height:150px"></div>
+                <div id="recommend2" style="width:230px;height:150px"></div>
+            </div>
+        </div>
+     
+        <div class="main fr" id="main-content">
+            <div class="result-con-l" style="display:none">
+                <div class="search-his-tip">
+                    <span class="tip-range">Search Range：<b class="range">ALL</b></span>
+                    <span class="conditions"></span>
+                </div>
+                <a id="SubjectCustomization" class="btn-subscribe js-haslogin" href="javascript:void(0)">Subject Customization</a>
+                <a class="btn-search-his" href="/KNS8/manage/history.html" target="_blank">Search History</a>
+            </div>
+
+            
+<div id="briefBox" style="display:none">
+</div>
+
+            <div class="relevant">
+                <ul class="bottom-commend-list">
+    <li class="rlv-word">
+      
+    </li>
+    <li class="rlv-expert">
+       
+    </li>
+</ul>
+
+            </div>
+
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+
+
+<div id="modalBox" style="display:none;">
+	<div class="mask"></div>
+	<div class="visPop">
+		<a href="javascript:void(0);" class="close">X</a>
+		<div class="vpSide">
+			<div class="vpsHd">
+                <span></span>
+			</div>
+			<div class="vpsBd">
+				<div class="reco">
+					<div class="item">
+						<strong>Database:</strong><span id="item_database">English Articles</span>
+					</div>
+					<div class="item">
+						<strong>Search query:</strong><span id="item_query">Title</span>
+					</div>
+					<div class="item">
+						<strong>Distributed Term:</strong><span id="item_group">Title</span>
+					</div>
+				</div>
+                <div class="vpSideShow">
+					<a href="javascript:void(0);" class="vpsHideBar">&lt;&lt;</a>
+				</div>
+				<div class="filt">
+					<div class="dispNum">Display Amount:<span class="sel_cnt"></span></div>
+					<div class="choose"></div>
+				</div>
+				<div class="cont hidden">
+					<ul>
+						<li></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="vpSideHide">
+			<a href="javascript:void(0);" class="vpsHideBar"><span></span><i>&gt;&gt;</i></a>
+		</div>
+        <div class="vpMain">
+            <div id="chartbox" class="vpChart"></div>
+            <p class="disc" style="display:none;"><strong>Note:</strong><span class="sp_desc"></span></p>
+            <div class="visual-row">
+                <label for="txtStartYear" style="font-size:0;">Start</label><input id="txtStartYear" type="text" value="" onkeyup="setDateKeyUp(event)" /> <span>——</span> <label for="txtEndYear" style="font-size: 0;">End</label><input id="txtEndYear" type="text" value="" onkeyup="setDateKeyUp(event)" /> <a id="btnFilterYear" tit="发表年度" field="年" href="javascript:void(0)" onclick="setDateItem(function () {$('#modalBox').find('.close').click();});">Filter</a>
+			</div>
+
+        </div>
+	</div>
+</div>
+
+
+
+
+<script type="text/javascript" src="/kns8/scripts/min/merge.advsearch.min.js?v=2.6" ></script>
+<script type="text/javascript" src="/kns8/scripts/min/merge.visual.min.js?v=2.6" ></script>
+
+<script src="/kns8/scripts/advsearch/jquery.datetimepicker.full.min.js"></script>
+<input id="krs" name="krs" type="hidden" value="//oversea.cnki.net/KRS" />
+<input id="iswritekrs" name="iswritekrs" type="hidden" value="" />
+<input id="searchv" name="searchv" type="hidden" value="" />
+
+<input id="sentencev1" name="sentencev1" type="hidden" value="" />
+<input id="sentencev2" name="sentencev2" type="hidden" value="" />
+
+
+
+
+    
+    
+<input id="PathALLAnalysis" name="PathALLAnalysis" type="hidden" value="https://oversea.cnki.net/kvisual/article/center?language=EN" />
+<script src="https://oversea.cnki.net/index/Support/en/js/foot.js" type="text/javascript"></script>
+
+    <a class="back-top" href="javascript:void(0);" target="_self" title=Top style="display: block;"><i class="icon-backtop"></i></a>
+
+ 
+
+<script type="text/javascript">
+
+     var collect = "ENOVERSEA";
+    loadScript("https://track.oversea.cnki.net/collect/quote/" + collect);
+ 
+</script>
+
+<script type="text/javascript" src="/kns8/scripts/min/merge.collect.min.js?v=2.6" ></script>
+
+
+
+    <input id="CollectName" name="CollectName" type="hidden" value="OVERSEA" />
+    
+
+<div class="setmodule" id="searchsetdiv">
+    <!-- 检索设置 start -->
+    
+    <dl class="setup">
+        <dt>Search Range<span>（Set cross-database search scope and resource display order）</span></dt>
+        <dd class="setdoctype">
+            <ul class="haschecked-list" data-listidx="0">
+                <li data-id="CJFQ"><div class="item">Academic Journals</div><i class="icon-del"></i></li>
+                <li data-id="CDMD">
+                    <div class="item">Theses &amp; Dissertations</div><i class="icon-del"></i>
+                </li>
+                <li data-id="CIPD">
+                    <div class="item">Conferences</div><i class="icon-del"></i>
+                </li>
+                <li data-id="CCND">
+                    <div class="item">Newspapers</div><i class="icon-del"></i>
+                </li>
+                <li data-id="CYFD">
+                    <div class="item">Yearbooks</div><i class="icon-del"></i>
+                </li>
+                <li data-id="BDZK">
+                    <div class="item">Books</div><i class="icon-del"></i>
+                </li>
+                <li data-id="CISD">
+                    <div class="item">Standards</div><i class="icon-del"></i>
+                </li>
+
+                <li data-id="SNAD">
+                    <div class="item">Achievements</div><i class="icon-del"></i>
+                </li>
+           
+                <li data-id="CCJD">
+                    <div class="item">Monographic Serials</div><i class="icon-del"></i>
+                </li>
+                <li data-id="CJFN">
+                    <div class="item">Magazines</div><i class="icon-del"></i>
+                </li>
+
+            </ul>
+            <a class="add-doctype" href="javascript:void(0)"><i>+</i></a>
+            <ul class="doctype-list" style="display: none;">
+                <li id="CJFQ" class="selected"><span>Academic Journals</span><a href="javascript:void(0)">Selected</a></li>
+                <li id="CCND" class="selected"><span>Newspapers</span><a href="javascript:void(0)">Selected</a></li>
+                <li id="CIPD" class="selected"><span>Conferences</span><a href="javascript:void(0)">Selected</a></li>
+                <li id="CDMD" class="selected"><span>Theses &amp; Dissertations</span><a href="javascript:void(0)">Selected</a></li>
+                <li id="CYFD" class="selected"><span>Yearbooks</span><a href="javascript:void(0)">Selected</a></li>
+                 <li id="BDZK" class="selected"><span>Books</span><a href="javascript:void(0)">Selected</a></li>
+                <li id="SCOD" class=""><span>Patents</span><a href="javascript:void(0)">Add</a></li>
+                <li id="CISD" class="selected"><span>Standards</span><a href="javascript:void(0)">Selected</a></li>
+             
+                <li id="SNAD" class="selected"><span>Achievements</span><a href="javascript:void(0)">Selected</a></li> 
+                               
+                <li id="CCJD" class="selected"><span>Monographic Serials</span><a href="javascript:void(0)">Selected</a></li>
+                 <li id="GXDB_SECTION" class=""><span>Ancient Books</span><a href="javascript:void(0)">Add</a></li>
+                <li id="CJFN" class="selected"><span>Magazines</span><a href="javascript:void(0)">Selected</a></li>
+
+            </ul>
+            <div class="clear"></div>
+        </dd>
+
+
+
+        
+
+        <dt>Search Results</dt>
+        <dd class="dperpage" style="display:none">
+            <b class="tit">Record Page:</b>
+            <label><input type="radio" name="page" value="10">10</label>
+            <label class="on"><input type="radio" checked="" name="page" value="20">20</label>
+            <label><input type="radio" name="page" value="50">50</label>
+        </dd>
+        <dd class="dstyle" style="display:none">
+            <b class="tit">Display mode：</b>
+            <label class="on"><input type="radio" checked="" name="styl" value="listmode">list</label>
+            <label><input type="radio" name="styl" value="custommode">detail</label>
+        </dd>
+        <dd class="dsorder">
+            <b class="tit">Sort Order：</b>
+            <label><input type="radio" name="order" value="pubdate">Publication Date</label>
+            <label class="on"><input type="radio" checked="" name="order" value="relevant">Relevance</label>
+            <label><input type="radio" name="order" value="cite">Cite</label>
+            <label><input type="radio" name="order" value="download">Download</label>
+            <label><input type="radio" name="order" value="all">Overall</label>
+        </dd>
+        <dd class="dmaxgroup">
+            <b class="tit">GroupMaxNum:</b>
+            <label class="on"><input type="radio" checked="" name="group" value="20">20</label>
+            <label><input type="radio" name="group" value="50">50</label>
+            <label><input type="radio" name="group" value="100">100</label>
+        </dd>
+        <dd class="dsearch">
+            <b class="tit">Search Area Auto Fold:</b>
+            <label class="on"><input type="radio" name="search" checked="" value="1">YES</label>
+            <label><input type="radio" name="search" value="0">NO</label>
+        </dd>
+
+        
+    </dl>
+
+    <div class="btn-box">
+        <a href="javascript:void(0);" id="ctrl-s">Save Settings</a>
+        <a href="javascript:void(0);" id="ctrl-z">Restore Settings</a>
+    </div>
+    <!-- 检索设置 end-->
+</div><!-- setmodule -->
+<script type="text/javascript" src="/kns8/scripts/min/merge.searchsettings.min.js?v=2.6" ></script>
+
+
+    <input id="isShowMyCNKI" name="isShowMyCNKI" type="hidden" value="1" />
+</body>
+</html>
+
+<!-- Live800在线客服图标:中文图标[浮动图标]开始-->
+<div style='display:none;'><a href=' '>在线客服</a></div>
+<script language="javascript" src="https://v88.live800.com/live800/chatClient/floatButton.js?jid=2632204061&companyID=1573360&configID=18446&codeType=custom&ss=1"></script>
+<!-- Live800默认功能代码: 开始-->
+<script language="javascript" src="https://v88.live800.com/live800/chatClient/monitor.js?jid=2632204061&companyID=1573360&configID=18445&codeType=custom&ss=1&insidePageId=18446"></script>
+<script>
+    /* add by shenwei for 支持无障碍服务 修改无效的超链接响应模式 */
+    setInterval(function () {
+        $("[href='javascript:void(0)'],[href='javascript:void(0);'],[href='javascript:']").each(function (index) {
+            if ($(this).attr('id')) {
+                $(this).attr('href', $(this).attr('id'));
+            }
+            else {
+                var linkId = 'link-' + index;
+                $(this).attr('href', '#' + linkId);
+                $(this).attr('id', linkId);
+            }            
+            $(this).click(function (e) { e.preventDefault(); });
+
+            var cur_li = $('._1gzv7750');
+            var first_li = $('body').children().eq(0);
+            if (!first_li.hasClass('_1gzv7750')) {                
+                first_li.before(cur_li);
+            }
+        });
+    }, 500);
+</script>

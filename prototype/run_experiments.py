@@ -84,6 +84,7 @@ def run_scenario(name: str, snapshots: List[ResourceSnapshot], task_n: int = 10)
         "started_total": float(m["started_total"]),
         "completed_total": float(m["completed_total"]),
         "blocked_event_total": float(m["blocked_total"]),
+        "blocked_task_total": float(m["blocked_task_total"]),
         "unique_blocked_tasks": float(len(unique_blocked)),
         "preempted_total": float(m["preempted_total"]),
         "emergency_ticks": float(m["emergency_ticks"]),

@@ -1,0 +1,104 @@
+{
+  "captured_at": "2026-02-13T12:52:21.564818+08:00",
+  "items": [
+    {
+      "name": "CN117788264A_google_patents",
+      "url": "https://patents.google.com/patent/CN117788264A/en",
+      "saved_file": "prior_art/evidence/cnipa_status_R29_2026-02-13/CN117788264A_google_patents.html",
+      "status": "ok",
+      "http_status": 200,
+      "content_type": "text/html",
+      "bytes": 120307,
+      "sha256": "0cf5b61cdc8d7f53875c66b049b9b958fcc126ef8b9b1bcfec4337dc726d90de",
+      "error": null
+    },
+    {
+      "name": "CN111736987B_google_patents",
+      "url": "https://patents.google.com/patent/CN111736987B/zh",
+      "saved_file": "prior_art/evidence/cnipa_status_R29_2026-02-13/CN111736987B_google_patents.html",
+      "status": "ok",
+      "http_status": 200,
+      "content_type": "text/html",
+      "bytes": 101458,
+      "sha256": "210993148fe0289b1f942938b25cbb59d8de45d90ffb5000e71984d70277d954",
+      "error": null
+    },
+    {
+      "name": "CN116719628B_google_patents",
+      "url": "https://patents.google.com/patent/CN116719628B/zh",
+      "saved_file": "prior_art/evidence/cnipa_status_R29_2026-02-13/CN116719628B_google_patents.html",
+      "status": "ok",
+      "http_status": 200,
+      "content_type": "text/html",
+      "bytes": 119418,
+      "sha256": "e8b8f0070919ba912f58990893c5a9e34d3a2d40d50193a262fc9cce11686ba0",
+      "error": null
+    },
+    {
+      "name": "CNIPA_conventionalSearch",
+      "url": "https://pss-system.cponline.cnipa.gov.cn/conventionalSearch",
+      "saved_file": null,
+      "status": "error",
+      "http_status": 412,
+      "content_type": null,
+      "bytes": null,
+      "sha256": null,
+      "error": "HTTPError 412: Precondition Failed"
+    },
+    {
+      "name": "CNIPA_instruction_20230213",
+      "url": "https://www.cnipa.gov.cn/art/2023/2/13/art_3166_182074.html",
+      "saved_file": "prior_art/evidence/cnipa_status_R29_2026-02-13/CNIPA_instruction_20230213.html",
+      "status": "ok",
+      "http_status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 2974,
+      "sha256": "d2ccae26b64f4be039a5fdca9b3f577f456a0e575e87253bcd67fd02d7f70bd7",
+      "error": null
+    },
+    {
+      "name": "CNIPA_guide_20240401",
+      "url": "https://www.cnipa.gov.cn/art/2024/4/1/art_3359_191346.html",
+      "saved_file": "prior_art/evidence/cnipa_status_R29_2026-02-13/CNIPA_guide_20240401.html",
+      "status": "ok",
+      "http_status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 14473,
+      "sha256": "e20715afbd7dbd28af303429d19386b51a16d2a27ec2aec2d2eb225bf8236380",
+      "error": null
+    },
+    {
+      "name": "CNKI_CJFQ_entry",
+      "url": "https://kns.cnki.net/kns8?dbcode=CJFQ",
+      "saved_file": "prior_art/evidence/cnki_route_R29_2026-02-13/CNKI_CJFQ_entry.html",
+      "status": "ok",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 26101,
+      "sha256": "e49f73caac33466e1bdcd8368714a5263cacaeaa1c254d44a577bf71e22ccc8d",
+      "error": null
+    },
+    {
+      "name": "CNKI_CDFD_entry",
+      "url": "https://kns.cnki.net/kns8?dbcode=CDFD",
+      "saved_file": "prior_art/evidence/cnki_route_R29_2026-02-13/CNKI_CDFD_entry.html",
+      "status": "ok",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 21566,
+      "sha256": "b8863f6b4846f6939a6aa3ffa2b095f8d606c2986139604ff81083c37eee9452",
+      "error": null
+    },
+    {
+      "name": "CNKI_CMFD_entry",
+      "url": "https://kns.cnki.net/kns8?dbcode=CMFD",
+      "saved_file": "prior_art/evidence/cnki_route_R29_2026-02-13/CNKI_CMFD_entry.html",
+      "status": "ok",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 21566,
+      "sha256": "47c2710507775c61ea098a5e87f30228ab879eafe0abed9ce42ed63fc9372b75",
+      "error": null
+    }
+  ]
+}

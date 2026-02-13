@@ -1,0 +1,153 @@
+{
+  "summary": {
+    "evidence_id": "REAL-BASELINE-EVENTFUL",
+    "eventful_achieved": 1,
+    "attempts_executed": 5,
+    "min_completed": 5,
+    "final_completed": 7,
+    "final_emergency_ticks": 3,
+    "final_preempted_total": 1
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "seed": 20260211,
+      "threshold_bias": 0.0,
+      "adaptation_action": "tighten_and_escalate",
+      "params": {
+        "task_count": 8,
+        "duration_sec": 6.0,
+        "base_mem_mb": 2048,
+        "fixed_workers": 4,
+        "dynamic_memory_high_pct": 76.0,
+        "dynamic_memory_emergency_pct": 82.0,
+        "dynamic_preempt_count_per_tick": 1,
+        "max_scheduler_wall_sec": 24.0
+      },
+      "dynamic_summary": {
+        "started_total": 8,
+        "completed": 8,
+        "blocked_event_total": 0,
+        "preempted_total": 0,
+        "emergency_ticks": 0,
+        "low_signal_dynamic": 1,
+        "emergency_signal_missing": 1,
+        "scheduler_timeout_hit": 0
+      },
+      "retry_needed": 1,
+      "retry_reason": "low_signal_dynamic"
+    },
+    {
+      "attempt": 2,
+      "seed": 20260248,
+      "threshold_bias": -4.0,
+      "adaptation_action": "tighten_and_escalate",
+      "params": {
+        "task_count": 10,
+        "duration_sec": 8.0,
+        "base_mem_mb": 2560,
+        "fixed_workers": 4,
+        "dynamic_memory_high_pct": 67.0,
+        "dynamic_memory_emergency_pct": 72.0,
+        "dynamic_preempt_count_per_tick": 1,
+        "max_scheduler_wall_sec": 24.0
+      },
+      "dynamic_summary": {
+        "started_total": 10,
+        "completed": 8,
+        "blocked_event_total": 0,
+        "preempted_total": 0,
+        "emergency_ticks": 0,
+        "low_signal_dynamic": 1,
+        "emergency_signal_missing": 1,
+        "scheduler_timeout_hit": 1
+      },
+      "retry_needed": 1,
+      "retry_reason": "low_signal_dynamic"
+    },
+    {
+      "attempt": 3,
+      "seed": 20260285,
+      "threshold_bias": -8.0,
+      "adaptation_action": "tighten_and_escalate",
+      "params": {
+        "task_count": 12,
+        "duration_sec": 10.0,
+        "base_mem_mb": 3200,
+        "fixed_workers": 4,
+        "dynamic_memory_high_pct": 58.0,
+        "dynamic_memory_emergency_pct": 62.0,
+        "dynamic_preempt_count_per_tick": 2,
+        "max_scheduler_wall_sec": 24.0
+      },
+      "dynamic_summary": {
+        "started_total": 12,
+        "completed": 8,
+        "blocked_event_total": 1,
+        "preempted_total": 0,
+        "emergency_ticks": 0,
+        "low_signal_dynamic": 0,
+        "emergency_signal_missing": 1,
+        "scheduler_timeout_hit": 1
+      },
+      "retry_needed": 1,
+      "retry_reason": "missing_emergency_signal"
+    },
+    {
+      "attempt": 4,
+      "seed": 20260322,
+      "threshold_bias": -12.0,
+      "adaptation_action": "relax_and_hold",
+      "params": {
+        "task_count": 11,
+        "duration_sec": 12.0,
+        "base_mem_mb": 4000,
+        "fixed_workers": 4,
+        "dynamic_memory_high_pct": 50.0,
+        "dynamic_memory_emergency_pct": 53.0,
+        "dynamic_preempt_count_per_tick": 2,
+        "max_scheduler_wall_sec": 24.0
+      },
+      "dynamic_summary": {
+        "started_total": 8,
+        "completed": 2,
+        "blocked_event_total": 518,
+        "preempted_total": 3,
+        "emergency_ticks": 7,
+        "low_signal_dynamic": 0,
+        "emergency_signal_missing": 0,
+        "scheduler_timeout_hit": 1
+      },
+      "retry_needed": 1,
+      "retry_reason": "insufficient_completion"
+    },
+    {
+      "attempt": 5,
+      "seed": 20260359,
+      "threshold_bias": -4.0,
+      "adaptation_action": "stop",
+      "params": {
+        "task_count": 11,
+        "duration_sec": 12.0,
+        "base_mem_mb": 4000,
+        "fixed_workers": 4,
+        "dynamic_memory_high_pct": 56.0,
+        "dynamic_memory_emergency_pct": 60.0,
+        "dynamic_preempt_count_per_tick": 3,
+        "max_scheduler_wall_sec": 32.0
+      },
+      "dynamic_summary": {
+        "started_total": 11,
+        "completed": 7,
+        "blocked_event_total": 20,
+        "preempted_total": 1,
+        "emergency_ticks": 3,
+        "low_signal_dynamic": 0,
+        "emergency_signal_missing": 0,
+        "scheduler_timeout_hit": 1
+      },
+      "retry_needed": 0,
+      "retry_reason": "satisfied"
+    }
+  ]
+}

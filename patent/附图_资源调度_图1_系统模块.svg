@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <rect width="1200" height="720" fill="#ffffff"/>
+  <text x="40" y="50" font-size="28" font-family="Arial">图1 资源调度系统模块图</text>
+
+  <rect x="60" y="100" width="260" height="110" fill="#e8f2ff" stroke="#2c5aa0" stroke-width="2"/>
+  <text x="85" y="145" font-size="20" font-family="Arial">资源监控模块</text>
+  <text x="85" y="175" font-size="16" font-family="Arial">CPU / 内存 / GPU 采样</text>
+
+  <rect x="380" y="100" width="300" height="110" fill="#e9ffe8" stroke="#2e7d32" stroke-width="2"/>
+  <text x="405" y="145" font-size="20" font-family="Arial">模式判定模块</text>
+  <text x="405" y="175" font-size="16" font-family="Arial">raw 紧急 + EMA 稳态</text>
+
+  <rect x="740" y="100" width="380" height="110" fill="#fff3e8" stroke="#b85c00" stroke-width="2"/>
+  <text x="765" y="145" font-size="20" font-family="Arial">准入控制模块</text>
+  <text x="765" y="175" font-size="16" font-family="Arial">同 tick 累计投影 + per-GPU 亲和</text>
+
+  <rect x="230" y="300" width="340" height="120" fill="#f4e8ff" stroke="#6a1b9a" stroke-width="2"/>
+  <text x="255" y="350" font-size="20" font-family="Arial">抢占回收模块</text>
+  <text x="255" y="380" font-size="16" font-family="Arial">瓶颈识别 + 归一化评分 + 双目标回收</text>
+
+  <rect x="630" y="300" width="270" height="120" fill="#ffe8e8" stroke="#b71c1c" stroke-width="2"/>
+  <text x="655" y="350" font-size="20" font-family="Arial">任务执行模块</text>
+  <text x="655" y="380" font-size="16" font-family="Arial">启动 / 跟踪 / 终止</text>
+
+  <rect x="430" y="520" width="320" height="120" fill="#f0f0f0" stroke="#424242" stroke-width="2"/>
+  <text x="455" y="570" font-size="20" font-family="Arial">审计日志模块</text>
+  <text x="455" y="600" font-size="16" font-family="Arial">TASK_BLOCKED / PREEMPT / MODE</text>
+
+  <line x1="320" y1="155" x2="380" y2="155" stroke="#333" stroke-width="3"/>
+  <line x1="680" y1="155" x2="740" y2="155" stroke="#333" stroke-width="3"/>
+  <line x1="930" y1="210" x2="820" y2="300" stroke="#333" stroke-width="3"/>
+  <line x1="450" y1="210" x2="420" y2="300" stroke="#333" stroke-width="3"/>
+  <line x1="570" y1="360" x2="630" y2="360" stroke="#333" stroke-width="3"/>
+  <line x1="760" y1="420" x2="700" y2="520" stroke="#333" stroke-width="3"/>
+  <line x1="400" y1="420" x2="500" y2="520" stroke="#333" stroke-width="3"/>
+</svg>

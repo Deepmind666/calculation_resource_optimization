@@ -1,0 +1,77 @@
+{
+  "targets": [
+    {
+      "name": "CN117788264A_google_patents",
+      "url": "https://patents.google.com/patent/CN117788264A/en",
+      "group": "cnipa_status_R30_2026-02-13"
+    },
+    {
+      "name": "CN111736987B_google_patents",
+      "url": "https://patents.google.com/patent/CN111736987B/zh",
+      "group": "cnipa_status_R30_2026-02-13"
+    },
+    {
+      "name": "CN116719628B_google_patents",
+      "url": "https://patents.google.com/patent/CN116719628B/zh",
+      "group": "cnipa_status_R30_2026-02-13"
+    },
+    {
+      "name": "CNIPA_conventionalSearch",
+      "url": "https://pss-system.cponline.cnipa.gov.cn/conventionalSearch",
+      "group": "cnipa_status_R30_2026-02-13",
+      "headers": {
+        "Referer": "https://www.cnipa.gov.cn/"
+      }
+    },
+    {
+      "name": "CNIPA_instruction_20230213",
+      "url": "https://www.cnipa.gov.cn/art/2023/2/13/art_3166_182074.html",
+      "group": "cnipa_status_R30_2026-02-13"
+    },
+    {
+      "name": "CNIPA_guide_20240401",
+      "url": "https://www.cnipa.gov.cn/art/2024/4/1/art_3359_191346.html",
+      "group": "cnipa_status_R30_2026-02-13"
+    },
+    {
+      "name": "CNKI_CJFQ_entry",
+      "url": "https://kns.cnki.net/kns8?dbcode=CJFQ",
+      "group": "cnki_route_R30_2026-02-13"
+    },
+    {
+      "name": "CNKI_CDFD_entry",
+      "url": "https://kns.cnki.net/kns8?dbcode=CDFD",
+      "group": "cnki_route_R30_2026-02-13"
+    },
+    {
+      "name": "CNKI_CMFD_entry",
+      "url": "https://kns.cnki.net/kns8?dbcode=CMFD",
+      "group": "cnki_route_R30_2026-02-13"
+    },
+    {
+      "name": "CNKI_AdvSearch",
+      "url": "https://kns.cnki.net/kns8/AdvSearch",
+      "group": "cnki_result_R30_2026-02-13"
+    },
+    {
+      "name": "CNKI_defaultresult_empty",
+      "url": "https://kns.cnki.net/kns8/defaultresult/index",
+      "group": "cnki_result_R30_2026-02-13"
+    },
+    {
+      "name": "CNKI_defaultresult_kw_1",
+      "url": "https://kns.cnki.net/kns8/defaultresult/index?kw=GPU%20%E8%B5%84%E6%BA%90%20%E8%B0%83%E5%BA%A6",
+      "group": "cnki_result_R30_2026-02-13"
+    },
+    {
+      "name": "CNKI_defaultresult_kw_2",
+      "url": "https://kns.cnki.net/kns8/defaultresult/index?kw=%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%20%E4%BB%BB%E5%8A%A1%20%E8%B0%83%E5%BA%A6",
+      "group": "cnki_result_R30_2026-02-13"
+    },
+    {
+      "name": "CNKI_defaultresult_kw_3",
+      "url": "https://kns.cnki.net/kns8/defaultresult/index?kw=%E8%87%AA%E8%B0%83%E5%BA%A6%20%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1",
+      "group": "cnki_result_R30_2026-02-13"
+    }
+  ]
+}

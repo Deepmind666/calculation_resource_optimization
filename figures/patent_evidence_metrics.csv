@@ -1,0 +1,5 @@
+admitted_tasks,blocked_tasks,breach_limit,emergency_ticks,evidence_id,first_emergency_tick,memory_limit_pct,mode_switches,over_issue_rate_without_cumulative,over_issued_tasks_without_cumulative,projected_peak_memory_pct,raw_emergency_first_tick,response_delay_ticks,scenario,variant
+,,,6,P-02,3,,1,,,,3,0,P-02 dual-view emergency response delay ablation,dual_view_raw_plus_ema
+,,,3,P-02,6,,2,,,,3,3,P-02 dual-view emergency response delay ablation,ema_only_alpha_0_3_no_raw_bypass
+2,2,False,,P-03,,92.0,,0.5,2,90.8906,,,P-03 same-tick cumulative projection ablation,with_cumulative_projection
+4,0,True,,P-03,,92.0,,0.5,2,100.6562,,,P-03 same-tick cumulative projection ablation,without_cumulative_projection_baseline

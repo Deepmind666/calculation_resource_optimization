@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>CN116719628B - 一种并发任务抢占式调度方法、系统及介质 
+        - Google Patents</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="referrer" content="origin-when-crossorigin">
+    <link rel="canonical" href="https://patents.google.com/patent/CN116719628B/zh">
+    <meta name="description" content="
+     本申请实施例提供了一种并发任务抢占式调度方法、系统及介质，该方法包括：获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务；获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息；获取链路传输状态信息，将链路传输状态信息与预设的状态信息进行比较，得到状态偏差率；判断所述状态偏差率是否大于或等于预设的偏差率阈值；若大于或等于，则对同一链路内的待传输子任务进行优先度排序；若小于，则多个待传输子任务同时并发传输；通过链路配合使多个传输子任务并发进行，减少任务传输的等待时间，提高数据传输的吞吐量，实现多个并发任务同步进行读写操作的功能。 
+     
+   
+   ">
+    <meta name="DC.type" content="patent">
+    <meta name="DC.title" content="一种并发任务抢占式调度方法、系统及介质 
+       ">
+    <meta name="DC.date" content="2023-08-09" scheme="dateSubmitted">
+    <meta name="DC.description" content="
+     本申请实施例提供了一种并发任务抢占式调度方法、系统及介质，该方法包括：获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务；获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息；获取链路传输状态信息，将链路传输状态信息与预设的状态信息进行比较，得到状态偏差率；判断所述状态偏差率是否大于或等于预设的偏差率阈值；若大于或等于，则对同一链路内的待传输子任务进行优先度排序；若小于，则多个待传输子任务同时并发传输；通过链路配合使多个传输子任务并发进行，减少任务传输的等待时间，提高数据传输的吞吐量，实现多个并发任务同步进行读写操作的功能。 
+     
+   
+   ">
+    <meta name="citation_patent_application_number" content="CN:202310996676.XA">
+    <meta name="citation_pdf_url" content="https://patentimages.storage.googleapis.com/bc/3c/f4/b26d7e1816b8f5/CN116719628B.pdf">
+    <meta name="citation_patent_number" content="CN:116719628:B">
+    <meta name="DC.date" content="2024-04-19" scheme="issue">
+    <meta name="DC.contributor" content="罗建星" scheme="inventor">
+    <meta name="DC.contributor" content="吴李慧" scheme="inventor">
+    <meta name="DC.contributor" content="朱敦齐" scheme="inventor">
+    <meta name="DC.contributor" content="何幸良" scheme="inventor">
+    <meta name="DC.contributor" content="Guangdong Xinbao Testing Co ltd" scheme="assignee">
+    <meta name="DC.contributor" content="Shanghai Xinbao Testing Co ltd" scheme="assignee">
+    <meta name="DC.contributor" content="Dongguan Btl Inc" scheme="assignee">
+    <meta name="DC.relation" content="CN:103152382:A" scheme="references">
+    <meta name="DC.relation" content="CN:104519075:A" scheme="references">
+    <meta name="DC.relation" content="CN:106126681:A" scheme="references">
+    <meta name="DC.relation" content="WO:2020000944:A1" scheme="references">
+    <meta name="DC.relation" content="CN:114972335:A" scheme="references">
+    <meta name="DC.relation" content="CN:116048745:A" scheme="references">
+    <meta name="DC.relation" content="CN:116489019:A" scheme="references">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Product+Sans">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700">
+
+    <style>
+      
+      #gb { top: 15px; left: auto; right: 0; width: auto; min-width: 135px !important; }   
+      body { transition: none; }
+    </style>
+    <script></script>
+
+    <script>
+      window.version = 'patent-search.search_20250707_RC00';
+
+      function sendFeedback() {
+        userfeedback.api.startFeedback({
+          'productId': '713680',
+          'bucket': 'patent-search-web',
+          'productVersion': window.version,
+        });
+      }
+
+      window.experiments = {};
+      window.experiments.patentCountries = "ae,ag,al,am,ao,ap,ar,at,au,aw,az,ba,bb,bd,be,bf,bg,bh,bj,bn,bo,br,bw,bx,by,bz,ca,cf,cg,ch,ci,cl,cm,cn,co,cr,cs,cu,cy,cz,dd,de,dj,dk,dm,do,dz,ea,ec,ee,eg,em,ep,es,fi,fr,ga,gb,gc,gd,ge,gh,gm,gn,gq,gr,gt,gw,hk,hn,hr,hu,ib,id,ie,il,in,ir,is,it,jo,jp,ke,kg,kh,km,kn,kp,kr,kw,kz,la,lc,li,lk,lr,ls,lt,lu,lv,ly,ma,mc,md,me,mg,mk,ml,mn,mo,mr,mt,mw,mx,my,mz,na,ne,ng,ni,nl,no,nz,oa,om,pa,pe,pg,ph,pl,pt,py,qa,ro,rs,ru,rw,sa,sc,sd,se,sg,si,sk,sl,sm,sn,st,su,sv,sy,sz,td,tg,th,tj,tm,tn,tr,tt,tw,tz,ua,ug,us,uy,uz,vc,ve,vn,wo,yu,za,zm,zw";
+      
+      
+      window.experiments.keywordWizard = true;
+      
+      
+      
+      window.experiments.definitions = true;
+      window.experiments.plogs = true;
+
+      window.Polymer = {
+        dom: 'shady',
+        lazyRegister: true,
+      };
+    </script>
+
+    <script src="//www.gstatic.com/patent-search/frontend/patent-search.search_20250707_RC00/scs/compiled_dir/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="//www.gstatic.com/patent-search/frontend/patent-search.search_20250707_RC00/scs/compiled_dir/search-app-vulcanized.html">
+  </head>
+  <body unresolved>
+    
+    
+    <script></script>
+    <script src="//www.gstatic.com/patent-search/frontend/patent-search.search_20250707_RC00/scs/compiled_dir/search-app-vulcanized.js"></script>
+    <search-app>
+      
+      
+
+      <article class="result" itemscope itemtype="http://schema.org/ScholarlyArticle">
+  <h1 itemprop="pageTitle">CN116719628B - 一种并发任务抢占式调度方法、系统及介质 
+        - Google Patents</h1>
+  <span itemprop="title">一种并发任务抢占式调度方法、系统及介质 
+       </span>
+
+  <meta itemprop="type" content="patent">
+  <a href="https://patentimages.storage.googleapis.com/bc/3c/f4/b26d7e1816b8f5/CN116719628B.pdf" itemprop="pdfLink">Download PDF</a>
+  <h2>Info</h2>
+
+  <dl>
+    <dt>Publication number</dt>
+    <dd itemprop="publicationNumber">CN116719628B</dd>
+    <meta itemprop="numberWithoutCodes" content="116719628">
+    <meta itemprop="kindCode" content="B">
+    <meta itemprop="publicationDescription" content="Granted patent for invention">
+    <span>CN116719628B</span>
+    <span>CN202310996676.XA</span>
+    <span>CN202310996676A</span>
+    <span>CN116719628B</span>
+    <span>CN 116719628 B</span>
+    <span>CN116719628 B</span>
+    <span>CN 116719628B</span>
+    <span>  </span>
+    <span> </span>
+    <span> </span>
+    <span>CN 202310996676 A</span>
+    <span>CN202310996676 A</span>
+    <span>CN 202310996676A</span>
+    <span>CN 116719628 B</span>
+    <span>CN116719628 B</span>
+    <span>CN 116719628B</span>
+
+    <dt>Authority</dt>
+    <dd itemprop="countryCode">CN</dd>
+    <dd itemprop="countryName">China</dd>
+
+    <dt>Prior art keywords</dt>
+    <dd itemprop="priorArtKeywords" repeat>link</dd>
+    <dd itemprop="priorArtKeywords" repeat>transmitted</dd>
+    <dd itemprop="priorArtKeywords" repeat>subtasks</dd>
+    <dd itemprop="priorArtKeywords" repeat>concurrent</dd>
+    <dd itemprop="priorArtKeywords" repeat>task</dd>
+
+    <dt>Prior art date</dt>
+    <dd><time itemprop="priorArtDate" datetime="2023-08-09">2023-08-09</time></dd>
+
+    <dt>Legal status (The legal status is an assumption and is not a legal conclusion. Google has not performed a legal analysis and makes no representation as to the accuracy of the status listed.)</dt>
+    <dd itemprop="legalStatusIfi" itemscope>
+      <span itemprop="status">Active</span>
+    </dd>
+  </dl>
+
+  <dt>Application number</dt>
+  <dd itemprop="applicationNumber">CN202310996676.XA</dd>
+
+  <dt>Other languages</dt>
+  <dd itemprop="otherLanguages" itemscope repeat>
+    <a href="/patent/CN116719628B/en">
+      <span itemprop="name">English</span> (<span itemprop="code">en</span>)
+    </a>
+  </dd>
+
+  <dt>Other versions</dt>
+  <dd itemprop="directAssociations" itemscope repeat>
+    <a href="/patent/CN116719628A/zh">
+      <span itemprop="publicationNumber">CN116719628A</span>
+      (<span itemprop="primaryLanguage">zh</span>
+    </a>
+  </dd>
+
+  <dt>Inventor</dt>
+  <dd itemprop="inventor" repeat>罗建星</dd>
+  <dd itemprop="inventor" repeat>吴李慧</dd>
+  <dd itemprop="inventor" repeat>朱敦齐</dd>
+  <dd itemprop="inventor" repeat>何幸良</dd>
+
+  <dt>Current Assignee (The listed assignees may be inaccurate. Google has not performed a legal analysis and makes no representation or warranty as to the accuracy of the list.)</dt>
+  <dd itemprop="assigneeCurrent" repeat>
+    Dongguan Btl Inc
+  </dd>
+  <dd itemprop="assigneeCurrent" repeat>
+    Shanghai Xinbao Testing Co ltd
+  </dd>
+
+  <dt>Original Assignee</dt>
+  <dd itemprop="assigneeOriginal" repeat>Guangdong Xinbao Testing Co ltd</dd>
+  <dd itemprop="assigneeOriginal" repeat>Shanghai Xinbao Testing Co ltd</dd>
+  <dd itemprop="assigneeOriginal" repeat>Dongguan Btl Inc</dd>
+
+  <dt>Priority date (The priority date is an assumption and is not a legal conclusion. Google has not performed a legal analysis and makes no representation as to the accuracy of the date listed.)</dt>
+  <dd><time itemprop="priorityDate" datetime="2023-08-09">2023-08-09</time></dd>
+
+  <dt>Filing date</dt>
+  <dd><time itemprop="filingDate" datetime="2023-08-09">2023-08-09</time></dd>
+
+  <dt>Publication date</dt>
+  <dd><time itemprop="publicationDate" datetime="2024-04-19">2024-04-19</time></dd>
+
+  
+  <dd itemprop="events" itemscope repeat>
+    <time itemprop="date" datetime="2023-08-09">2023-08-09</time>
+    <span itemprop="title">Application filed by Guangdong Xinbao Testing Co ltd, Shanghai Xinbao Testing Co ltd, Dongguan Btl Inc</span>
+    <span itemprop="type">filed</span>
+    <span itemprop="critical" content="true" bool>Critical</span>
+    
+    
+    
+    <span itemprop="assigneeSearch">Guangdong Xinbao Testing Co ltd</span>
+  </dd>
+  <dd itemprop="events" itemscope repeat>
+    <time itemprop="date" datetime="2023-08-09">2023-08-09</time>
+    <span itemprop="title">Priority to CN202310996676.XA</span>
+    <span itemprop="type">priority</span>
+    <span itemprop="critical" content="true" bool>Critical</span>
+    
+    
+    <span itemprop="documentId">patent/CN116719628B/zh</span>
+    
+  </dd>
+  <dd itemprop="events" itemscope repeat>
+    <time itemprop="date" datetime="2023-09-08">2023-09-08</time>
+    <span itemprop="title">Publication of CN116719628A</span>
+    <span itemprop="type">publication</span>
+    <span itemprop="critical" content="true" bool>Critical</span>
+    
+    
+    <span itemprop="documentId">patent/CN116719628A/zh</span>
+    
+  </dd>
+  <dd itemprop="events" itemscope repeat>
+    <time itemprop="date" datetime="2024-04-19">2024-04-19</time>
+    <span itemprop="title">Application granted</span>
+    <span itemprop="type">granted</span>
+    <span itemprop="critical" content="true" bool>Critical</span>
+    
+    
+    
+    
+  </dd>
+  <dd itemprop="events" itemscope repeat>
+    <time itemprop="date" datetime="2024-04-19">2024-04-19</time>
+    <span itemprop="title">Publication of CN116719628B</span>
+    <span itemprop="type">publication</span>
+    <span itemprop="critical" content="true" bool>Critical</span>
+    
+    
+    <span itemprop="documentId">patent/CN116719628B/zh</span>
+    
+  </dd>
+  <dd itemprop="events" itemscope repeat>
+    <time itemprop="date">Status</time>
+    <span itemprop="title">Active</span>
+    <span itemprop="type">legal-status</span>
+    <span itemprop="critical" content="true" bool>Critical</span>
+    <span itemprop="current" content="true" bool>Current</span>
+    
+    
+    
+  </dd>
+  <dd itemprop="events" itemscope repeat>
+    <time itemprop="date" datetime="2043-08-09">2043-08-09</time>
+    <span itemprop="title">Anticipated expiration</span>
+    <span itemprop="type">legal-status</span>
+    <span itemprop="critical" content="true" bool>Critical</span>
+    
+    
+    
+    
+  </dd>
+
+  <h2>Links</h2>
+  <ul>
+    
+
+    <li itemprop="links" itemscope repeat>
+        <meta itemprop="id" content="espacenetLink">
+        <a href="https://worldwide.espacenet.com/publicationDetails/biblio?CC=CN&amp;NR=116719628B&amp;KC=B&amp;FT=D" itemprop="url" target="_blank"><span itemprop="text">Espacenet</span></a>
+      </li>
+      
+
+    
+
+    <li itemprop="links" itemscope repeat>
+      <meta itemprop="id" content="globalDossierLink">
+      <a href="https://globaldossier.uspto.gov/result/application/CN/202310996676/1" itemprop="url" target="_blank"><span itemprop="text">Global Dossier</span></a>
+    </li>
+
+    
+
+      
+
+      
+
+      
+      <li itemprop="links" itemscope repeat>
+        <meta itemprop="id" content="stackexchangeLink">
+        <a href="https://patents.stackexchange.com/questions/tagged/CN116719628B" itemprop="url"><span itemprop="text">Discuss</span></a>
+      </li>
+  </ul>
+
+  
+
+  
+
+  <section>
+    <h2>Classifications</h2>
+    <ul>
+      <li>
+        <ul itemprop="classifications" itemscope repeat>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G</span>&mdash;<span itemprop="Description">PHYSICS</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06</span>&mdash;<span itemprop="Description">COMPUTING OR CALCULATING; COUNTING</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F</span>&mdash;<span itemprop="Description">ELECTRIC DIGITAL DATA PROCESSING</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F9/00</span>&mdash;<span itemprop="Description">Arrangements for program control, e.g. control units</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F9/06</span>&mdash;<span itemprop="Description">Arrangements for program control, e.g. control units using stored programs, i.e. using an internal store of processing equipment to receive or retain programs</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F9/46</span>&mdash;<span itemprop="Description">Multiprogramming arrangements</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F9/48</span>&mdash;<span itemprop="Description">Program initiating; Program switching, e.g. by interrupt</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F9/4806</span>&mdash;<span itemprop="Description">Task transfer initiation or dispatching</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F9/4843</span>&mdash;<span itemprop="Description">Task transfer initiation or dispatching by program, e.g. task dispatcher, supervisor, operating system</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F9/4881</span>&mdash;<span itemprop="Description">Scheduling strategies for dispatcher, e.g. round robin, multi-level priority queues</span>
+            <meta itemprop="Leaf" content="true"><meta itemprop="FirstCode" content="true"><meta itemprop="IsCPC" content="true">
+          </li>
+        </ul>
+      </li>
+      <li>
+        <ul itemprop="classifications" itemscope repeat>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G</span>&mdash;<span itemprop="Description">PHYSICS</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06</span>&mdash;<span itemprop="Description">COMPUTING OR CALCULATING; COUNTING</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F</span>&mdash;<span itemprop="Description">ELECTRIC DIGITAL DATA PROCESSING</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F9/00</span>&mdash;<span itemprop="Description">Arrangements for program control, e.g. control units</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F9/06</span>&mdash;<span itemprop="Description">Arrangements for program control, e.g. control units using stored programs, i.e. using an internal store of processing equipment to receive or retain programs</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F9/46</span>&mdash;<span itemprop="Description">Multiprogramming arrangements</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F9/52</span>&mdash;<span itemprop="Description">Program synchronisation; Mutual exclusion, e.g. by means of semaphores</span>
+            <meta itemprop="Leaf" content="true"><meta itemprop="IsCPC" content="true">
+          </li>
+        </ul>
+      </li>
+      <li>
+        <ul itemprop="classifications" itemscope repeat>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G</span>&mdash;<span itemprop="Description">PHYSICS</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06</span>&mdash;<span itemprop="Description">COMPUTING OR CALCULATING; COUNTING</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F</span>&mdash;<span itemprop="Description">ELECTRIC DIGITAL DATA PROCESSING</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F2209/00</span>&mdash;<span itemprop="Description">Indexing scheme relating to G06F9/00</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F2209/48</span>&mdash;<span itemprop="Description">Indexing scheme relating to G06F9/48</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F2209/484</span>&mdash;<span itemprop="Description">Precedence</span>
+            <meta itemprop="Leaf" content="true"><meta itemprop="Additional" content="true"><meta itemprop="IsCPC" content="true">
+          </li>
+        </ul>
+      </li>
+      <li>
+        <ul itemprop="classifications" itemscope repeat>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G</span>&mdash;<span itemprop="Description">PHYSICS</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06</span>&mdash;<span itemprop="Description">COMPUTING OR CALCULATING; COUNTING</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F</span>&mdash;<span itemprop="Description">ELECTRIC DIGITAL DATA PROCESSING</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F2209/00</span>&mdash;<span itemprop="Description">Indexing scheme relating to G06F9/00</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F2209/50</span>&mdash;<span itemprop="Description">Indexing scheme relating to G06F9/50</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F2209/5017</span>&mdash;<span itemprop="Description">Task decomposition</span>
+            <meta itemprop="Leaf" content="true"><meta itemprop="Additional" content="true"><meta itemprop="IsCPC" content="true">
+          </li>
+        </ul>
+      </li>
+      <li>
+        <ul itemprop="classifications" itemscope repeat>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G</span>&mdash;<span itemprop="Description">PHYSICS</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06</span>&mdash;<span itemprop="Description">COMPUTING OR CALCULATING; COUNTING</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F</span>&mdash;<span itemprop="Description">ELECTRIC DIGITAL DATA PROCESSING</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F2209/00</span>&mdash;<span itemprop="Description">Indexing scheme relating to G06F9/00</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F2209/50</span>&mdash;<span itemprop="Description">Indexing scheme relating to G06F9/50</span>
+            <meta itemprop="IsCPC" content="true">
+          </li>
+          <li itemprop="classifications" itemscope repeat>
+            <span itemprop="Code">G06F2209/508</span>&mdash;<span itemprop="Description">Monitor</span>
+            <meta itemprop="Leaf" content="true"><meta itemprop="Additional" content="true"><meta itemprop="IsCPC" content="true">
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  
+
+  
+
+  
+
+  <section>
+    <h2>Landscapes</h2>
+    <ul>
+      <li itemprop="landscapes" itemscope repeat>
+        <span itemprop="name">Engineering &amp; Computer Science</span>
+        (<span itemprop="type">AREA</span>)
+      </li>
+      <li itemprop="landscapes" itemscope repeat>
+        <span itemprop="name">Software Systems</span>
+        (<span itemprop="type">AREA</span>)
+      </li>
+      <li itemprop="landscapes" itemscope repeat>
+        <span itemprop="name">Theoretical Computer Science</span>
+        (<span itemprop="type">AREA</span>)
+      </li>
+      <li itemprop="landscapes" itemscope repeat>
+        <span itemprop="name">Physics &amp; Mathematics</span>
+        (<span itemprop="type">AREA</span>)
+      </li>
+      <li itemprop="landscapes" itemscope repeat>
+        <span itemprop="name">General Engineering &amp; Computer Science</span>
+        (<span itemprop="type">AREA</span>)
+      </li>
+      <li itemprop="landscapes" itemscope repeat>
+        <span itemprop="name">General Physics &amp; Mathematics</span>
+        (<span itemprop="type">AREA</span>)
+      </li>
+      <li itemprop="landscapes" itemscope repeat>
+        <span itemprop="name">Information Retrieval, Db Structures And Fs Structures Therefor</span>
+        (<span itemprop="type">AREA</span>)
+      </li>
+    </ul>
+  </section>
+
+
+  <section itemprop="abstract" itemscope>
+    <h2>Abstract</h2>
+    
+    <div itemprop="content" html><abstract mxw-id="PA667794308" lang="ZH" load-source="patent-office">
+    <div num="0001" class="abstract">本申请实施例提供了一种并发任务抢占式调度方法、系统及介质，该方法包括：获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务；获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息；获取链路传输状态信息，将链路传输状态信息与预设的状态信息进行比较，得到状态偏差率；判断所述状态偏差率是否大于或等于预设的偏差率阈值；若大于或等于，则对同一链路内的待传输子任务进行优先度排序；若小于，则多个待传输子任务同时并发传输；通过链路配合使多个传输子任务并发进行，减少任务传输的等待时间，提高数据传输的吞吐量，实现多个并发任务同步进行读写操作的功能。</div>
+    </abstract>
+  </div>
+  </section>
+
+  <section itemprop="description" itemscope>
+    <h2>Description</h2>
+    
+    <div itemprop="content" html><div mxw-id="PDES459785310" lang="ZH" load-source="patent-office" class="description">
+    <invention-title lang="ZH" id="title1">一种并发任务抢占式调度方法、系统及介质</invention-title>
+    <technical-field>
+      <div id="p0001" class="description-paragraph">技术领域</div>
+      <div id="p0002" num="0001" class="description-paragraph">本申请涉及数据传输调度领域，具体而言，涉及一种并发任务抢占式调度方法、系统及介质。</div>
+    </technical-field>
+    <background-art>
+      <div id="p0003" class="description-paragraph">背景技术</div>
+      <div id="p0004" num="0002" class="description-paragraph">锁库锁表会限制并发性，因为当一个事务获取了锁后，其他事务必须等待该事务释放锁才能执行相应的操作。这可能导致大量的事务等待，造成系统的性能瓶颈，降低系统的吞吐量，使用锁库锁表的方式可能会增加死锁的风险。当多个事务同时竞争多个资源时，可能会出现循环等待的情况，导致死锁的发生。解决死锁问题需要谨慎的设计和管理锁的获取和释放顺序，增加了系统开发和维护的复杂性，锁库锁表的方式限制了同时进行读写操作的能力，因为当一个事务持有锁时，其他事务无法同时对相同的库或表进行读写操作。这可能导致一些并发性较高的场景受到限制，影响系统的并发处理能力，锁库锁表可能会导致长时间的阻塞问题。当一个事务持有锁并且执行时间较长时，其他事务可能需要等待很长时间才能获得所需的资源。这会导致事务的等待时间增加，响应时间延长，影响用户体验，使用锁库锁表的方式在面对大规模系统的扩展时可能会遇到问题。当并发请求增加时，需要增加更多的锁资源，这可能导致系统扩展性受限。此外，如果需要对数据库进行分片或分区，锁库锁表的方式可能会更加复杂和困难，针对上述问题，目前亟待有效的技术解决方案。</div>
+    </background-art>
+    <disclosure>
+      <div id="p0005" class="description-paragraph">发明内容</div>
+      <div id="p0006" num="0003" class="description-paragraph">本申请实施例的目的在于提供一种并发任务抢占式调度方法、系统及介质，可以通过链路配合使多个传输子任务并发进行，减少任务传输的等待时间，提高数据传输的吞吐量，实现多个并发任务同步进行读写操作的功能的技术。</div>
+      <div id="p0007" num="0004" class="description-paragraph">本申请实施例还提供了一种并发任务抢占式调度方法，包括：</div>
+      <div id="p0008" num="0005" class="description-paragraph">获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务；</div>
+      <div id="p0009" num="0006" class="description-paragraph">获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息；</div>
+      <div id="p0010" num="0007" class="description-paragraph">获取链路传输状态信息，将链路传输状态信息与预设的状态信息进行比较，得到状态偏差率；</div>
+      <div id="p0011" num="0008" class="description-paragraph">判断所述状态偏差率是否大于或等于预设的偏差率阈值；</div>
+      <div id="p0012" num="0009" class="description-paragraph">若大于或等于，则对同一链路内的待传输子任务进行优先度排序；</div>
+      <div id="p0013" num="0010" class="description-paragraph">若小于，则多个待传输子任务同时并发传输。</div>
+      <div id="p0014" num="0011" class="description-paragraph">可选地，在本申请实施例所述的并发任务抢占式调度方法中，所述获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务，具体为：</div>
+      <div id="p0015" num="0012" class="description-paragraph">获取任务数据库，提取数据特征，并生成特征向量；</div>
+      <div id="p0016" num="0013" class="description-paragraph">将特征向量与预设的向量进行夹角计算，得到向量角；</div>
+      <div id="p0017" num="0014" class="description-paragraph">判断所述向量角是否满足角度范围；</div>
+      <div id="p0018" num="0015" class="description-paragraph">若满足，则判定对应的数据为同一任务内的数据；</div>
+      <div id="p0019" num="0016" class="description-paragraph">若不满足，则判定对应的数据为不同任务内的数据。</div>
+      <div id="p0020" num="0017" class="description-paragraph">可选地，在本申请实施例所述的并发任务抢占式调度方法中，所述获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息，具体为：</div>
+      <div id="p0021" num="0018" class="description-paragraph">获取链路数量与待传输子任务数量；将链路数量与待传输子任务数量进行比较，得到数量差值；</div>
+      <div id="p0022" num="0019" class="description-paragraph">若链路数量大于待传输子任务数量，则获取链路传输标准信息与待传输子任务的占用资源信息；</div>
+      <div id="p0023" num="0020" class="description-paragraph">根据链路传输标准信息与待传输子任务的占用资源信息进行匹配，将待传输子任务通过链路进行数据传输；</div>
+      <div id="p0024" num="0021" class="description-paragraph">若链路数量小于待传输子任务数量，则根据待传输子任务的优先度与链路进行匹配，并获取并发子任务；</div>
+      <div id="p0025" num="0022" class="description-paragraph">获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序；</div>
+      <div id="p0026" num="0023" class="description-paragraph">根据链路空闲顺序对并发子任务进行链路分配。</div>
+      <div id="p0027" num="0024" class="description-paragraph">可选地，在本申请实施例所述的并发任务抢占式调度方法中，所述获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序，具体为：</div>
+      <div id="p0028" num="0025" class="description-paragraph">获取每一个链路占用时间信息，根据链路占用时间信息对链路并发任务分配进行排序；</div>
+      <div id="p0029" num="0026" class="description-paragraph">获取每一个链路并发任务数量，判断所述并发任务数量是否大于预设的数量；</div>
+      <div id="p0030" num="0027" class="description-paragraph">若大于，则计算并发任务数量的超量，根据超量将并发任务按照链路分配排序进行调整；</div>
+      <div id="p0031" num="0028" class="description-paragraph">若小于或等于，则计算并发任务的预定传输时间。</div>
+      <div id="p0032" num="0029" class="description-paragraph">可选地，在本申请实施例所述的并发任务抢占式调度方法中，若大于或等于，则对同一链路内的待传输子任务进行优先度排序，具体为：</div>
+      <div id="p0033" num="0030" class="description-paragraph">获取待传输子任务，将待传输子任务输入预设的传输调度模型，生成子任务优先度信息；</div>
+      <div id="p0034" num="0031" class="description-paragraph">根据子任务优先度信息对待传输子任务进行并发传输排序；</div>
+      <div id="p0035" num="0032" class="description-paragraph">根据传输排序对待传输子任务进行数据传输，并生成链路传输状态；</div>
+      <div id="p0036" num="0033" class="description-paragraph">将链路传输状态与预设的传输状态进行比较，得到链路负荷；</div>
+      <div id="p0037" num="0034" class="description-paragraph">判断所述链路负荷是否大于预设的负荷；</div>
+      <div id="p0038" num="0035" class="description-paragraph">若大于，则生成链路配合信息，根据链路配合信息对链路进行传输调度；</div>
+      <div id="p0039" num="0036" class="description-paragraph">若小于，则将链路传输状态实时进行监控。</div>
+      <div id="p0040" num="0037" class="description-paragraph">可选地，在本申请实施例所述的并发任务抢占式调度方法中，所述获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序，具体为：</div>
+      <div id="p0041" num="0038" class="description-paragraph">获取链路传输时间，根据链路传输时间获取对应链路中并发任务的等待时间；</div>
+      <div id="p0042" num="0039" class="description-paragraph">将等待时间与预设的等待时间进行比较，得到时间偏差率；</div>
+      <div id="p0043" num="0040" class="description-paragraph">判断所述时间偏差率是否大于或等于预设的偏差率阈值；</div>
+      <div id="p0044" num="0041" class="description-paragraph">若大于或等于，则将并发任务进行链路得重新分配；</div>
+      <div id="p0045" num="0042" class="description-paragraph">若小于，则生成并发任务排序信息，并生成每一个并发任务的等待时间，并将等待时间传输至终端。</div>
+      <div id="p0046" num="0043" class="description-paragraph">第二方面，本申请实施例提供了一种并发任务抢占式调度系统，该系统包括：存储器及处理器，所述存储器中包括并发任务抢占式调度方法的程序，所述并发任务抢占式调度方法的程序被所述处理器执行时实现以下步骤：</div>
+      <div id="p0047" num="0044" class="description-paragraph">获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务；</div>
+      <div id="p0048" num="0045" class="description-paragraph">获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息；</div>
+      <div id="p0049" num="0046" class="description-paragraph">获取链路传输状态信息，将链路传输状态信息与预设的状态信息进行比较，得到状态偏差率；</div>
+      <div id="p0050" num="0047" class="description-paragraph">判断所述状态偏差率是否大于或等于预设的偏差率阈值；</div>
+      <div id="p0051" num="0048" class="description-paragraph">若大于或等于，则对同一链路内的待传输子任务进行优先度排序；</div>
+      <div id="p0052" num="0049" class="description-paragraph">若小于，则多个待传输子任务同时并发传输。</div>
+      <div id="p0053" num="0050" class="description-paragraph">可选地，在本申请实施例所述的并发任务抢占式调度系统中，所述获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务，具体为：</div>
+      <div id="p0054" num="0051" class="description-paragraph">获取任务数据库，提取数据特征，并生成特征向量；</div>
+      <div id="p0055" num="0052" class="description-paragraph">将特征向量与预设的向量进行夹角计算，得到向量角；</div>
+      <div id="p0056" num="0053" class="description-paragraph">判断所述向量角是否满足角度范围；</div>
+      <div id="p0057" num="0054" class="description-paragraph">若满足，则判定对应的数据为同一任务内的数据；</div>
+      <div id="p0058" num="0055" class="description-paragraph">若不满足，则判定对应的数据为不同任务内的数据。</div>
+      <div id="p0059" num="0056" class="description-paragraph">可选地，在本申请实施例所述的并发任务抢占式调度系统中，所述获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息，具体为：</div>
+      <div id="p0060" num="0057" class="description-paragraph">获取链路数量与待传输子任务数量；将链路数量与待传输子任务数量进行比较，得到数量差值；</div>
+      <div id="p0061" num="0058" class="description-paragraph">若链路数量大于待传输子任务数量，则获取链路传输标准信息与待传输子任务的占用资源信息；</div>
+      <div id="p0062" num="0059" class="description-paragraph">根据链路传输标准信息与待传输子任务的占用资源信息进行匹配，将待传输子任务通过链路进行数据传输；</div>
+      <div id="p0063" num="0060" class="description-paragraph">若链路数量小于待传输子任务数量，则根据待传输子任务的优先度与链路进行匹配，并获取并发子任务；</div>
+      <div id="p0064" num="0061" class="description-paragraph">获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序；</div>
+      <div id="p0065" num="0062" class="description-paragraph">根据链路空闲顺序对并发子任务进行链路分配。</div>
+      <div id="p0066" num="0063" class="description-paragraph">第三方面，本申请实施例还提供了一种计算机可读存储介质，所述计算机可读存储介质中包括并发任务抢占式调度方法程序，所述并发任务抢占式调度方法程序被处理器执行时，实现如上述任一项所述的并发任务抢占式调度方法的步骤。</div>
+      <div id="p0067" num="0064" class="description-paragraph">由上可知，本申请实施例提供的一种并发任务抢占式调度方法、系统及介质，通过获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务；获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息；获取链路传输状态信息，将链路传输状态信息与预设的状态信息进行比较，得到状态偏差率；判断所述状态偏差率是否大于或等于预设的偏差率阈值；若大于或等于，则对同一链路内的待传输子任务进行优先度排序；若小于，则多个待传输子任务同时并发传输；通过链路配合使多个传输子任务并发进行，减少任务传输的等待时间，提高数据传输的吞吐量，实现多个并发任务同步进行读写操作的功能。</div>
+      <div id="p0068" num="0065" class="description-paragraph">本申请的其他特征和优点将在随后的说明书阐述，本申请的目的和优点可通过在所写的说明书、权利要求书、以及附图中所特别指出的结构来实现和获得。</div>
+    </disclosure>
+    <description-of-drawings>
+      <div id="p0069" class="description-paragraph">附图说明</div>
+      <div id="p0070" num="0066" class="description-paragraph">为了更清楚地说明本申请实施例的技术方案，下面将对本申请实施例中所需要使用的附图作简单地介绍，应当理解，以下附图仅示出了本申请的某些实施例，因此不应被看作是对范围的限定，对于本领域普通技术人员来讲，在不付出创造性劳动的前提下，还可以根据这些附图获得其他相关的附图。</div>
+      <div id="p0071" num="0067" class="description-paragraph">图1为本申请实施例提供的并发任务抢占式调度方法的流程图；</div>
+      <div id="p0072" num="0068" class="description-paragraph">图2为本申请实施例提供的并发任务抢占式调度方法的任务数据库分类流程图；</div>
+      <div id="p0073" num="0069" class="description-paragraph">图3为本申请实施例提供的并发任务抢占式调度方法的并发任务链路分配流程图；</div>
+      <div id="p0074" num="0070" class="description-paragraph">图4为本申请实施例提供的并发任务抢占式调度系统的结构示意图。</div>
+    </description-of-drawings>
+    <mode-for-invention>
+      <div id="p0075" class="description-paragraph">具体实施方式</div>
+      <div id="p0076" num="0071" class="description-paragraph">下面将结合本申请实施例中附图，对本申请实施例中的技术方案进行清楚、完整地描述，显然，所描述的实施例仅仅是本申请一部分实施例，而不是全部的实施例。通常在此处附图中描述和示出的本申请实施例的组件可以以各种不同的配置来布置和设计。因此，以下对在附图中提供的本申请的实施例的详细描述并非旨在限制要求保护的本申请的范围，而是仅仅表示本申请的选定实施例。基于本申请的实施例，本领域技术人员在没有做出创造性劳动的前提下所获得的所有其他实施例，都属于本申请保护的范围。</div>
+      <div id="p0077" num="0072" class="description-paragraph">应注意到，相似的标号和字母在下面的附图中表示类似项，因此，一旦某一项在一个附图中被定义，则在随后的附图中不需要对其进行进一步定义和解释。同时，在本申请的描述中，术语“第一”、“第二”等仅用于区分描述，而不能理解为指示或暗示相对重要性。</div>
+      <div id="p0078" num="0073" class="description-paragraph">请参照图1，图1是本申请一些实施例中的一种并发任务抢占式调度方法的流程图。该并发任务抢占式调度方法用于终端设备中，该并发任务抢占式调度方法，包括以下步骤：</div>
+      <div id="p0079" num="0074" class="description-paragraph">S101，获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务；</div>
+      <div id="p0080" num="0075" class="description-paragraph">S102，获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息；</div>
+      <div id="p0081" num="0076" class="description-paragraph">S103，获取链路传输状态信息，将链路传输状态信息与预设的状态信息进行比较，得到状态偏差率；</div>
+      <div id="p0082" num="0077" class="description-paragraph">S104，判断状态偏差率是否大于或等于预设的偏差率阈值；</div>
+      <div id="p0083" num="0078" class="description-paragraph">S105，若大于或等于，则对同一链路内的待传输子任务进行优先度排序；若小于，则多个待传输子任务同时并发传输。</div>
+      <div id="p0084" num="0079" class="description-paragraph">需要说明的是，通过对任务数据库内的数据进行分析，并进行分类，根据数据类别生成多个待传输子任务，不同的待传输子任务的数据类型不同，将待传输子任务与传输链路进行匹配，提高链路的传输速率，同时降低子任务的排队量，将出现子任务排队时，对待传输子任务进行优先度排序实现待传输子任务有序传输，提高传输效率。</div>
+      <div id="p0085" num="0080" class="description-paragraph">请参照图2，图2是本申请一些实施例中的一种并发任务抢占式调度方法的任务数据库分类流程图。根据本发明实施例，获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务，具体为：</div>
+      <div id="p0086" num="0081" class="description-paragraph">S201，获取任务数据库，提取数据特征，并生成特征向量；</div>
+      <div id="p0087" num="0082" class="description-paragraph">S202，将特征向量与预设的向量进行夹角计算，得到向量角；</div>
+      <div id="p0088" num="0083" class="description-paragraph">S203，判断向量角是否满足角度范围；</div>
+      <div id="p0089" num="0084" class="description-paragraph">S204，若满足，则判定对应的数据为同一任务内的数据；</div>
+      <div id="p0090" num="0085" class="description-paragraph">S205，若不满足，则判定对应的数据为不同任务内的数据。</div>
+      <div id="p0091" num="0086" class="description-paragraph">需要说明的是，通过分析任务数据库内的数据特征，并对特征进行分析比较，从而根据特征向量角的判断结果将数据进行类别分配，提高分类精度。</div>
+      <div id="p0092" num="0087" class="description-paragraph">请参照图3，图3是本申请一些实施例中的一种并发任务抢占式调度方法的并发任务链路分配流程图。根据本发明实施例，获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息，具体为：</div>
+      <div id="p0093" num="0088" class="description-paragraph">S301，获取链路数量与待传输子任务数量；将链路数量与待传输子任务数量进行比较，得到数量差值；</div>
+      <div id="p0094" num="0089" class="description-paragraph">S302，若链路数量大于待传输子任务数量，则获取链路传输标准信息与待传输子任务的占用资源信息；</div>
+      <div id="p0095" num="0090" class="description-paragraph">S303，根据链路传输标准信息与待传输子任务的占用资源信息进行匹配，将待传输子任务通过链路进行数据传输；</div>
+      <div id="p0096" num="0091" class="description-paragraph">S304，若链路数量小于待传输子任务数量，则根据待传输子任务的优先度与链路进行匹配，并获取并发子任务；</div>
+      <div id="p0097" num="0092" class="description-paragraph">S305，获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序，根据链路空闲顺序对并发子任务进行链路分配。</div>
+      <div id="p0098" num="0093" class="description-paragraph">需要说明的是，通过判断待传输子任务的占用链路资源，进行判断链路是否满足该待传输子任务的数据传输，如果满足，则通过一条链路即可实现对应的子任务数据的传输，若不满足，则造成链路排队，并实时判断链路排队的情况，当链路排队严重时，对传输链路进行重新分配，保证待传输数据的等待时间不会过长。</div>
+      <div id="p0099" num="0094" class="description-paragraph">根据本发明实施例，获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序，具体为：</div>
+      <div id="p0100" num="0095" class="description-paragraph">获取每一个链路占用时间信息，根据链路占用时间信息对链路并发任务分配进行排序；</div>
+      <div id="p0101" num="0096" class="description-paragraph">获取每一个链路并发任务数量，判断并发任务数量是否大于预设的数量；</div>
+      <div id="p0102" num="0097" class="description-paragraph">若大于，则计算并发任务数量的超量，根据超量将并发任务按照链路分配排序进行调整；</div>
+      <div id="p0103" num="0098" class="description-paragraph">若小于或等于，则计算并发任务的预定传输时间。</div>
+      <div id="p0104" num="0099" class="description-paragraph">需要说明的是，根据待传输子任务的数据量进行判断链路的占用时间，并判断并发任务量是否大于链路数量，若大于，则计算并发任务量与链路数量的差值，该值为并发任务量的超量，并将超量按照链路的分配顺序进行调整，防止其中一条链路中的并发任务量较多，造成该链路排队严重，造成该链路数据传输瘫痪。</div>
+      <div id="p0105" num="0100" class="description-paragraph">根据本发明实施例，若大于或等于，则对同一链路内的待传输子任务进行优先度排序，具体为：</div>
+      <div id="p0106" num="0101" class="description-paragraph">获取待传输子任务，将待传输子任务输入预设的传输调度模型，生成子任务优先度信息；</div>
+      <div id="p0107" num="0102" class="description-paragraph">根据子任务优先度信息对待传输子任务进行并发传输排序；</div>
+      <div id="p0108" num="0103" class="description-paragraph">根据传输排序对待传输子任务进行数据传输，并生成链路传输状态；</div>
+      <div id="p0109" num="0104" class="description-paragraph">将链路传输状态与预设的传输状态进行比较，得到链路负荷；</div>
+      <div id="p0110" num="0105" class="description-paragraph">判断链路负荷是否大于预设的负荷；</div>
+      <div id="p0111" num="0106" class="description-paragraph">若大于，则生成链路配合信息，根据链路配合信息对链路进行传输调度；</div>
+      <div id="p0112" num="0107" class="description-paragraph">若小于，则将链路传输状态实时进行监控。</div>
+      <div id="p0113" num="0108" class="description-paragraph">需要说明的是，根据待传输子任务的优先度进行并发传输排序，并将传输排序与链路的传输状态进行比较，如链路正在传输时，计算正在传输的数据剩余量，并根据剩余量计算链路剩余负荷，根据链路剩余负荷与下一个待传输子任务的负荷，进行判断链路负荷是否满足待传输子任务的负荷，若满足，则在链路传输过程中将下一个待传输任务进行同步传输，减少子任务的传输等待时间。</div>
+      <div id="p0114" num="0109" class="description-paragraph">根据本发明实施例，获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序，具体为：</div>
+      <div id="p0115" num="0110" class="description-paragraph">获取链路传输时间，根据链路传输时间获取对应链路中并发任务的等待时间；</div>
+      <div id="p0116" num="0111" class="description-paragraph">将等待时间与预设的等待时间进行比较，得到时间偏差率；</div>
+      <div id="p0117" num="0112" class="description-paragraph">判断时间偏差率是否大于或等于预设的偏差率阈值；</div>
+      <div id="p0118" num="0113" class="description-paragraph">若大于或等于，则将并发任务进行链路得重新分配；</div>
+      <div id="p0119" num="0114" class="description-paragraph">若小于，则生成并发任务排序信息，并生成每一个并发任务的等待时间，并将等待时间传输至终端。</div>
+      <div id="p0120" num="0115" class="description-paragraph">需要说明的是，判断链路传输时间，并根据传输时间计算并发任务的等待时间，通过判断等待时间的长短，进行分析数据传输的有效性，如数据传输时间较长时，会造成部分数据的失效，此时需要对传输链路进行重新分配调整，提高数据的传输速率。</div>
+      <div id="p0121" num="0116" class="description-paragraph">根据本发明实施例，还包括：</div>
+      <div id="p0122" num="0117" class="description-paragraph">用户在客户端修改任务状态为待传输任务，并设定任务争夺标识（并发任务）；</div>
+      <div id="p0123" num="0118" class="description-paragraph">查询数据库待传输任务列表, 按照状态修改时间和优先级排序规则排序, 取第一条数据行对象；</div>
+      <div id="p0124" num="0119" class="description-paragraph">修改此数据行对象的争夺标识和任务状态,</div>
+      <div id="p0125" num="0120" class="description-paragraph">重新查询数据库中行对象的任务争夺标识的数据行；</div>
+      <div id="p0126" num="0121" class="description-paragraph">如果存在数据行则表明成功抢占任务, 开始执行任务, 如果不存在数据行则标识争夺任务失败 (即被其他服务器抢走任务)。</div>
+      <div id="p0127" num="0122" class="description-paragraph">请参照图4，图4是本申请一些实施例中的一种并发任务抢占式调度系统的结构示意图。第二方面，本申请实施例提供了一种并发任务抢占式调度系统4，该系统包括：存储器41及处理器42，存储器41中包括并发任务抢占式调度方法的程序，并发任务抢占式调度方法的程序被处理器执行时实现以下步骤：</div>
+      <div id="p0128" num="0123" class="description-paragraph">获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务；</div>
+      <div id="p0129" num="0124" class="description-paragraph">获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息；</div>
+      <div id="p0130" num="0125" class="description-paragraph">获取链路传输状态信息，将链路传输状态信息与预设的状态信息进行比较，得到状态偏差率；</div>
+      <div id="p0131" num="0126" class="description-paragraph">判断状态偏差率是否大于或等于预设的偏差率阈值；</div>
+      <div id="p0132" num="0127" class="description-paragraph">若大于或等于，则对同一链路内的待传输子任务进行优先度排序；</div>
+      <div id="p0133" num="0128" class="description-paragraph">若小于，则多个待传输子任务同时并发传输。</div>
+      <div id="p0134" num="0129" class="description-paragraph">根据本发明实施例，获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务，具体为：</div>
+      <div id="p0135" num="0130" class="description-paragraph">获取任务数据库，提取数据特征，并生成特征向量；</div>
+      <div id="p0136" num="0131" class="description-paragraph">将特征向量与预设的向量进行夹角计算，得到向量角；</div>
+      <div id="p0137" num="0132" class="description-paragraph">判断向量角是否满足角度范围；</div>
+      <div id="p0138" num="0133" class="description-paragraph">若满足，则判定对应的数据为同一任务内的数据；</div>
+      <div id="p0139" num="0134" class="description-paragraph">若不满足，则判定对应的数据为不同任务内的数据。</div>
+      <div id="p0140" num="0135" class="description-paragraph">根据本发明实施例，获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息，具体为：</div>
+      <div id="p0141" num="0136" class="description-paragraph">获取链路数量与待传输子任务数量；将链路数量与待传输子任务数量进行比较，得到数量差值；</div>
+      <div id="p0142" num="0137" class="description-paragraph">若链路数量大于待传输子任务数量，则获取链路传输标准信息与待传输子任务的占用资源信息；</div>
+      <div id="p0143" num="0138" class="description-paragraph">根据链路传输标准信息与待传输子任务的占用资源信息进行匹配，将待传输子任务通过链路进行数据传输；</div>
+      <div id="p0144" num="0139" class="description-paragraph">若链路数量小于待传输子任务数量，则根据待传输子任务的优先度与链路进行匹配，并获取并发子任务；</div>
+      <div id="p0145" num="0140" class="description-paragraph">获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序；</div>
+      <div id="p0146" num="0141" class="description-paragraph">根据链路空闲顺序对并发子任务进行链路分配。</div>
+      <div id="p0147" num="0142" class="description-paragraph">需要说明的是，通过判断待传输子任务的占用链路资源，进行判断链路是否满足该待传输子任务的数据传输，如果满足，则通过一条链路即可实现对应的子任务数据的传输，若不满足，则造成链路排队，并实时判断链路排队的情况，当链路排队严重时，对传输链路进行重新分配，保证待传输数据的等待时间不会过长。</div>
+      <div id="p0148" num="0143" class="description-paragraph">根据本发明实施例，获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序，具体为：</div>
+      <div id="p0149" num="0144" class="description-paragraph">获取每一个链路占用时间信息，根据链路占用时间信息对链路并发任务分配进行排序；</div>
+      <div id="p0150" num="0145" class="description-paragraph">获取每一个链路并发任务数量，判断并发任务数量是否大于预设的数量；</div>
+      <div id="p0151" num="0146" class="description-paragraph">若大于，则计算并发任务数量的超量，根据超量将并发任务按照链路分配排序进行调整；</div>
+      <div id="p0152" num="0147" class="description-paragraph">若小于或等于，则计算并发任务的预定传输时间。</div>
+      <div id="p0153" num="0148" class="description-paragraph">需要说明的是，根据待传输子任务的数据量进行判断链路的占用时间，并判断并发任务量是否大于链路数量，若大于，则计算并发任务量与链路数量的差值，该值为并发任务量的超量，并将超量按照链路的分配顺序进行调整，防止其中一条链路中的并发任务量较多，造成该链路排队严重，造成该链路数据传输瘫痪。</div>
+      <div id="p0154" num="0149" class="description-paragraph">根据本发明实施例，若大于或等于，则对同一链路内的待传输子任务进行优先度排序，具体为：</div>
+      <div id="p0155" num="0150" class="description-paragraph">获取待传输子任务，将待传输子任务输入预设的传输调度模型，生成子任务优先度信息；</div>
+      <div id="p0156" num="0151" class="description-paragraph">根据子任务优先度信息对待传输子任务进行并发传输排序；</div>
+      <div id="p0157" num="0152" class="description-paragraph">根据传输排序对待传输子任务进行数据传输，并生成链路传输状态；</div>
+      <div id="p0158" num="0153" class="description-paragraph">将链路传输状态与预设的传输状态进行比较，得到链路负荷；</div>
+      <div id="p0159" num="0154" class="description-paragraph">判断链路负荷是否大于预设的负荷；</div>
+      <div id="p0160" num="0155" class="description-paragraph">若大于，则生成链路配合信息，根据链路配合信息对链路进行传输调度；</div>
+      <div id="p0161" num="0156" class="description-paragraph">若小于，则将链路传输状态实时进行监控。</div>
+      <div id="p0162" num="0157" class="description-paragraph">需要说明的是，根据待传输子任务的优先度进行并发传输排序，并将传输排序与链路的传输状态进行比较，如链路正在传输时，计算正在传输的数据剩余量，并根据剩余量计算链路剩余负荷，根据链路剩余负荷与下一个待传输子任务的负荷，进行判断链路负荷是否满足待传输子任务的负荷，若满足，则在链路传输过程中将下一个待传输任务进行同步传输，减少子任务的传输等待时间。</div>
+      <div id="p0163" num="0158" class="description-paragraph">根据本发明实施例，获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序，具体为：</div>
+      <div id="p0164" num="0159" class="description-paragraph">获取链路传输时间，根据链路传输时间获取对应链路中并发任务的等待时间；</div>
+      <div id="p0165" num="0160" class="description-paragraph">将等待时间与预设的等待时间进行比较，得到时间偏差率；</div>
+      <div id="p0166" num="0161" class="description-paragraph">判断时间偏差率是否大于或等于预设的偏差率阈值；</div>
+      <div id="p0167" num="0162" class="description-paragraph">若大于或等于，则将并发任务进行链路得重新分配；</div>
+      <div id="p0168" num="0163" class="description-paragraph">若小于，则生成并发任务排序信息，并生成每一个并发任务的等待时间，并将等待时间传输至终端。</div>
+      <div id="p0169" num="0164" class="description-paragraph">需要说明的是，判断链路传输时间，并根据传输时间计算并发任务的等待时间，通过判断等待时间的长短，进行分析数据传输的有效性，如数据传输时间较长时，会造成部分数据的失效，此时需要对传输链路进行重新分配调整，提高数据的传输速率。</div>
+      <div id="p0170" num="0165" class="description-paragraph">本发明第三方面提供了一种计算机可读存储介质，可读存储介质中包括并发任务抢占式调度方法程序，并发任务抢占式调度方法程序被处理器执行时，实现如上述任一项的并发任务抢占式调度方法的步骤。</div>
+      <div id="p0171" num="0166" class="description-paragraph">本发明公开的一种并发任务抢占式调度方法、系统及介质，通过获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务；获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息；获取链路传输状态信息，将链路传输状态信息与预设的状态信息进行比较，得到状态偏差率；判断所述状态偏差率是否大于或等于预设的偏差率阈值；若大于或等于，则对同一链路内的待传输子任务进行优先度排序；若小于，则多个待传输子任务同时并发传输；通过链路配合使多个传输子任务并发进行，减少任务传输的等待时间，提高数据传输的吞吐量，实现多个并发任务同步进行读写操作的功能。</div>
+      <div id="p0172" num="0167" class="description-paragraph">在本申请所提供的几个实施例中，应该理解到，所揭露的设备和方法，可以通过其它的方式实现。以上所描述的设备实施例仅仅是示意性的，例如，单元的划分，仅仅为一种逻辑功能划分，实际实现时可以有另外的划分方式，如：多个单元或组件可以结合，或可以集成到另一个系统，或一些特征可以忽略，或不执行。另外，所显示或讨论的各组成部分相互之间的耦合、或直接耦合、或通信连接可以是通过一些接口，设备或单元的间接耦合或通信连接，可以是电性的、机械的或其它形式的。</div>
+      <div id="p0173" num="0168" class="description-paragraph">上述作为分离部件说明的单元可以是、或也可以不是物理上分开的，作为单元显示的部件可以是、或也可以不是物理单元；既可以位于一个地方，也可以分布到多个网络单元上；可以根据实际的需要选择其中的部分或全部单元来实现本实施例方案的目的。</div>
+      <div id="p0174" num="0169" class="description-paragraph">另外，在本发明各实施例中的各功能单元可以全部集成在一个处理单元中，也可以是各单元分别单独作为一个单元，也可以两个或两个以上单元集成在一个单元中；上述集成的单元既可以采用硬件的形式实现，也可以采用硬件加软件功能单元的形式实现。</div>
+      <div id="p0175" num="0170" class="description-paragraph">本领域普通技术人员可以理解：实现上述方法实施例的全部或部分步骤可以通过程序指令相关的硬件来完成，前述的程序可以存储于可读取存储介质中，该程序在执行时，执行包括上述方法实施例的步骤；而前述的存储介质包括：移动存储设备、只读存储器（ROM，Read-Only Memory）、随机存取存储器（RAM，Random Access Memory）、磁碟或者光盘等各种可以存储程序代码的介质。</div>
+      <div id="p0176" num="0171" class="description-paragraph">或者，本发明上述集成的单元如果以软件功能模块的形式实现并作为独立的产品销售或使用时，也可以存储在一个可读取存储介质中。基于这样的理解，本发明实施例的技术方案本质上或者说对现有技术做出贡献的部分可以以软件产品的形式体现出来，该软件产品存储在一个存储介质中，包括若干指令用以使得一台计算机设备（可以是个人计算机、服务器、或者网络设备等）执行本发明各个实施例所述方法的全部或部分。而前述的存储介质包括：移动存储设备、ROM、RAM、磁碟或者光盘等各种可以存储程序代码的介质。</div>
+    </mode-for-invention>
+  </div>
+  </div>
+  </section>
+
+  <section itemprop="claims" itemscope>
+    <h2>Claims (<span itemprop="count">5</span>)</h2>
+    
+    <div itemprop="content" html><div mxw-id="PCLM456066102" lang="ZH" load-source="patent-office" class="claims">
+    <div class="claim"> <div id="zh-cl0001" num="0001" class="claim">
+      <div class="claim-text">1.一种并发任务抢占式调度方法，其特征在于，包括：</div>
+      <div class="claim-text">获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务；获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息；</div>
+      <div class="claim-text">获取链路传输状态信息，将链路传输状态信息与预设的状态信息进行比较，得到状态偏差率；</div>
+      <div class="claim-text">判断所述状态偏差率是否大于或等于预设的偏差率阈值；</div>
+      <div class="claim-text">若大于或等于，则对同一链路内的待传输子任务进行优先度排序；若小于，则多个待传输子任务同时并发传输；</div>
+      <div class="claim-text">所述获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务，具体为：</div>
+      <div class="claim-text">获取任务数据库，提取数据特征，并生成特征向量；</div>
+      <div class="claim-text">将特征向量与预设的向量进行夹角计算，得到向量角；判断所述向量角是否满足角度范围；</div>
+      <div class="claim-text">若满足，则判定对应的数据为同一任务内的数据；</div>
+      <div class="claim-text">若不满足，则判定对应的数据为不同任务内的数据；</div>
+      <div class="claim-text">所述获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息，具体为：</div>
+      <div class="claim-text">获取链路数量与待传输子任务数量；将链路数量与待传输子任务数量进行比较，得到数量差值；</div>
+      <div class="claim-text">若链路数量大于待传输子任务数量，则获取链路传输标准信息与待传输子任务的占用资源信息；</div>
+      <div class="claim-text">根据链路传输标准信息与待传输子任务的占用资源信息进行匹配，将待传输子任务通过链路进行数据传输；</div>
+      <div class="claim-text">若链路数量小于待传输子任务数量，则根据待传输子任务的优先度与链路进行匹配，并获取并发子任务；</div>
+      <div class="claim-text">获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序；</div>
+      <div class="claim-text">根据链路空闲顺序对并发子任务进行链路分配；</div>
+      <div class="claim-text">若大于或等于，则对同一链路内的待传输子任务进行优先度排序，具体为：</div>
+      <div class="claim-text">获取待传输子任务，将待传输子任务输入预设的传输调度模型，生成子任务优先度信息；</div>
+      <div class="claim-text">根据子任务优先度信息对待传输子任务进行并发传输排序；</div>
+      <div class="claim-text">根据传输排序对待传输子任务进行数据传输，并生成链路传输状态；将链路传输状态与预设的传输状态进行比较，得到链路负荷；</div>
+      <div class="claim-text">判断所述链路负荷是否大于预设的负荷；</div>
+      <div class="claim-text">若大于，则生成链路配合信息，根据链路配合信息对链路进行传输调度；若小于，则将链路传输状态实时进行监控。</div>
+    </div>
+    </div> <div class="claim-dependent"> <div id="zh-cl0002" num="0002" class="claim">
+      <div class="claim-text">
+        <claim-ref idref="zh-cl0001"> </claim-ref>
+      </div>
+      <div class="claim-text">2.根据权利要求1所述的并发任务抢占式调度方法，其特征在于，所述获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序，具体为：</div>
+      <div class="claim-text">获取每一个链路占用时间信息，根据链路占用时间信息对链路并发任务分配进行排序；</div>
+      <div class="claim-text">获取每一个链路并发任务数量，判断所述并发任务数量是否大于预设的数量；</div>
+      <div class="claim-text">若大于，则计算并发任务数量的超量，根据超量将并发任务按照链路分配排序进行调整；</div>
+      <div class="claim-text">若小于或等于，则计算并发任务的预定传输时间。</div>
+    </div>
+    </div> <div class="claim-dependent"> <div id="zh-cl0003" num="0003" class="claim">
+      <div class="claim-text">
+        <claim-ref idref="zh-cl0001"> </claim-ref>
+      </div>
+      <div class="claim-text">3.根据权利要求1所述的并发任务抢占式调度方法，其特征在于，所述获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序，具体为：</div>
+      <div class="claim-text">获取链路传输时间，根据链路传输时间获取对应链路中并发任务的等待时间；将等待时间与预设的等待时间进行比较，得到时间偏差率；</div>
+      <div class="claim-text">判断所述时间偏差率是否大于或等于预设的偏差率阈值；若大于或等于，则将并发任务进行链路得重新分配；</div>
+      <div class="claim-text">若小于，则生成并发任务排序信息，并生成每一个并发任务的等待时间，并将等待时间传输至终端。</div>
+    </div>
+    </div> <div class="claim"> <div id="zh-cl0004" num="0004" class="claim">
+      <div class="claim-text">4.一种并发任务抢占式调度系统，其特征在于，该系统包括：存储器及处理器，所述存储器中包括并发任务抢占式调度方法的程序，所述并发任务抢占式调度方法的程序被所述处理器执行时实现以下步骤：</div>
+      <div class="claim-text">获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务；获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息；</div>
+      <div class="claim-text">获取链路传输状态信息，将链路传输状态信息与预设的状态信息进行比较，得到状态偏差率；</div>
+      <div class="claim-text">判断所述状态偏差率是否大于或等于预设的偏差率阈值；</div>
+      <div class="claim-text">若大于或等于，则对同一链路内的待传输子任务进行优先度排序；若小于，则多个待传输子任务同时并发传输；</div>
+      <div class="claim-text">所述获取任务数据库，将任务数据库内的数据进行分类，并生成多个待传输子任务，具体为：</div>
+      <div class="claim-text">获取任务数据库，提取数据特征，并生成特征向量；</div>
+      <div class="claim-text">将特征向量与预设的向量进行夹角计算，得到向量角；判断所述向量角是否满足角度范围；</div>
+      <div class="claim-text">若满足，则判定对应的数据为同一任务内的数据；</div>
+      <div class="claim-text">若不满足，则判定对应的数据为不同任务内的数据；</div>
+      <div class="claim-text">所述获取链路个数，将多个待传输子任务与链路进行匹配，生成并发传输信息，具体为：</div>
+      <div class="claim-text">获取链路数量与待传输子任务数量；将链路数量与待传输子任务数量进行比较，得到数量差值；</div>
+      <div class="claim-text">若链路数量大于待传输子任务数量，则获取链路传输标准信息与待传输子任务的占用资源信息；</div>
+      <div class="claim-text">根据链路传输标准信息与待传输子任务的占用资源信息进行匹配，将待传输子任务通过链路进行数据传输；</div>
+      <div class="claim-text">若链路数量小于待传输子任务数量，则根据待传输子任务的优先度与链路进行匹配，并获取并发子任务；</div>
+      <div class="claim-text">获取链路传输时间信息，根据链路传输时间信息生成链路空闲顺序，并对链路空间状态按照空闲时间进行排序；</div>
+      <div class="claim-text">根据链路空闲顺序对并发子任务进行链路分配；</div>
+      <div class="claim-text">若大于或等于，则对同一链路内的待传输子任务进行优先度排序，具体为：</div>
+      <div class="claim-text">获取待传输子任务，将待传输子任务输入预设的传输调度模型，生成子任务优先度信息；</div>
+      <div class="claim-text">根据子任务优先度信息对待传输子任务进行并发传输排序；</div>
+      <div class="claim-text">根据传输排序对待传输子任务进行数据传输，并生成链路传输状态；将链路传输状态与预设的传输状态进行比较，得到链路负荷；</div>
+      <div class="claim-text">判断所述链路负荷是否大于预设的负荷；</div>
+      <div class="claim-text">若大于，则生成链路配合信息，根据链路配合信息对链路进行传输调度；若小于，则将链路传输状态实时进行监控。</div>
+    </div>
+    </div> <div class="claim-dependent"> <div id="zh-cl0005" num="0005" class="claim">
+      <div class="claim-text">5.一种计算机可读存储介质，其特征在于，所述计算机可读存储介质中包括并发任务抢占式调度方法程序，所述并发任务抢占式调度方法程序被处理器执行时，实现如权利要求1至3中任一项所述的并发任务抢占式调度方法的步骤。</div>
+    </div>
+  </div> </div>
+  </div>
+  </section>
+
+  <section itemprop="application" itemscope>
+
+    <section itemprop="metadata" itemscope>
+      <span itemprop="applicationNumber">CN202310996676.XA</span>
+      <span itemprop="priorityDate">2023-08-09</span>
+      <span itemprop="filingDate">2023-08-09</span>
+      <span itemprop="title">一种并发任务抢占式调度方法、系统及介质 
+       </span>
+      <span itemprop="ifiStatus">Active</span>
+      
+      <a href="/patent/CN116719628B/zh">
+        <span itemprop="representativePublication">CN116719628B</span>
+        (<span itemprop="primaryLanguage">zh</span>)
+      </a>
+    </section>
+
+    <h2>Priority Applications (1)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Application Number</th>
+          <th>Priority Date</th>
+          <th>Filing Date</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="priorityApps" itemscope repeat>
+          <td>
+            <span itemprop="applicationNumber">CN202310996676.XA</span>
+            
+            <a href="/patent/CN116719628B/zh">
+              <span itemprop="representativePublication">CN116719628B</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+          </td>
+          <td itemprop="priorityDate">2023-08-09</td>
+          <td itemprop="filingDate">2023-08-09</td>
+          <td itemprop="title">一种并发任务抢占式调度方法、系统及介质 
+       </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Applications Claiming Priority (1)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Application Number</th>
+          <th>Priority Date</th>
+          <th>Filing Date</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="appsClaimingPriority" itemscope repeat>
+          <td>
+            <span itemprop="applicationNumber">CN202310996676.XA</span>
+            <a href="/patent/CN116719628B/zh">
+              <span itemprop="representativePublication">CN116719628B</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+          </td>
+          <td itemprop="priorityDate">2023-08-09</td>
+          <td itemprop="filingDate">2023-08-09</td>
+          <td itemprop="title">一种并发任务抢占式调度方法、系统及介质 
+       </td>
+        </tr>
+      </tbody>
+    </table>
+
+    
+
+    
+
+    <h2>Publications (2)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Publication Number</th>
+          <th>Publication Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="pubs" itemscope repeat>
+          <td>
+            <span itemprop="publicationNumber">CN116719628A</span>
+            
+            <a href="/patent/CN116719628A/zh">
+              CN116719628A
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+          </td>
+          <td itemprop="publicationDate">2023-09-08</td>
+        </tr>
+        <tr itemprop="pubs" itemscope repeat>
+          <td>
+            <span itemprop="publicationNumber">CN116719628B</span>
+            
+            <span itemprop="thisPatent">true</span>
+            <a href="/patent/CN116719628B/zh">
+              CN116719628B
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+          </td>
+          <td itemprop="publicationDate">2024-04-19</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <section itemprop="family" itemscope>
+    <h1>Family</h1>
+    <h2>ID=87871978</h2>
+
+    <h2>Family Applications (1)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Application Number</th>
+          <th>Title</th>
+          <th>Priority Date</th>
+          <th>Filing Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="applications" itemscope repeat>
+          <td>
+            <span itemprop="applicationNumber">CN202310996676.XA</span>
+            <span itemprop="ifiStatus">Active</span>
+            
+            <a href="/patent/CN116719628B/zh">
+              <span itemprop="representativePublication">CN116719628B</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+          </td>
+          <td itemprop="priorityDate">2023-08-09</td>
+          <td itemprop="filingDate">2023-08-09</td>
+          <td itemprop="title">一种并发任务抢占式调度方法、系统及介质 
+       </td>
+        </tr>
+      </tbody>
+    </table>
+
+    
+
+    
+
+    <h2>Country Status (1)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Country</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="countryStatus" itemscope repeat>
+          <td>
+            <span itemprop="countryCode">CN</span>
+            (<span itemprop="num">1</span>)
+            <meta itemprop="thisCountry" content="true">
+          </td>
+          <td>
+            <a href="/patent/CN116719628B/zh">
+              <span itemprop="representativePublication">CN116719628B</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    
+
+    <h2>Families Citing this family (1)</h2>
+    <table>
+      <caption>* Cited by examiner, † Cited by third party</caption>
+      <thead>
+        <tr>
+          <th>Publication number</th>
+          <th>Priority date</th>
+          <th>Publication date</th>
+          <th>Assignee</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="forwardReferencesFamily" itemscope repeat>
+          <td>
+            <a href="/patent/CN119883525B/zh">
+              <span itemprop="publicationNumber">CN119883525B</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2025-03-03</td>
+          <td itemprop="publicationDate">2025-12-30</td>
+          <td><span itemprop="assigneeOriginal">西安电子科技大学</span></td>
+          <td itemprop="title">一种动态的实时事务调度方法及系统 
+       </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Citations (7)</h2>
+    <table>
+      <caption>* Cited by examiner, † Cited by third party</caption>
+      <thead>
+        <tr>
+          <th>Publication number</th>
+          <th>Priority date</th>
+          <th>Publication date</th>
+          <th>Assignee</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="backwardReferencesOrig" itemscope repeat>
+          <td>
+            <a href="/patent/CN103152382A/zh">
+              <span itemprop="publicationNumber">CN103152382A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2013-01-15</td>
+          <td itemprop="publicationDate">2013-06-12</td>
+          <td>
+            <span itemprop="assigneeOriginal">中国科学技术大学苏州研究院</span>
+          </td>
+          <td itemprop="title">面向多宿主网络的多文件并发传输控制方法 
+       </td>
+        </tr>
+        <tr itemprop="backwardReferencesOrig" itemscope repeat>
+          <td>
+            <a href="/patent/CN104519075A/zh">
+              <span itemprop="publicationNumber">CN104519075A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2013-09-26</td>
+          <td itemprop="publicationDate">2015-04-15</td>
+          <td>
+            <span itemprop="assigneeOriginal">中兴通讯股份有限公司</span>
+          </td>
+          <td itemprop="title">一种数据传输方法及设备 
+       </td>
+        </tr>
+        <tr itemprop="backwardReferencesOrig" itemscope repeat>
+          <td>
+            <a href="/patent/CN106126681A/zh">
+              <span itemprop="publicationNumber">CN106126681A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2016-06-29</td>
+          <td itemprop="publicationDate">2016-11-16</td>
+          <td>
+            <span itemprop="assigneeOriginal">泰华智慧产业集团股份有限公司</span>
+          </td>
+          <td itemprop="title">一种增量式流式数据聚类方法及系统 
+       </td>
+        </tr>
+        <tr itemprop="backwardReferencesOrig" itemscope repeat>
+          <td>
+            <a href="/patent/WO2020000944A1/zh">
+              <span itemprop="publicationNumber">WO2020000944A1</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2018-06-25</td>
+          <td itemprop="publicationDate">2020-01-02</td>
+          <td>
+            <span itemprop="assigneeOriginal">星环信息科技（上海）有限公司</span>
+          </td>
+          <td itemprop="title">基于抢占式调度的资源共享使用方法、系统及设备 
+       </td>
+        </tr>
+        <tr itemprop="backwardReferencesOrig" itemscope repeat>
+          <td>
+            <a href="/patent/CN114972335A/zh">
+              <span itemprop="publicationNumber">CN114972335A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2022-07-20</td>
+          <td itemprop="publicationDate">2022-08-30</td>
+          <td>
+            <span itemprop="assigneeOriginal">凌云光技术股份有限公司</span>
+          </td>
+          <td itemprop="title">一种用于工业检测的图像分类方法、装置及计算机设备 
+       </td>
+        </tr>
+        <tr itemprop="backwardReferencesOrig" itemscope repeat>
+          <td>
+            <a href="/patent/CN116048745A/zh">
+              <span itemprop="publicationNumber">CN116048745A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2022-11-08</td>
+          <td itemprop="publicationDate">2023-05-02</td>
+          <td>
+            <span itemprop="assigneeOriginal">网易有道信息技术（北京）有限公司</span>
+          </td>
+          <td itemprop="title">多模块gpu的分时调度方法、系统、电子设备及存储介质 
+       </td>
+        </tr>
+        <tr itemprop="backwardReferencesOrig" itemscope repeat>
+          <td>
+            <a href="/patent/CN116489019A/zh">
+              <span itemprop="publicationNumber">CN116489019A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2023-06-02</td>
+          <td itemprop="publicationDate">2023-07-25</td>
+          <td>
+            <span itemprop="assigneeOriginal">深圳市博思云为科技有限公司</span>
+          </td>
+          <td itemprop="title">一种智能视觉信令通道管理方法、系统及介质 
+       </td>
+        </tr>
+      </tbody>
+    </table>
+
+    
+
+    <ul>
+      <li itemprop="applicationsByYear" itemscope repeat>
+        <span itemprop="year">2023</span>
+        <ul>
+          <li itemprop="application" itemscope repeat>
+            <span itemprop="filingDate">2023-08-09</span>
+            <span itemprop="countryCode">CN</span>
+            <span itemprop="applicationNumber">CN202310996676.XA</span>
+            <a href="/patent/CN116719628B/zh"><span itemprop="documentId">patent/CN116719628B/zh</span></a>
+            <span itemprop="legalStatusCat">active</span>
+            <span itemprop="legalStatus">Active</span>
+            <span itemprop="thisApp" content="true" bool></span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    </section>
+
+  <section>
+    <h2>Patent Citations (7)</h2>
+    <table>
+      <caption>* Cited by examiner, † Cited by third party</caption>
+      <thead>
+        <tr>
+          <th>Publication number</th>
+          <th>Priority date</th>
+          <th>Publication date</th>
+          <th>Assignee</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="backwardReferences" itemscope repeat>
+          <td>
+            <a href="/patent/CN103152382A/zh">
+              <span itemprop="publicationNumber">CN103152382A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2013-01-15</td>
+          <td itemprop="publicationDate">2013-06-12</td>
+          <td><span itemprop="assigneeOriginal">中国科学技术大学苏州研究院</span></td>
+          <td itemprop="title">面向多宿主网络的多文件并发传输控制方法 
+       </td>
+        </tr>
+        <tr itemprop="backwardReferences" itemscope repeat>
+          <td>
+            <a href="/patent/CN104519075A/zh">
+              <span itemprop="publicationNumber">CN104519075A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2013-09-26</td>
+          <td itemprop="publicationDate">2015-04-15</td>
+          <td><span itemprop="assigneeOriginal">中兴通讯股份有限公司</span></td>
+          <td itemprop="title">一种数据传输方法及设备 
+       </td>
+        </tr>
+        <tr itemprop="backwardReferences" itemscope repeat>
+          <td>
+            <a href="/patent/CN106126681A/zh">
+              <span itemprop="publicationNumber">CN106126681A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2016-06-29</td>
+          <td itemprop="publicationDate">2016-11-16</td>
+          <td><span itemprop="assigneeOriginal">泰华智慧产业集团股份有限公司</span></td>
+          <td itemprop="title">一种增量式流式数据聚类方法及系统 
+       </td>
+        </tr>
+        <tr itemprop="backwardReferences" itemscope repeat>
+          <td>
+            <a href="/patent/WO2020000944A1/zh">
+              <span itemprop="publicationNumber">WO2020000944A1</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2018-06-25</td>
+          <td itemprop="publicationDate">2020-01-02</td>
+          <td><span itemprop="assigneeOriginal">星环信息科技（上海）有限公司</span></td>
+          <td itemprop="title">基于抢占式调度的资源共享使用方法、系统及设备 
+       </td>
+        </tr>
+        <tr itemprop="backwardReferences" itemscope repeat>
+          <td>
+            <a href="/patent/CN114972335A/zh">
+              <span itemprop="publicationNumber">CN114972335A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2022-07-20</td>
+          <td itemprop="publicationDate">2022-08-30</td>
+          <td><span itemprop="assigneeOriginal">凌云光技术股份有限公司</span></td>
+          <td itemprop="title">一种用于工业检测的图像分类方法、装置及计算机设备 
+       </td>
+        </tr>
+        <tr itemprop="backwardReferences" itemscope repeat>
+          <td>
+            <a href="/patent/CN116048745A/zh">
+              <span itemprop="publicationNumber">CN116048745A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2022-11-08</td>
+          <td itemprop="publicationDate">2023-05-02</td>
+          <td><span itemprop="assigneeOriginal">网易有道信息技术（北京）有限公司</span></td>
+          <td itemprop="title">多模块gpu的分时调度方法、系统、电子设备及存储介质 
+       </td>
+        </tr>
+        <tr itemprop="backwardReferences" itemscope repeat>
+          <td>
+            <a href="/patent/CN116489019A/zh">
+              <span itemprop="publicationNumber">CN116489019A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+            <span itemprop="examinerCited">*</span>
+            
+          </td>
+          <td itemprop="priorityDate">2023-06-02</td>
+          <td itemprop="publicationDate">2023-07-25</td>
+          <td><span itemprop="assigneeOriginal">深圳市博思云为科技有限公司</span></td>
+          <td itemprop="title">一种智能视觉信令通道管理方法、系统及介质 
+       </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  
+
+  
+
+  <section>
+    <h2>Also Published As</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Publication number</th>
+          <th>Publication date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="docdbFamily" itemscope repeat>
+          <td>
+            <a href="/patent/CN116719628A/zh">
+              <span itemprop="publicationNumber">CN116719628A</span>
+              (<span itemprop="primaryLanguage">zh</span>)
+            </a>
+          </td>
+          <td itemprop="publicationDate">2023-09-08</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Similar Documents</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Publication</th>
+          <th>Publication Date</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN110362611B/zh">
+                <span itemprop="publicationNumber">CN110362611B</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2021-07-09">2021-07-09</time>
+            
+            
+          </td>
+          <td itemprop="title">一种数据库查询方法、装置、电子设备及存储介质 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/US10108458B2/en">
+                <span itemprop="publicationNumber">US10108458B2</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2018-10-23">2018-10-23</time>
+            
+            
+          </td>
+          <td itemprop="title">System and method for scheduling jobs in distributed datacenters 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/WO2016078008A1/zh">
+                <span itemprop="publicationNumber">WO2016078008A1</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2016-05-26">2016-05-26</time>
+            
+            
+          </td>
+          <td itemprop="title">调度数据流任务的方法和装置 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN115292016A/zh">
+                <span itemprop="publicationNumber">CN115292016A</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2022-11-04">2022-11-04</time>
+            
+            
+          </td>
+          <td itemprop="title">基于人工智能的任务调度方法及相关设备 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            
+            <meta itemprop="isScholar" content="true">
+              <meta itemprop="scholarID" content="2362649410053762651">
+              <a href="/scholar/2362649410053762651"><span itemprop="scholarAuthors">Bommala et al.</span></a>
+            
+          </td>
+          <td>
+            
+            <time itemprop="publicationDate" datetime="2023">2023</time>
+            
+          </td>
+          <td itemprop="title">Machine learning job failure analysis and prediction model for the cloud environment</td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN116719628B/zh">
+                <span itemprop="publicationNumber">CN116719628B</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2024-04-19">2024-04-19</time>
+            
+            
+          </td>
+          <td itemprop="title">一种并发任务抢占式调度方法、系统及介质 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN114327894A/zh">
+                <span itemprop="publicationNumber">CN114327894A</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2022-04-12">2022-04-12</time>
+            
+            
+          </td>
+          <td itemprop="title">资源分配方法、装置、电子设备及存储介质 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN118535330A/zh">
+                <span itemprop="publicationNumber">CN118535330A</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2024-08-23">2024-08-23</time>
+            
+            
+          </td>
+          <td itemprop="title">一种新型多应用智能卡操作系统的实现方法 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN114721824A/zh">
+                <span itemprop="publicationNumber">CN114721824A</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2022-07-08">2022-07-08</time>
+            
+            
+          </td>
+          <td itemprop="title">一种资源分配方法、介质以及电子设备 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/US8667008B2/en">
+                <span itemprop="publicationNumber">US8667008B2</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2014-03-04">2014-03-04</time>
+            
+            
+          </td>
+          <td itemprop="title">Search request control apparatus and search request control method 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/US20090165009A1/en">
+                <span itemprop="publicationNumber">US20090165009A1</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2009-06-25">2009-06-25</time>
+            
+            
+          </td>
+          <td itemprop="title">Optimal scheduling for cad architecture 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            
+            <meta itemprop="isScholar" content="true">
+              <meta itemprop="scholarID" content="6809665056473043380">
+              <a href="/scholar/6809665056473043380"><span itemprop="scholarAuthors">He et al.</span></a>
+            
+          </td>
+          <td>
+            
+            <time itemprop="publicationDate" datetime="2013">2013</time>
+            
+          </td>
+          <td itemprop="title">Real-time scheduling in mapreduce clusters</td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN111930485B/zh">
+                <span itemprop="publicationNumber">CN111930485B</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2022-09-13">2022-09-13</time>
+            
+            
+          </td>
+          <td itemprop="title">一种基于性能表现的作业调度方法 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN115437758A/zh">
+                <span itemprop="publicationNumber">CN115437758A</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2022-12-06">2022-12-06</time>
+            
+            
+          </td>
+          <td itemprop="title">主机调度方法、装置以及及存储介质 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN116260876B/zh">
+                <span itemprop="publicationNumber">CN116260876B</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2025-08-05">2025-08-05</time>
+            
+            
+          </td>
+          <td itemprop="title">基于K8s的AI应用调度方法、装置及电子设备 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN117667689A/zh">
+                <span itemprop="publicationNumber">CN117667689A</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2024-03-08">2024-03-08</time>
+            
+            
+          </td>
+          <td itemprop="title">一种测试用例调度方法及计算设备 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/US11789773B2/en">
+                <span itemprop="publicationNumber">US11789773B2</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2023-10-17">2023-10-17</time>
+            
+            
+          </td>
+          <td itemprop="title">Computing device for handling tasks in a multi-core processor, and method for operating computing device 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/US11488723B1/en">
+                <span itemprop="publicationNumber">US11488723B1</span>
+                (<span itemprop="primaryLanguage">en</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2022-11-01">2022-11-01</time>
+            
+            
+          </td>
+          <td itemprop="title">Feature prediction 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN117742928B/zh">
+                <span itemprop="publicationNumber">CN117742928B</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2024-04-26">2024-04-26</time>
+            
+            
+          </td>
+          <td itemprop="title">一种用于联邦学习的算法组件执行调度方法 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN111538491A/zh">
+                <span itemprop="publicationNumber">CN111538491A</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2020-08-14">2020-08-14</time>
+            
+            
+          </td>
+          <td itemprop="title">数据事件处理方法、装置、设备和存储介质 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN116991882B/zh">
+                <span itemprop="publicationNumber">CN116991882B</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2023-12-01">2023-12-01</time>
+            
+            
+          </td>
+          <td itemprop="title">基于业务优先级的查询优化方法、装置和电子设备 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN116860464B/zh">
+                <span itemprop="publicationNumber">CN116860464B</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2024-01-09">2024-01-09</time>
+            
+            
+          </td>
+          <td itemprop="title">负载资源的分配方法和装置、存储介质及电子装置 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/TW201942741A/zh">
+                <span itemprop="publicationNumber">TW201942741A</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2019-11-01">2019-11-01</time>
+            
+            
+          </td>
+          <td itemprop="title">資訊處理裝置、控制方法及程式產品 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            <meta itemprop="isPatent" content="true">
+              <a href="/patent/CN115586962B/zh">
+                <span itemprop="publicationNumber">CN115586962B</span>
+                (<span itemprop="primaryLanguage">zh</span>)
+              </a>
+            
+            
+          </td>
+          <td>
+            <time itemprop="publicationDate" datetime="2025-11-25">2025-11-25</time>
+            
+            
+          </td>
+          <td itemprop="title">一种负载均衡方法、计算设备及存储介质 
+       </td>
+        </tr>
+        <tr itemprop="similarDocuments" itemscope repeat>
+          <td>
+            
+            <meta itemprop="isScholar" content="true">
+              <meta itemprop="scholarID" content="250154597667706306">
+              <a href="/scholar/250154597667706306"><span itemprop="scholarAuthors">López‐Albelda et al.</span></a>
+            
+          </td>
+          <td>
+            
+            <time itemprop="publicationDate" datetime="2020">2020</time>
+            
+          </td>
+          <td itemprop="title">Heuristics for concurrent task scheduling on GPUs</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Legal Events</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Code</th>
+          <th>Title</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2023-09-08">2023-09-08</time></td>
+          <td itemprop="code">PB01</td>
+          <td itemprop="title">Publication</td>
+          <td>
+          </td>
+        </tr>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2023-09-08">2023-09-08</time></td>
+          <td itemprop="code">PB01</td>
+          <td itemprop="title">Publication</td>
+          <td>
+          </td>
+        </tr>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2023-09-26">2023-09-26</time></td>
+          <td itemprop="code">SE01</td>
+          <td itemprop="title">Entry into force of request for substantive examination</td>
+          <td>
+          </td>
+        </tr>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2023-09-26">2023-09-26</time></td>
+          <td itemprop="code">SE01</td>
+          <td itemprop="title">Entry into force of request for substantive examination</td>
+          <td>
+          </td>
+        </tr>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2024-04-05">2024-04-05</time></td>
+          <td itemprop="code">TA01</td>
+          <td itemprop="title">Transfer of patent application right</td>
+          <td>
+          </td>
+        </tr>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2024-04-05">2024-04-05</time></td>
+          <td itemprop="code">TA01</td>
+          <td itemprop="title">Transfer of patent application right</td>
+          <td>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Effective date of registration</strong>:
+              <span itemprop="value">20240321</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Address after</strong>:
+              <span itemprop="value">No. 3, Jinshagang 1st Road, Dalang Town, Dongguan City, Guangdong Province, 523000</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Applicant after</strong>:
+              <span itemprop="value">DONGGUAN BTL Inc.</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Country or region after</strong>:
+              <span itemprop="value">China</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Applicant after</strong>:
+              <span itemprop="value">Guangdong Xinbao Testing Co.,Ltd.</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Applicant after</strong>:
+              <span itemprop="value">Shanghai Xinbao Testing Co.,Ltd.</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Address before</strong>:
+              <span itemprop="value">No. 3, Jinshagang 1st Road, Dalang Town, Dongguan City, Guangdong Province, 523000</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Applicant before</strong>:
+              <span itemprop="value">DONGGUAN BTL Inc.</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Country or region before</strong>:
+              <span itemprop="value">China</span>
+            </p>
+          </td>
+        </tr>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2024-04-19">2024-04-19</time></td>
+          <td itemprop="code">GR01</td>
+          <td itemprop="title">Patent grant</td>
+          <td>
+          </td>
+        </tr>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2024-04-19">2024-04-19</time></td>
+          <td itemprop="code">GR01</td>
+          <td itemprop="title">Patent grant</td>
+          <td>
+          </td>
+        </tr>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2025-12-05">2025-12-05</time></td>
+          <td itemprop="code">TR01</td>
+          <td itemprop="title">Transfer of patent right</td>
+          <td>
+          </td>
+        </tr>
+        <tr itemprop="legalEvents" itemscope repeat>
+          <td><time itemprop="date" datetime="2025-12-05">2025-12-05</time></td>
+          <td itemprop="code">TR01</td>
+          <td itemprop="title">Transfer of patent right</td>
+          <td>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Effective date of registration</strong>:
+              <span itemprop="value">20251119</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Address after</strong>:
+              <span itemprop="value">No. 3, Jinshagang 1st Road, Dalang Town, Dongguan City, Guangdong Province, 523000</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Patentee after</strong>:
+              <span itemprop="value">DONGGUAN BTL Inc.</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Country or region after</strong>:
+              <span itemprop="value">China</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Patentee after</strong>:
+              <span itemprop="value">Shanghai Xinbao Testing Co.,Ltd.</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Address before</strong>:
+              <span itemprop="value">No. 3, Jinshagang 1st Road, Dalang Town, Dongguan City, Guangdong Province, 523000</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Patentee before</strong>:
+              <span itemprop="value">DONGGUAN BTL Inc.</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Country or region before</strong>:
+              <span itemprop="value">China</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Patentee before</strong>:
+              <span itemprop="value">Guangdong Xinbao Testing Co.,Ltd.</span>
+            </p>
+            <p itemprop="attributes" itemscope repeat>
+              <strong itemprop="label">Patentee before</strong>:
+              <span itemprop="value">Shanghai Xinbao Testing Co.,Ltd.</span>
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</article>
+
+    </search-app>
+    
+    <script></script>
+    <script type="text/javascript" src="//www.gstatic.com/feedback/api.js"></script>
+    <script type="text/javascript" src="//www.gstatic.com/feedback/js/help/prod/service/lazy.min.js"></script>
+    <script type="text/javascript">
+      if (window.help && window.help.service) {
+        helpApi = window.help.service.Lazy.create(0, {apiKey: 'AIzaSyDTEI_0tLX4varJ7bwK8aT-eOI5qr3BmyI', locale: 'en-US'});
+        window.requestedSurveys = new Set();
+        window.requestSurvey = function(triggerId) {
+          if (window.requestedSurveys.has(triggerId)) {
+            return;
+          }
+          window.requestedSurveys.add(triggerId);
+          helpApi.requestSurvey({
+            triggerId: triggerId,
+            enableTestingMode: false,
+            callback: (requestSurveyCallbackParam) => {
+              if (!requestSurveyCallbackParam.surveyData) {
+                return;
+              }
+              helpApi.presentSurvey({
+                productData: {
+                  productVersion: window.version,
+                  customData: {
+                    "experiments": "",
+                  },
+                },
+                surveyData: requestSurveyCallbackParam.surveyData,
+                colorScheme: 1,
+                customZIndex: 10000,
+              });
+            }
+          });
+        };
+
+        window.requestSurvey('YXTwAsvoW0kedxbuTdH0RArc9VhT');
+      }
+    </script>
+    <script src="/sw/null_loader.js"></script>
+  </body>
+</html>

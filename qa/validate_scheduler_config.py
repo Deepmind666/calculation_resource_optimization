@@ -54,6 +54,12 @@ def main() -> None:
         "max_start_per_tick_high",
         "max_event_log_entries",
         "dry_run",
+        "enable_estimation_autocalibration",
+        "profile_ema_alpha",
+        "profile_safety_multiplier",
+        "profile_min_samples",
+        "runtime_sample_interval_sec",
+        "max_resource_profiles",
     }
     missing = sorted(required_keys - set(cfg.keys()))
     if missing:
@@ -88,6 +94,16 @@ def main() -> None:
         fail("mode_hysteresis_pct must be >= 0.")
     if not (0.0 <= float(cfg["ema_alpha"]) <= 1.0):
         fail("ema_alpha must be in [0, 1].")
+    if not (0.0 <= float(cfg["profile_ema_alpha"]) <= 1.0):
+        fail("profile_ema_alpha must be in [0, 1].")
+    if float(cfg["profile_safety_multiplier"]) < 1.0:
+        fail("profile_safety_multiplier must be >= 1.0.")
+    if int(cfg["profile_min_samples"]) < 1:
+        fail("profile_min_samples must be >= 1.")
+    if float(cfg["runtime_sample_interval_sec"]) <= 0:
+        fail("runtime_sample_interval_sec must be > 0.")
+    if int(cfg["max_resource_profiles"]) < 1:
+        fail("max_resource_profiles must be >= 1.")
 
     for k in [
         "memory_high_pct",
@@ -106,6 +122,8 @@ def main() -> None:
         fail("memory_high_pct must be < memory_emergency_pct.")
     if float(cfg["cpu_high_pct"]) >= float(cfg["cpu_hard_pct"]):
         fail("cpu_high_pct must be < cpu_hard_pct.")
+    if float(cfg["gpu_memory_high_pct"]) >= float(cfg["gpu_memory_emergency_pct"]):
+        fail("gpu_memory_high_pct must be < gpu_memory_emergency_pct.")
 
     print(f"[PASS] scheduler config looks valid: {config_path}")
 

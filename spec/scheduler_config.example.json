@@ -22,5 +22,11 @@
   "max_start_per_tick_normal": 4,
   "max_start_per_tick_high": 1,
   "max_event_log_entries": 5000,
-  "dry_run": true
+  "dry_run": true,
+  "enable_estimation_autocalibration": false,
+  "profile_ema_alpha": 0.5,
+  "profile_safety_multiplier": 1.25,
+  "profile_min_samples": 3,
+  "runtime_sample_interval_sec": 0.2,
+  "max_resource_profiles": 1024
 }
