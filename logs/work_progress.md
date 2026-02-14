@@ -1,4 +1,4 @@
-﻿# 工作进展日志（专用）
+# 工作进展日志（专用）
 
 ## 2026-02-09 14:31:07 +08:00
 - 工作内容：
@@ -2377,3 +2377,166 @@
 - 风险与后续：
   - 风险：v9 条款数量增加，首轮审查可读性低于 v8；
   - 后续：建议下一轮产出“v8/v9 选型决策表”，供代理人按审查压力快速选稿。
+
+## 2026-02-14 21:02:40 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R43（继续推进：CNIPA 格式化与附图文字描述稿）
+- 工作内容：
+  1. 先更新 `spec/` 格式规范：
+     - 新增 `spec/cnipa_formal_document_profile_R43.md`；
+     - 定义 CNIPA 风格文稿结构与附图文本规则。
+  2. 转换为 CNIPA 风格专利文本：
+     - 新增 `patent/权利要求书_资源调度_CNIPA_格式化稿_R43.md`；
+     - 新增 `patent/说明书_资源调度_CNIPA_格式化稿_R43.md`。
+  3. 产出附图文字描述稿：
+     - 新增 `patent/附图文字描述稿_CNIPA_R43.md`；
+     - 包含正式附图说明句 + 绘图文字描述（图1-图4）。
+  4. 产出附图标记说明表：
+     - 新增 `patent/附图标记说明表_资源调度_CNIPA_R43.md`；
+     - 使用资源调度方向编号，避免旧方向符号混用。
+  5. 同步导航与审计：
+     - 更新 `patent/README.md`；
+     - 新增 `qa/deep_algorithm_self_audit_R43_2026-02-14.md`。
+- 文件变更：
+  - `spec/cnipa_formal_document_profile_R43.md`
+  - `patent/权利要求书_资源调度_CNIPA_格式化稿_R43.md`
+  - `patent/说明书_资源调度_CNIPA_格式化稿_R43.md`
+  - `patent/附图文字描述稿_CNIPA_R43.md`
+  - `patent/附图标记说明表_资源调度_CNIPA_R43.md`
+  - `patent/README.md`
+  - `qa/deep_algorithm_self_audit_R43_2026-02-14.md`
+  - `logs/work_progress.md`
+  - `.claude.md`
+- 文件评审清单：
+  - [x] 先更新 `spec/` 后更新 `patent/`
+  - [x] CNIPA 风格权利要求书与说明书已落地
+  - [x] 附图文字描述稿覆盖图1-图4并可直接交绘图
+  - [x] 附图标记说明表已切换到资源调度语义
+  - [x] 已先清缓存再执行三板斧并全部 PASS
+  - [x] 新增文件 UTF-8 无 BOM 编码检查通过
+- 验证结果：
+  - 清缓存：PASS（`rd /s /q` 清理 `prototype` 与 `prototype/tests` 下 `__pycache__`）
+  - Structure：PASS
+  - Config：PASS
+  - Tests：PASS（75/75，0.488s）
+- 风险与后续：
+  - 风险：R43 为工程格式化稿，最终法律措辞仍需代理人定稿；
+  - 后续：建议下一轮产出“CNIPA 提交包目录 + 附图审校清单”。
+
+## 2026-02-14 21:23:22 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R44（继续推进：CNIPA 硬伤修复）
+- 工作内容：
+  1. 先更新 `spec/` 修复规范：
+     - 新增 `spec/cnipa_hard_issue_fix_profile_R44.md`；
+     - 固化四个硬伤的整改目标与验收口径。
+  2. 修复说明书公开不充分问题：
+     - 新增 `patent/说明书_资源调度_CNIPA_完整稿_R44.md`；
+     - 承接 `v3` 全量公开内容（未删减）并按 CNIPA 章节承接。
+  3. 补齐 CNIPA 必需形式要素：
+     - 新增 `patent/摘要_资源调度_CNIPA_独立页_R44.md`（含摘要附图：图1）。
+  4. 修复权利要求形式问题：
+     - 新增 `patent/权利要求书_资源调度_CNIPA_修正版_R44.md`；
+     - 已加入步骤编号、拆分原合并特征、补全系统模块功能、修正介质引用。
+  5. 核实 SVG 标注一致性：
+     - 新增 `patent/附图标注一致性核查_R44.md`；
+     - 新增 `patent/附图标记说明表_资源调度_CNIPA_R44_核验版.md`；
+     - 明确现图与标号体系的差异与后续重绘建议。
+  6. 同步导航与审计：
+     - 更新 `patent/README.md`；
+     - 新增 `qa/deep_algorithm_self_audit_R44_2026-02-14.md`。
+- 文件变更：
+  - `spec/cnipa_hard_issue_fix_profile_R44.md`
+  - `patent/权利要求书_资源调度_CNIPA_修正版_R44.md`
+  - `patent/说明书_资源调度_CNIPA_完整稿_R44.md`
+  - `patent/摘要_资源调度_CNIPA_独立页_R44.md`
+  - `patent/附图标注一致性核查_R44.md`
+  - `patent/附图标记说明表_资源调度_CNIPA_R44_核验版.md`
+  - `patent/README.md`
+  - `qa/deep_algorithm_self_audit_R44_2026-02-14.md`
+  - `logs/work_progress.md`
+  - `.claude.md`
+- 文件评审清单：
+  - [x] 已先更新 `spec/` 再改 `patent/`
+  - [x] 说明书完整公开内容已恢复至 CNIPA 完整稿
+  - [x] 摘要独立页与摘要附图要素已补齐
+  - [x] 权利要求 1/5/6/8 形式问题已修正
+  - [x] SVG 标注一致性已核查并落核验表
+  - [x] 已先清缓存再执行三板斧并全部 PASS
+  - [x] 新增文件 UTF-8 无 BOM 编码检查通过
+- 验证结果：
+  - 清缓存：PASS（`rd /s /q` 清理 `prototype` 与 `prototype/tests` 下 `__pycache__`）
+  - Structure：PASS
+  - Config：PASS
+  - Tests：PASS（75/75，0.479s）
+- 风险与后续：
+  - 风险：R44 完整稿已恢复内容但仍存在章节标题重复，需代理人做最终版式清稿；
+  - 后续：建议下一轮执行“去重排版版说明书 + 附图中文化审校清单”。
+
+## 2026-02-14 21:28:57 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R45（继续推进：CNIPA 终版排版与提交清单）
+- 工作内容：
+  1. 先更新 `spec/` 终版排版规范：
+     - 新增 `spec/cnipa_final_layout_profile_R45.md`。
+  2. 生成 CNIPA 终版说明书排版稿：
+     - 新增 `patent/说明书_资源调度_CNIPA_终版排版稿_R45.md`；
+     - 在保留 v3 完整公开深度前提下，转为 CNIPA 顶层章节结构并去除 R44 的重复承接样式。
+  3. 新增提交与审校工件：
+     - 新增 `patent/CNIPA_提交包目录_R45.md`；
+     - 新增 `patent/附图审校清单_R45.md`。
+  4. 同步导航与审计：
+     - 更新 `patent/README.md`；
+     - 新增 `qa/deep_algorithm_self_audit_R45_2026-02-14.md`。
+- 文件变更：
+  - `spec/cnipa_final_layout_profile_R45.md`
+  - `patent/说明书_资源调度_CNIPA_终版排版稿_R45.md`
+  - `patent/CNIPA_提交包目录_R45.md`
+  - `patent/附图审校清单_R45.md`
+  - `patent/README.md`
+  - `qa/deep_algorithm_self_audit_R45_2026-02-14.md`
+  - `logs/work_progress.md`
+  - `.claude.md`
+- 文件评审清单：
+  - [x] 先更新 `spec/` 再更新 `patent/`
+  - [x] 说明书终版排版稿保持完整公开内容深度
+  - [x] 提交包目录与附图审校清单已落地
+  - [x] README 导航已同步 R45
+  - [x] 先清缓存再执行三板斧并全部 PASS
+  - [x] 新增文件 UTF-8 无 BOM 编码检查通过
+- 验证结果：
+  - 清缓存：PASS（`rd /s /q` 清理 `prototype` 与 `prototype/tests` 下 `__pycache__`）
+  - Structure：PASS
+  - Config：PASS
+  - Tests：PASS（75/75，0.489s）
+- 风险与后续：
+  - 风险：R45 终版说明书已可用，但仍建议代理人做最终法律文风精修；
+  - 后续：建议下一轮产出“v8/v9 + R45 版本矩阵”供提交前最终选型。
+## 2026-02-14 21:49:14 +08:00
+- 执行人：Codex (GPT-5)
+- 评审状态：R46
+- 工作内容：
+  1. 修复 `patent/说明书_资源调度_CNIPA_完整稿_R44.md` 的拼接错误，改为单文档 CNIPA 六章结构。
+  2. 将背景技术、发明内容、具体实施方式按 v3 映射归位，避免重复“技术领域/背景技术/摘要”。
+  3. 充实 `patent/权利要求书_资源调度_CNIPA_修正版_R44.md` 中从属权利要求 5/6/7 的具体技术动作。
+  4. 在 `patent/附图文字描述稿_CNIPA_R43.md` 增加提交前图面规范化提示。
+- 文件变更：
+  1. spec/cnipa_single_document_fix_profile_R46.md
+  2. patent/说明书_资源调度_CNIPA_完整稿_R44.md
+  3. patent/权利要求书_资源调度_CNIPA_修正版_R44.md
+  4. patent/附图文字描述稿_CNIPA_R43.md
+  5. qa/deep_algorithm_self_audit_R46_2026-02-14.md
+  6. logs/work_progress.md
+- 文件评审清单：
+  1. 检查 `说明书_资源调度_CNIPA_完整稿_R44.md` 顶层是否仅保留六章。
+  2. 检查是否删除拼接分隔线和二次顶层标题。
+  3. 检查权利要求 5/6/7 是否包含可执行条件、动作与记录字段。
+  4. 检查说明书是否包含对 5/6/7 的支撑段落。
+  5. 检查附图稿是否明确“实验阶段图面+提交前规范化要求”。
+- 验证结果：
+  1. 结构检查：PASS
+  2. 配置校验：PASS
+  3. 单元测试：PASS（75/75）
+- 风险与后续：
+  1. 当前 SVG 仍为实验图面，提交前仍需中文化和编号统一。
+  2. 下一步建议按同一编号体系完成图1~图4重绘与图文一致性复核。
